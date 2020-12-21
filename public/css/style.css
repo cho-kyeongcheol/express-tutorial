@@ -1,0 +1,17 @@
+.debug {
+  border: solid 1px red;
+}
+
+.w-100p {
+  width: 100%
+}
+
+.regist-box {
+  padding: 30px;
+  width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 150px;
+  border-radius: 8px;
+  border: solid 1px #c7c7c7;
+}
