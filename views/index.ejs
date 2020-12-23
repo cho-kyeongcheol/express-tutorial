@@ -9,18 +9,24 @@
 <body>
 
   <div class="container">
-    <div class="regist-box">      
-      <div class="mb-3">
-        <label for="inputName" class="form-label">이름</label>
-        <input type="text" class="form-control" id="inputName">
-      </div>
-      <div class="mb-3">
-        <label for="inputPw" class="form-label">비밀번호</label>
-        <input type="password" class="form-control" id="inputPw">
-      </div>
-      <div>
-        <button onclick="regist()" type="submit" class="btn btn-light w-100p">회원가입</button>
-      </div>
+    <div class="regist-box">   
+        <h1>
+            인덱스
+        </h1>   
+        <div>
+            현재 로그인 상태
+        </div>      
+        <% if (user) { %>
+        <div>
+            <div>로그인 -> 사용자명 : <span><%= user.username %></span></div>
+            <button onclick="logout()" type="button" class="btn btn-primary">로그아웃</button>
+        </div>      
+        <% } else { %>
+        <div>
+            비로그인
+            <button onclick="login()" type="button" class="btn btn-primary">로그인</button>
+        </div>  
+        <% } %>
     </div>
   </div>
 
@@ -30,47 +36,14 @@
   <script src="/js/jquery-3.5.1.min.js"></script>
   <script src="/js/bootstrap.bundle.min.js"></script>
   <script>
-    function regist() {
-      var inputName = $('#inputName').val();
-      var inputPw = $('#inputPw').val();
-      // var data=JSON.parse(data);
+      function login() {
+        window.location.href = "/login";
+      }
 
-      console.log('inputName = ', inputName)
-      console.log('inputPw = ', inputPw)      
-
-    //   $.ajax({
-		// 	type:'post',
-		// 	url:'/api/insert',			
-    //   dataType: 'json',
-    //   data:{      
-		// 		inputId:qwer1234,				
-		// 		inputPw:1234
-		// 	},
-		// 	success:function(result){
-		// 		if(result=='SUCCESS'){
-		// 			alert("등록 되었습니다.");
-		// 			// getPage("/reply/select/"+bno+"/"+page);
-		// 			$("#inputId").val("");
-		// 			$("#inputPw").val("");
-		// 	}
-		// 	}
-		// });
-
-      $.post( "/api/v1/regist", {         
-        inputName: inputName,
-        inputPw: inputPw
-      })
-      .done(function( data ) {
-        if (data.result === 'fail') {
-          alert('회원가입에 실패하였습니다.')
-        } else {
-          alert('회원가입 성공!')
-        }
-      });
-
-
-
-    }
+      function logout() {
+        // 세션을 지워야함
+        window.location.href = "/login";
+      }
   </script>
 </body>
 </html>
