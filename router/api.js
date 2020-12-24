@@ -5,6 +5,38 @@ var crypto = require('crypto');
 const { getConnection, Users, UsersLogin, Todos } = require('../connection')
 
 
+router.post('/vi/board/delete', async function (req, res, next) {
+
+  const sequelize = getConnection();
+
+  const todos = Todos();
+
+  const users_login = UsersLogin();
+
+  const session = req.session;
+  console.log('@@session =>', session)
+
+  const session_id = req.session.user_id;
+
+  console.log('session_id =>', session_id)
+
+  // const board_id = req.session.board_id;
+
+  // console.log('board_id =>', board_id)
+
+  const user_login = await users_login.create({
+    user_id: session_id
+  })
+
+  await todos.destroy({
+    where: {
+      id: user_login.user_id
+    }
+  });
+
+})
+
+
 router.post('/v1/board/insert', async function (req, res, next) {
 
   console.log('req.body = ', req.body);

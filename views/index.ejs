@@ -43,7 +43,7 @@
           <% todo_list.forEach(function(todo){ %>
             <tr>
               <td><input type='text' class='mt-10 mb-15' placeholder="<%= todo.content %>">
-                <button>수정</button><button>삭제</button>
+                <button class="btn btn-primary" >수정</button><button class="btn btn-secondary" onclick="board_delete()">삭제</button>
       </div>
       </td>
       </tr>
@@ -66,10 +66,7 @@
 
 
           <script>
-            function test() {
-              alert('!!');
-            }
-
+            
           </script>
           <script>
 
@@ -78,6 +75,35 @@
                 board();
               }
             });
+
+            function board_delete() {
+              var inputText = $('#inputText').val();
+
+              $.post("/api/vi/board/delete", {
+                inputText : inputText
+              })
+              .done(function(data){
+                if (data.result === 'fail') {
+                  Swal.fire({
+                      icon: 'error',
+                      title: '삭제!',
+                      text: '실패!'
+                    })
+                } else {
+                    Swal.fire({
+                      icon: 'succes',
+                      title: '삭제!',
+                      text: '성공!'
+                    }).then((result) => {
+                      if (result.isConfirmed) {
+                        window.location.href = "/";
+                      } else if (result.isDenied) {
+                      }
+                    })
+                  }
+
+              })
+            }
 
 
 
