@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-const { getConnection, Users, UsersLogin } = require('../connection')
+const { getConnection, Users, UsersLogin, Todos } = require('../connection')
 
 router.get('/', async (req, res) => {
 
@@ -12,6 +12,8 @@ router.get('/', async (req, res) => {
 
     if (user_id) {
         const users = Users();
+
+        const todos = Todos();
 
         const user = await users.findAll({
             where: {
@@ -24,15 +26,32 @@ router.get('/', async (req, res) => {
             raw: true
         });
 
+        const todo = await todos.findAll({
+            where: {
+                user_id : user_id
+              },              
+            raw: true
+        });
+        const todo_list = await todos.findAll({
+            order: [
+                ['id', 'DESC']               
+            ],
+            raw: true
+        });
+
         context.user = user[0]
         context.user_list = user_list
+        context.todo = todo[0]
+        context.todo_list = todo_list
     } else {
         context.user = undefined
         context.user_list = undefined
-    }
-
-    res.render('index', context);
+        context.todo = undefined
+        context.user_list = undefined
+    }   
+    res.render('index', context);    
 })
+
 
 router.get('/regist', (req, res) => {
     var context = {};

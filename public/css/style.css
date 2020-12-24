@@ -2,12 +2,20 @@
   border: solid 1px red;
 }
 
+.box {
+  border: solid 2px black;
+}
+
 .w-100p {
   width: 100%
 }
 
 .mb-15 {
   margin-bottom: 15px;
+}
+
+.mt-10 {
+  margin-top: 10px;
 }
 
 .mt-20 {

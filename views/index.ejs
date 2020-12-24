@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
-  <%- include('./common/head') -%>
+<%- include('./common/head') -%>
+
   <body>
     <div class="container">
       <% if (user) { %>
@@ -14,44 +15,137 @@
           <div class="title">
             사용자명
           </div>
-          <div>
+          <div id="username">
             <%= user.username %>
           </div>
           <button onclick="logout()" type="button" class="btn btn-secondary mt-20">로그아웃</button>
         </div>
-      <% } else { %>
-        <div class="title">
-          현재 상태
-        </div>
-        <div>
-          비로그인
-        </div>
-        <button onclick="login()" type="button" class="btn btn-secondary mt-20">로그인</button>
-        </div>
-      <% } %>
+        <% } else { %>
+          <div class="title">
+            현재 상태
+          </div>
+          <div>
+            비로그인
+          </div>
+          <button onclick="login()" type="button" class="btn btn-secondary mt-20">로그인</button>
     </div>
+    <% } %>
 
-    <%- include('./common/javascript') -%>
-      <script>
-        function login() {
-          window.location.href = "/login";
-        }
+      <div><input id="inputText" type='text' class='mt-20' placeholder="입력하세요"> <button onclick="board()">등록</button>
+      </div>
 
-        function logout() {
-          var inputName = $('#inputName').val();
-          // 세션을 지워야함
+      <div class="container-sm box mt-20 ">
 
-          $.post("/api/v1/logout", {
-            inputName: inputName
-          })
-            .done(function (data) {
-              if (data.result === 'fail') {
-                alert('로그아웃 실패')
-              } else {
-                window.location.href = "/login";
+        <h1>
+          게시판 출력
+        </h1>
+        <table>
+          <% todo_list.forEach(function(todo){ %>
+            <tr>
+              <td><input type='text' class='mt-10 mb-15' placeholder="<%= todo.content %>">
+                <button>수정</button><button>삭제</button>
+      </div>
+      </td>
+      </tr>
+      <% }) %>
+
+
+        </table>
+
+
+        </div>
+
+        <button onclick="test()">test</button>
+
+
+
+        </div>
+
+        <%- include('./common/javascript') -%>
+
+
+
+          <script>
+            function test() {
+              alert('!!');
+            }
+
+          </script>
+          <script>
+
+            $("#inputText").keydown(function (key) {
+              if (key.keyCode == 13) {
+                board();
               }
             });
-        }
-      </script>
+
+
+
+            function board(res) {
+              var inputText = $('#inputText').val();
+
+              $.post("/api/v1/board/insert", {
+                inputText: inputText
+              })
+                .done(function (data) {
+                  if (data.result === 'fail') {
+                    Swal.fire({
+                      icon: 'error',
+                      title: '등록!',
+                      text: '실패!'
+                    })
+                  } else {
+                    Swal.fire({
+                      icon: 'succes',
+                      title: '등록!',
+                      text: '등록!'
+                    }).then((result) => {
+                      if (result.isConfirmed) {
+                        window.location.href = "/";
+                      } else if (result.isDenied) {
+                      }
+                    })
+                  }
+                });
+            }
+
+
+            function login() {
+              window.location.href = "/login";
+            }
+
+            function logout() {
+              var inputName = $('#inputName').val();
+              // 세션을 지워야함
+
+              $.post("/api/v1/logout", {
+                inputName: inputName
+              })
+                .done(function (data) {
+                  if (data.result === 'fail') {
+                    // alert('회원가입에 실패하였습니다.')
+                    Swal.fire({
+                      icon: 'error',
+                      title: '게시판등록',
+                      text: '등록에 실패하였습니다.'
+                    })
+                  } else {
+                    // alert('회원가입 성공!');
+                    Swal.fire({
+                      icon: 'success',
+                      title: '게시판등록',
+                      text: '등록이 완료되었습니다.'
+                    }).then((result) => {
+                      if (result.isConfirmed) {
+                        window.location.href = "/";
+                      } else if (result.isDenied) {
+                        // pass
+                      }
+                    })
+                  }
+                });
+            }
+          </script>
   </body>
+
 </html>
