@@ -27,12 +27,16 @@
 
   <%- include('./common/javascript') -%>
   <script>
+
+    $("#inputPw").keydown(function(key) {
+      if (key.keyCode == 13) {
+        login();
+      }
+    });
+
     function login() {
       var inputName = $('#inputName').val();
       var inputPw = $('#inputPw').val();
-
-      console.log('inputName = ', inputName)
-      console.log('inputPw = ', inputPw)      
 
       $.post( "/api/v1/login", {         
         inputName: inputName,
@@ -40,7 +44,12 @@
       })
       .done(function( data ) {
         if (data.result === 'fail') {
-          alert('아이디 또는 비밀번호가 일치하지 않습니다');
+          // alert('아이디 또는 비밀번호가 일치하지 않습니다');
+          Swal.fire({
+            icon: 'error',
+            title: '로그인',
+            text: '아이디 또는 비밀번호가 일치하지 않습니다.'
+          })
         } else {
           window.location.href = "/";
         }

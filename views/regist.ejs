@@ -27,6 +27,13 @@
 
   <%- include('./common/javascript') -%>
   <script>
+
+    $("#inputPw").keydown(function(key) {
+      if (key.keyCode == 13) {
+        regist();
+      }
+    });
+
     function regist() {
       var inputName = $('#inputName').val();
       var inputPw = $('#inputPw').val();
@@ -40,10 +47,25 @@
       })
       .done(function( data ) {
         if (data.result === 'fail') {
-          alert('회원가입에 실패하였습니다.')
+          // alert('회원가입에 실패하였습니다.')
+          Swal.fire({
+            icon: 'error',
+            title: '회원가입',
+            text: '회원가입에 실패하였습니다.'
+          })
         } else {
-          alert('회원가입 성공!');
-          window.location.href = "/login";
+          // alert('회원가입 성공!');
+          Swal.fire({
+            icon: 'success',
+            title: '회원가입',
+            text: '회원가입이 완료되었습니다.'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              window.location.href = "/login";
+            } else if (result.isDenied) {
+              // pass
+            }
+          })
         }
       });
     }

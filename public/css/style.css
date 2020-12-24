@@ -10,6 +10,10 @@
   margin-bottom: 15px;
 }
 
+.mt-20 {
+  margin-top: 20px;
+}
+
 .regist-box {
   padding: 30px;
   width: 500px;
@@ -18,4 +22,9 @@
   margin-top: 150px;
   border-radius: 8px;
   border: solid 1px #c7c7c7;
+}
+
+.title {
+  font-weight: bold;
+  margin-top: 20px;
 }

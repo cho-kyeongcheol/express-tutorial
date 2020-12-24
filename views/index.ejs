@@ -3,58 +3,32 @@
   <%- include('./common/head') -%>
   <body>
     <div class="container">
-      <div class="regist-box">
-        <h1>
-          인덱스
-        </h1>
+      <% if (user) { %>
         <div>
-          현재 로그인 상태
-        </div>
-        <% if (user) { %>
-          <div>
-            <div>로그인 -> 사용자명 : <span>
-                <%= user.username %>
-              </span></div>
-            <button onclick="logout()" type="button" class="btn btn-primary">로그아웃</button>
+          <div class="title">
+            현재 상태
           </div>
-          <% } else { %>
-            <div>
-              비로그인
-              <button onclick="login()" type="button" class="btn btn-primary">로그인</button>
-            </div>
-            <% } %>
-
-              <table>
-                <thead>
-                  <tr>
-                    <td>
-                      사용자명
-                    </td>
-                    <td>
-                      비번
-                    </td>
-                    <td>
-                      회원가입일
-                    </td>
-                  </tr>
-                </thead>
-                <tbody>
-                  <% user_list && user_list.forEach(function(user){ %>
-                    <tr>
-                      <td>
-                        <%= user.username %>
-                      </td>
-                      <td>
-                        <%= user.password %>
-                      </td>
-                      <td>
-                        <%= user.create_at %>
-                      </td>
-                    </tr>
-                    <% }); %>
-                </tbody>
-              </table>
-      </div>
+          <div>
+            로그인
+          </div>
+          <div class="title">
+            사용자명
+          </div>
+          <div>
+            <%= user.username %>
+          </div>
+          <button onclick="logout()" type="button" class="btn btn-secondary mt-20">로그아웃</button>
+        </div>
+      <% } else { %>
+        <div class="title">
+          현재 상태
+        </div>
+        <div>
+          비로그인
+        </div>
+        <button onclick="login()" type="button" class="btn btn-secondary mt-20">로그인</button>
+        </div>
+      <% } %>
     </div>
 
     <%- include('./common/javascript') -%>
