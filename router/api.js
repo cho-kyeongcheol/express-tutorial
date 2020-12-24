@@ -4,6 +4,20 @@ var crypto = require('crypto');
 
 const { getConnection, Users, UsersLogin } = require('../connection')
 
+router.post('/v1/logout', async function(req, res, next) {
+  
+  var inputName = req.body.inputName;
+  console.log('@@inputName = ', inputName);
+  console.log("req.session:",req.session)
+  req.session.destroy(function(){
+    req.session;
+  }); 
+
+  console.log("req.session:",req.session)
+    res.json({'result': 'success'})
+
+});
+
 router.post('/v1/login', async function(req, res, next) {
     console.log('req.body = ', req.body);
 

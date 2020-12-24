@@ -20,9 +20,15 @@ router.get('/', async (req, res) => {
             raw: true
         });
 
+        const user_list = await users.findAll({
+            raw: true
+        });
+
         context.user = user[0]
+        context.user_list = user_list
     } else {
         context.user = undefined
+        context.user_list = undefined
     }
 
     res.render('index', context);
@@ -35,7 +41,7 @@ router.get('/regist', (req, res) => {
 
 router.get('/login', (req, res) => {
     var context = {};
-    res.render('login', context);
+    res.render('login', context);   
 })
 
 router.get('/test', (req, res) => {
