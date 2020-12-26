@@ -39,139 +39,145 @@
         <h1>
           게시판 출력
         </h1>
-        <table>
-          <% todo_list.forEach(function(todo){ %>
-            <tr>
-              <td><input type='text' class='mt-10 mb-15' placeholder="<%= todo.content %>">
-                <button class="btn btn-primary" >수정</button><button class="btn btn-secondary" onclick="board_delete()">삭제</button>
+
+      <%= todo.content %> 
+      <%= todo_list1.content %>
+      <%= todo2.content %>
+      <%= todo3.content %>
+       
+      
+      
+      
+      <% if (todo_list) { %>
+          <% if (todo.user_id==1) {%>
+            <table>
+              <% todo_list.forEach(function(todo){ %>
+                <tr>
+                  <td id="borad_list2">User_id<%= todo.user_id %></span> <input id="borad_list" type='text' class='mt-10 mb-15'
+                        placeholder="<%= todo.content %>">
+                      <button class="btn btn-primary">수정</button><button class="btn btn-secondary"
+                        onclick="board_delete()">삭제</button>
       </div>
       </td>
       </tr>
-      <% }) %>
-
-
+              <% }) %>
         </table>
 
-
-        </div>
-
-        <button onclick="test()">test</button>
+          <% } %>
+        <% } %>
 
 
 
-        </div>
-
-        <%- include('./common/javascript') -%>
 
 
 
-          <script>
-            
-          </script>
-          <script>
 
-            $("#inputText").keydown(function (key) {
-              if (key.keyCode == 13) {
-                board();
-              }
-            });
+            </div>
 
-            function board_delete() {
-              var inputText = $('#inputText').val();
-
-              $.post("/api/vi/board/delete", {
-                inputText : inputText
-              })
-              .done(function(data){
-                if (data.result === 'fail') {
-                  Swal.fire({
-                      icon: 'error',
-                      title: '삭제!',
-                      text: '실패!'
-                    })
-                } else {
-                    Swal.fire({
-                      icon: 'succes',
-                      title: '삭제!',
-                      text: '성공!'
-                    }).then((result) => {
-                      if (result.isConfirmed) {
-                        window.location.href = "/";
-                      } else if (result.isDenied) {
-                      }
-                    })
-                  }
-
-              })
-            }
+            <button onclick="test()">test</button>
 
 
 
-            function board(res) {
-              var inputText = $('#inputText').val();
+            </div>
 
-              $.post("/api/v1/board/insert", {
-                inputText: inputText
-              })
-                .done(function (data) {
-                  if (data.result === 'fail') {
-                    Swal.fire({
-                      icon: 'error',
-                      title: '등록!',
-                      text: '실패!'
-                    })
-                  } else {
-                    Swal.fire({
-                      icon: 'succes',
-                      title: '등록!',
-                      text: '등록!'
-                    }).then((result) => {
-                      if (result.isConfirmed) {
-                        window.location.href = "/";
-                      } else if (result.isDenied) {
-                      }
-                    })
+            <%- include('./common/javascript') -%>
+
+
+
+              <script>
+
+              </script>
+              <script>
+
+                $("#inputText").keydown(function (key) {
+                  if (key.keyCode == 13) {
+                    board();
                   }
                 });
-            }
 
+                function board_delete() {
+                  var list = document.getElementById("board_list2");
+                  console.log(list);
+                  alert(list)
+                  var todo_text = $('#todo_text').val();                  
 
-            function login() {
-              window.location.href = "/login";
-            }
-
-            function logout() {
-              var inputName = $('#inputName').val();
-              // 세션을 지워야함
-
-              $.post("/api/v1/logout", {
-                inputName: inputName
-              })
-                .done(function (data) {
-                  if (data.result === 'fail') {
-                    // alert('회원가입에 실패하였습니다.')
-                    Swal.fire({
-                      icon: 'error',
-                      title: '게시판등록',
-                      text: '등록에 실패하였습니다.'
-                    })
-                  } else {
-                    // alert('회원가입 성공!');
-                    Swal.fire({
-                      icon: 'success',
-                      title: '게시판등록',
-                      text: '등록이 완료되었습니다.'
-                    }).then((result) => {
-                      if (result.isConfirmed) {
-                        window.location.href = "/";
-                      } else if (result.isDenied) {
-                        // pass
+                  $.post("/api/vi/board/delete", {
+                    todo_text: todo_text
+                  })
+                    .done(function (data) {
+                      if (data.result === 'fail') {
+                        Swal.fire({
+                          icon: 'error',
+                          title: '삭제!',
+                          text: '실패!'
+                        })
+                      } else {
+                        Swal.fire({
+                          icon: 'succes',
+                          title: '삭제!',
+                          text: '성공!'
+                        }).then((result) => {
+                          if (result.isConfirmed) {
+                            window.location.href = "/";
+                          } else if (result.isDenied) {
+                          }
+                        })
                       }
+
                     })
-                  }
-                });
-            }
-          </script>
+                }
+
+
+
+                function board() {
+                  var inputText = $('#inputText').val();
+
+                  $.post("/api/v1/board/insert", {
+                    inputText: inputText
+                  })
+                    .done(function (data) {
+                      if (data.result === 'fail') {
+                        Swal.fire({
+                          icon: 'error',
+                          title: '등록!',
+                          text: '실패!'
+                        })
+                      } else {
+                        Swal.fire({
+                          icon: 'succes',
+                          title: '등록!',
+                          text: '등록!'
+                        }).then((result) => {
+                          if (result.isConfirmed) {
+                            window.location.href = "/";
+                          } else if (result.isDenied) {
+                          }
+                        })
+                      }
+                    });
+                }
+
+
+                function login() {
+                  window.location.href = "/login";
+                }
+
+                function logout() {
+                  var inputName = $('#inputName').val();
+                  // 세션을 지워야함
+                  $.post("/api/v1/logout", {
+                    inputName: inputName
+                  })
+                    .done(function (data) {
+                      if (data.result === 'fail') {
+                        alert('로그아웃에 실패하였습니다.')
+
+                      } else {
+                        window.location.href = "/";
+                      }
+                    });
+                }
+              </script>
   </body>
 
 </html>
