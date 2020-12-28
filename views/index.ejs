@@ -2,176 +2,161 @@
 <html>
 <%- include('./common/head') -%>
 
-  <body>
-    <div class="container">
-      <% if (user) { %>
-        <div>
-          <div class="title">
-            현재 상태
-          </div>
-          <div>
-            로그인
-          </div>
-          <div class="title">
-            사용자명
-          </div>
-          <div id="username">
-            <%= user.username %>
-          </div>
-          <button onclick="logout()" type="button" class="btn btn-secondary mt-20">로그아웃</button>
+<body>
+  <div class="container">
+    <% if (user) { %>
+      <div>
+        <div class="title">
+          현재 상태
         </div>
-        <% } else { %>
-          <div class="title">
-            현재 상태
-          </div>
-          <div>
-            비로그인
-          </div>
-          <button onclick="login()" type="button" class="btn btn-secondary mt-20">로그인</button>
-    </div>
+        <div>
+          로그인
+        </div>
+        <div class="title">
+          사용자명
+        </div>
+        <div id="username">
+          <%= user.username %>
+        </div>
+        <button onclick="logout()" type="button" class="btn btn-secondary mt-20">로그아웃</button>
+      </div>
+    <% } else { %>
+      <div class="title">
+        현재 상태
+      </div>
+      <div>
+        비로그인
+      </div>
+      <button onclick="login()" type="button" class="btn btn-secondary mt-20">로그인</button>
     <% } %>
 
-      <div><input id="inputText" type='text' class='mt-20' placeholder="입력하세요"> <button onclick="board()">등록</button>
+    <div class="row mt-20">
+      <div class="col">
+        <input id="inputText" type='text' class='form-control' placeholder="입력하세요"> 
       </div>
-
-      <div class="container-sm box mt-20 ">
-
-        <h1>
-          게시판 출력
-        </h1>
-        <table>
-          <% todo_list.forEach(function(todo){ %>
-            <tr>
-              <td><input type='text' class='mt-10 mb-15' placeholder="<%= todo.content %>">
-                <button class="btn btn-primary" >수정</button><button class="btn btn-secondary" onclick="board_delete()">삭제</button>
+      <div class="col">
+        <button class="btn btn-secondary" onclick="insertTodo()">등록</button>
       </div>
-      </td>
-      </tr>
-      <% }) %>
+    </div>
 
+    <div class="title">
+      게시판 출력
+    </div>
 
-        </table>
+    <table id="todo_list">
+    </table>
 
+  </div>
+    
+  <%- include('./common/javascript') -%>
+  <script>
+    // pass
+  </script>
+  <script>
+    // enter key bind
+    $("#inputText").keydown(function (key) {
+      if (key.keyCode == 13) {
+        board();
+      }
+    });
 
-        </div>
+    $(function() {
+      readTodo();
+    });
 
-        <button onclick="test()">test</button>
+    function readTodo(){
+      $.post("/api/vi/board/read/", {
+        // pass
+      }).done(function (data) {
+        var todos = data.data;
+        console.log('todos = ', todos)
+        todos.forEach(el => {
+          const content = `
+          <tr id="row_${el.id}">
+            <td>
+              <input id="borad_list" type='text' class='form-control mt-10 mb-15' placeholder="${el.content}">
+            </td>
+            <td>
+              <button class="btn btn-primary">수정</button>
+            </td>
+            <td>
+              <button class="btn btn-secondary" onclick="deleteTodo(${el.id})">삭제</button>
+            </td>
+          </tr>
+          `
+          console.log(content);
+          $('#todo_list').prepend(content);
+        });
 
+      })
+    }
 
+    function deleteTodo(id) {
+      console.log('id = ', id)
+      $.post("/api/vi/board/delete/", {
+        id: id
+      }).done(function (data) {
+        if (data.result === 'fail') {
+          Swal.fire({
+            icon: 'error',
+            title: '삭제!',
+            text: '실패!'
+          })
+        } else {
+          $('#row_' + id).remove();
+        }
+      })
+    }
+    
+    function insertTodo() {
+      var inputText = $('#inputText').val();
+      $.post("/api/v1/board/insert", {
+        inputText: inputText
+      }).done(function (data) {
+        if (data.result === 'fail') {
+          Swal.fire({
+            icon: 'error',
+            title: '등록!',
+            text: '실패!'
+          })
+        } else {
+          // success
+          var data = data.data;
+          const content = `
+          <tr id="row_${data.id}">
+            <td>
+              <input id="borad_list" type='text' class='form-control mt-10 mb-15' placeholder="${data.content}">
+            </td>
+            <td>
+              <button class="btn btn-primary">수정</button>
+            </td>
+            <td>
+              <button class="btn btn-secondary" onclick="deleteTodo(${data.id})">삭제</button>
+            </td>
+          </tr>
+          `
+          console.log(content);
+          $('#todo_list').prepend(content);
+        }
+      });
+    }
 
-        </div>
+    function login() {
+      window.location.href = "/login";
+    }
 
-        <%- include('./common/javascript') -%>
-
-
-
-          <script>
-            
-          </script>
-          <script>
-
-            $("#inputText").keydown(function (key) {
-              if (key.keyCode == 13) {
-                board();
-              }
-            });
-
-            function board_delete() {
-              var inputText = $('#inputText').val();
-
-              $.post("/api/vi/board/delete", {
-                inputText : inputText
-              })
-              .done(function(data){
-                if (data.result === 'fail') {
-                  Swal.fire({
-                      icon: 'error',
-                      title: '삭제!',
-                      text: '실패!'
-                    })
-                } else {
-                    Swal.fire({
-                      icon: 'succes',
-                      title: '삭제!',
-                      text: '성공!'
-                    }).then((result) => {
-                      if (result.isConfirmed) {
-                        window.location.href = "/";
-                      } else if (result.isDenied) {
-                      }
-                    })
-                  }
-
-              })
-            }
-
-
-
-            function board(res) {
-              var inputText = $('#inputText').val();
-
-              $.post("/api/v1/board/insert", {
-                inputText: inputText
-              })
-                .done(function (data) {
-                  if (data.result === 'fail') {
-                    Swal.fire({
-                      icon: 'error',
-                      title: '등록!',
-                      text: '실패!'
-                    })
-                  } else {
-                    Swal.fire({
-                      icon: 'succes',
-                      title: '등록!',
-                      text: '등록!'
-                    }).then((result) => {
-                      if (result.isConfirmed) {
-                        window.location.href = "/";
-                      } else if (result.isDenied) {
-                      }
-                    })
-                  }
-                });
-            }
-
-
-            function login() {
-              window.location.href = "/login";
-            }
-
-            function logout() {
-              var inputName = $('#inputName').val();
-              // 세션을 지워야함
-
-              $.post("/api/v1/logout", {
-                inputName: inputName
-              })
-                .done(function (data) {
-                  if (data.result === 'fail') {
-                    // alert('회원가입에 실패하였습니다.')
-                    Swal.fire({
-                      icon: 'error',
-                      title: '게시판등록',
-                      text: '등록에 실패하였습니다.'
-                    })
-                  } else {
-                    // alert('회원가입 성공!');
-                    Swal.fire({
-                      icon: 'success',
-                      title: '게시판등록',
-                      text: '등록이 완료되었습니다.'
-                    }).then((result) => {
-                      if (result.isConfirmed) {
-                        window.location.href = "/";
-                      } else if (result.isDenied) {
-                        // pass
-                      }
-                    })
-                  }
-                });
-            }
-          </script>
-  </body>
-
+    function logout() {
+      var inputName = $('#inputName').val();
+      $.post("/api/v1/logout", {
+        inputName: inputName
+      }).done(function (data) {
+        if (data.result === 'fail') {
+          alert('로그아웃에 실패하였습니다.')
+        } else {
+          window.location.href = "/";
+        }
+      });
+    }
+  </script>
+</body>
 </html>

@@ -17,7 +17,7 @@ router.get('/', async (req, res) => {
 
         const user = await users.findAll({
             where: {
-              id: user_id
+                id: user_id
             },
             raw: true
         });
@@ -28,11 +28,14 @@ router.get('/', async (req, res) => {
 
         const todo = await todos.findAll({
             where: {
-                user_id : user_id
+                user_id : user_id,
               },              
             raw: true
         });
         const todo_list = await todos.findAll({
+            where: {
+                del_yn: 'N'
+            },
             order: [
                 ['id', 'DESC']               
             ],

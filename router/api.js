@@ -4,36 +4,49 @@ var crypto = require('crypto');
 
 const { getConnection, Users, UsersLogin, Todos } = require('../connection')
 
-
-router.post('/vi/board/delete', async function (req, res, next) {
-
-  const sequelize = getConnection();
-
-  const todos = Todos();
-
-  const users_login = UsersLogin();
-
-  const session = req.session;
-  console.log('@@session =>', session)
+router.post('/vi/board/read', async function (req, res, next) {
 
   const session_id = req.session.user_id;
 
-  console.log('session_id =>', session_id)
+  const todos = Todos();
 
-  // const board_id = req.session.board_id;
-
-  // console.log('board_id =>', board_id)
-
-  const user_login = await users_login.create({
-    user_id: session_id
-  })
-
-  await todos.destroy({
-    where: {
-      id: user_login.user_id
-    }
+  const todo_list = await todos.findAll({
+      where: {
+          del_yn: 'N',
+          user_id: session_id
+      },
+      order: [
+          ['id', 'DESC']               
+      ],
+      raw: true
   });
 
+  console.log('todo_list = ', todo_list)
+
+  res.json({ 'result': 'success', 'data': todo_list })
+})
+
+router.post('/vi/board/delete', async function (req, res, next) {
+
+  console.log('req.body = ', req.body);
+
+  const session_id = req.session.user_id;
+  const id = req.body.id;
+
+  const todos = Todos();
+
+  try {
+    await todos.update({ del_yn: "Y" }, {
+      where: {
+        id: id,
+        user_id: session_id
+      }
+    });
+  } catch (e) {
+    res.json({ 'result': 'fail' })
+  }
+
+  res.json({ 'result': 'success' })
 })
 
 
@@ -41,48 +54,31 @@ router.post('/v1/board/insert', async function (req, res, next) {
 
   console.log('req.body = ', req.body);
 
-  var inputText = req.body.inputText;
-  var inputName = req.body.inputName;
-  var inputPw = req.body.inputPw;
+  const session_id = req.session.user_id;
+  const inputText = req.body.inputText;
 
-
+  console.log('session_id = ', session_id);
   console.log('inputText = ', inputText);
 
   if (inputText === '') {
     res.json({ 'result': 'fail' })
   }
 
-
-  const sequelize = getConnection();
-
-  // Model Basics
-  const users_login = UsersLogin();
-
   // Model Basics
   const todos = Todos();
 
-  // Transaction
-  const t = await sequelize.transaction();
-
-  const session_id = req.session.user_id;
-
   try {
-    const user_login = await users_login.create({
-      user_id: session_id
-    })
-
     const todo = await todos.create({
       content: inputText,
-      user_id: user_login.user_id
-    });
-  }
-  catch (error) {
-    await t.rollback();
+      user_id: session_id
+    })
+    console.log('todo => ', todo)
+
+    const data = todo.get({plain:true})
+    res.json({ 'result': 'success', 'data': data })  
+  } catch (e) {
     res.json({ 'result': 'fail' })
   }
-
-  res.json({ 'result': 'success' })
-
 });
 
 
