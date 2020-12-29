@@ -5,7 +5,7 @@
 <body>
   <div class="container">
     <% if (user) { %>
-      <div>
+   
         <div class="title">
           현재 상태
         </div>
@@ -18,8 +18,8 @@
         <div id="username">
           <%= user.username %>
         </div>
-        <button onclick="logout()" type="button" class="btn btn-secondary mt-20">로그아웃</button>
-      </div>
+        <button onclick="logout()" type="button" class="loginBtn btn btn-secondary mt-20">로그아웃</button>
+     
     <% } else { %>
       <div class="title">
         현재 상태
@@ -27,8 +27,10 @@
       <div>
         비로그인
       </div>
-      <button onclick="login()" type="button" class="btn btn-secondary mt-20">로그인</button>
+      <button onclick="login()" type="button" class="loginBtn btn btn-secondary mt-20">로그인</button>
     <% } %>
+
+  
 
     <div class="row mt-20">
       <div class="col">
@@ -39,14 +41,18 @@
       </div>
     </div>
 
-    <div class="title">
+    <div class="">
+    <div class="todo_list mt-20">
       게시판 출력
     </div>
 
-    <table id="todo_list">
+    <table id="todo_list" >
     </table>
-
   </div>
+  
+
+
+  
     
   <%- include('./common/javascript') -%>
   <script>
@@ -56,7 +62,7 @@
     // enter key bind
     $("#inputText").keydown(function (key) {
       if (key.keyCode == 13) {
-        board();
+        insertTodo();
       }
     });
 
@@ -74,20 +80,44 @@
           const content = `
           <tr id="row_${el.id}">
             <td>
-              <input id="borad_list" type='text' class='form-control mt-10 mb-15' placeholder="${el.content}">
+              <input id="inputTodo" type='text' class='form-control mt-10 mb-15' placeholder="${el.content}">
             </td>
             <td>
-              <button class="btn btn-primary">수정</button>
+              <button class="btn btn-primary" onclick="updateTodo(${el.id})">수정</button>
             </td>
             <td>
               <button class="btn btn-secondary" onclick="deleteTodo(${el.id})">삭제</button>
             </td>
-          </tr>
-          `
+          </tr>                  
+          `              
           console.log(content);
-          $('#todo_list').prepend(content);
+          $('#todo_list').prepend(content);       
         });
 
+      })
+    }
+    
+    function updateTodo(id) {
+      console.log('id = ', id)
+      var inputTodo = $('#inputTodo').val();         
+      console.log("inputTodo => ",inputTodo)
+      $.post("/api/vi/board/update/", {
+        id:id,
+        content:inputTodo
+      }).done(function (data) {
+        if (data.result === 'fail') {
+          Swal.fire({
+            icon: 'error',
+            title: '수정',
+            text: '실패!'
+          })
+        } else {
+          Swal.fire({
+            icon: 'success',
+            title: '수정',
+            text: '성공!'
+          })
+        }   
       })
     }
 
@@ -125,10 +155,10 @@
           const content = `
           <tr id="row_${data.id}">
             <td>
-              <input id="borad_list" type='text' class='form-control mt-10 mb-15' placeholder="${data.content}">
+              <input id="inputTodo" type='text' class='form-control mt-10 mb-15' placeholder="${data.content}">
             </td>
             <td>
-              <button class="btn btn-primary">수정</button>
+              <button class="btn btn-primary" onclick="updateTodo(${data.id})">수정</button>
             </td>
             <td>
               <button class="btn btn-secondary" onclick="deleteTodo(${data.id})">삭제</button>

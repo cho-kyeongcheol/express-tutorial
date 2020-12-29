@@ -40,7 +40,7 @@
 
       $.post( "/api/v1/login", {         
         inputName: inputName,
-        inputPw: inputPw
+        inputPw: inputPw        
       })
       .done(function( data ) {
         if (data.result === 'fail') {

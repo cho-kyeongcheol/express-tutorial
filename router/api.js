@@ -2,13 +2,40 @@ var express = require('express');
 var router = express.Router();
 var crypto = require('crypto');
 
+router.post('/vi/board/update', async function (req, res, next) {
+
+  console.log('req.body = ', req.body);
+
+  
+  const inputText = req.body.content;
+  console.log("@@inputText =>" ,inputText)
+
+  const id = req.body.id;  
+
+  const todos = Todos();
+   
+  
+  try {
+    await todos.update({ content: inputText , update_at : 'CURRENT_TIMESTAMP'}, {
+      where: {
+        id: id
+      }
+    });
+  } catch (e) {
+    res.json({ 'result': 'fail' })
+  }
+
+  res.json({ 'result': 'success' })
+})
+
+
 const { getConnection, Users, UsersLogin, Todos } = require('../connection')
 
 router.post('/vi/board/read', async function (req, res, next) {
 
   const session_id = req.session.user_id;
 
-  const todos = Todos();
+  const todos = Todos(); 
 
   const todo_list = await todos.findAll({
       where: {
@@ -21,7 +48,7 @@ router.post('/vi/board/read', async function (req, res, next) {
       raw: true
   });
 
-  console.log('todo_list = ', todo_list)
+  console.log('hello')
 
   res.json({ 'result': 'success', 'data': todo_list })
 })
@@ -36,7 +63,7 @@ router.post('/vi/board/delete', async function (req, res, next) {
   const todos = Todos();
 
   try {
-    await todos.update({ del_yn: "Y" }, {
+    await todos.update({ del_yn: "Y" , delete_at : '2017-08-28 17:22:21'}, {
       where: {
         id: id,
         user_id: session_id
@@ -150,12 +177,20 @@ router.post('/v1/logout', async function (req, res, next) {
 router.post('/v1/login', async function (req, res, next) {
   console.log('req.body = ', req.body);
 
+  const sequelize = getConnection();
   var inputName = req.body.inputName;
   var inputPw = req.body.inputPw;
   var hash = crypto.createHash('md5').update(inputPw).digest('hex');
+  const session_id = req.session.user_id;
+  const session = req.session
+
+
+  
 
   console.log('inputName = ', inputName);
   console.log('inputPw = ', hash);
+  console.log("session_id = ", session_id)
+  console.log("session = ", session)
 
   if (inputName === '') {
     res.json({ 'result': 'fail' })
@@ -165,6 +200,10 @@ router.post('/v1/login', async function (req, res, next) {
   }
 
   const users = Users();
+  var user_id = user.id;
+  console.log('@@user_id=>',user_id)
+
+  const users_login = UsersLogin();
 
   const user = await users.findAll({
     where: {
@@ -172,12 +211,18 @@ router.post('/v1/login', async function (req, res, next) {
       password: hash
     },
     raw: true
-  });
-
+  })
+  
+  
   console.log('user => ', user)
   console.log('user.length => ', user.length)
 
-  if (user.length === 0) {
+  if (user.length === 0) {     
+    await users_login.update({ login_cnt : sequelize.literal('login_cnt + 1')}, {
+      where: {
+        user_id: 174
+      }
+    });        
     res.json({ 'result': 'fail' })
   } else {
     // session up
@@ -185,8 +230,5 @@ router.post('/v1/login', async function (req, res, next) {
     res.json({ 'result': 'success' })
   }
 });
-
-
-
 
 module.exports = router;

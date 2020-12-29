@@ -12,7 +12,12 @@ const port = 3000
 
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
-app.use(bodyParser())
+// app.use(bodyParser())
+
+app.use(bodyParser.urlencoded({
+  extended: true
+}));  // body-parser deprecated bodyParser: use individual json/urlencoded middlewares server.js:15:9 에러가 나서 사용
+
 
 // session
 app.use(session({
