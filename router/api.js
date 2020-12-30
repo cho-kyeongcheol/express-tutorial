@@ -35,6 +35,8 @@ router.post('/vi/board/read', async function (req, res, next) {
   const todos = Todos();
 
   const todo_list = await todos.findAll({
+    offset: 0,
+    limit : 5,
     where: {
       del_yn: 'N',
       user_id: session_id
