@@ -3,9 +3,8 @@
 <%- include('./common/head') -%>
 
 <body>
-  <div class="container">
-    <% if (user) { %>
-   
+  <div class="container w100">
+    <% if (user) { %>   
         <div class="title">
           현재 상태
         </div>
@@ -19,7 +18,7 @@
           <%= user.username %>
         </div>
         <button onclick="logout()" type="button" class="loginBtn btn btn-secondary mt-20">로그아웃</button>
-     
+        
     <% } else { %>
       <div class="title">
         현재 상태
@@ -30,8 +29,6 @@
       <button onclick="login()" type="button" class="loginBtn btn btn-secondary mt-20">로그인</button>
     <% } %>
 
-  
-
     <div class="row mt-20">
       <div class="col">
         <input id="inputText" type='text' class='form-control' placeholder="입력하세요"> 
@@ -39,48 +36,81 @@
       <div class="col">
         <button class="btn btn-secondary" onclick="insertTodo()">등록</button>
       </div>
-    </div>
+    </div>    
 
-    <div class="">
+  </div>
+
+  <input class='form-control input ml-10 mt-10 mb-15' type="text" id="searchTodo" placeholder="검색어를 입력하세요"> 
+  <button class="btn btn-primary ml-10">검색</button>
+
     <div class="todo_list mt-20">
       게시판 출력
     </div>
 
     <table id="todo_list" >
-    </table>
-  </div>
+    </table> 
+    
   
+      <ul class="pagination" >
+        <li class="page-item">
+          <a class="page-link" href="#" aria-label="Previous">
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+        </li>
+        <% for(i=1;i<10;i++){ %>
 
-
-  
+        <li class="page-item"><a class="page-link" href="board/read/page/"><%= {i} %></a></li>
+        
+        <% } %>
+        <li class="page-item">
+          <a class="page-link" href="#" aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+          </a>
+        </li>
+      </ul>
+      
+      <div id="inputTodo2">tesfdst22</div>
+      <!-- <input type="text" id="inputTodo2"> -->
+      <button onclick="test()">
+        test
+      </button>
     
   <%- include('./common/javascript') -%>
   <script>
     // pass
+    function test() {    
+      var inputTodo2 = $('#inputTodo2').val();
+      alert(inputTodo2)
+      console.log("inputTodo2=>",inputTodo2)
+    }
+    
+
   </script>
   <script>
     // enter key bind
     $("#inputText").keydown(function (key) {
       if (key.keyCode == 13) {
-        insertTodo();
+        insertTodo();        
       }
     });
 
-    $(function() {
-      readTodo();
-    });
+    // $("#inputTodo").keydown(function (key) {
+    //   if (key.keyCode == 13) {
+    //     updateTodo(id)
+    //   }
+    // });
 
     function readTodo(){
       $.post("/api/vi/board/read/", {
         // pass
       }).done(function (data) {
         var todos = data.data;
-        console.log('todos = ', todos)
-        todos.forEach(el => {
-          const content = `
+        console.log('todos = ', todos);
+        todos.forEach(el => {          
+          const content = `          
           <tr id="row_${el.id}">
             <td>
-              <input id="inputTodo" type='text' class='form-control mt-10 mb-15' placeholder="${el.content}">
+              <input id="inputTodo_${el.id}" type='text' class='form-control ml-10 mt-10 mb-15' placeholder="${el.content}" value="${el.content}">
             </td>
             <td>
               <button class="btn btn-primary" onclick="updateTodo(${el.id})">수정</button>
@@ -88,18 +118,23 @@
             <td>
               <button class="btn btn-secondary" onclick="deleteTodo(${el.id})">삭제</button>
             </td>
-          </tr>                  
-          `              
-          console.log(content);
-          $('#todo_list').prepend(content);       
+          </tr>
+          `        
+          $('#todo_list').prepend(content);
         });
-
       })
     }
     
+ 
+
+    $(function() {
+      readTodo();
+    })
+
     function updateTodo(id) {
-      console.log('id = ', id)
-      var inputTodo = $('#inputTodo').val();         
+      // var inputTodo = document.getElementById('#inputTodo');
+      var inputTodo = $('#inputTodo_'+id).val();       
+      console.log('id = ', id)             
       console.log("inputTodo => ",inputTodo)
       $.post("/api/vi/board/update/", {
         id:id,
@@ -123,6 +158,8 @@
 
     function deleteTodo(id) {
       console.log('id = ', id)
+      var inputTodo = $('#inputTodo').val();  
+      console.log("inputTodo => ",inputTodo)
       $.post("/api/vi/board/delete/", {
         id: id
       }).done(function (data) {
@@ -140,6 +177,7 @@
     
     function insertTodo() {
       var inputText = $('#inputText').val();
+      console.log("inputText =>" , inputText)
       $.post("/api/v1/board/insert", {
         inputText: inputText
       }).done(function (data) {

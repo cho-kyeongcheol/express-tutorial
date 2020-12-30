@@ -1,22 +1,22 @@
 var express = require('express');
 var router = express.Router();
 var crypto = require('crypto');
+const { getConnection, Users, UsersLogin, Todos } = require('../connection')
 
 router.post('/vi/board/update', async function (req, res, next) {
 
   console.log('req.body = ', req.body);
-
-  
   const inputText = req.body.content;
-  console.log("@@inputText =>" ,inputText)
-
-  const id = req.body.id;  
+  const id = req.body.id;
+  let date_ob = new Date();
 
   const todos = Todos();
-   
-  
+
+  console.log("@@inputText =>", inputText)
+  console.log("date_ob=>" , date_ob)
+
   try {
-    await todos.update({ content: inputText , update_at : 'CURRENT_TIMESTAMP'}, {
+    await todos.update({ content: inputText, update_at: date_ob }, {
       where: {
         id: id
       }
@@ -29,23 +29,20 @@ router.post('/vi/board/update', async function (req, res, next) {
 })
 
 
-const { getConnection, Users, UsersLogin, Todos } = require('../connection')
-
 router.post('/vi/board/read', async function (req, res, next) {
 
   const session_id = req.session.user_id;
-
-  const todos = Todos(); 
+  const todos = Todos();
 
   const todo_list = await todos.findAll({
-      where: {
-          del_yn: 'N',
-          user_id: session_id
-      },
-      order: [
-          ['id', 'DESC']               
-      ],
-      raw: true
+    where: {
+      del_yn: 'N',
+      user_id: session_id
+    },
+    order: [
+      ['id', 'DESC']
+    ],
+    raw: true
   });
 
   console.log('hello')
@@ -59,11 +56,12 @@ router.post('/vi/board/delete', async function (req, res, next) {
 
   const session_id = req.session.user_id;
   const id = req.body.id;
+  let date_ob = new Date();
 
-  const todos = Todos();
+  const todos = Todos();  
 
   try {
-    await todos.update({ del_yn: "Y" , delete_at : '2017-08-28 17:22:21'}, {
+    await todos.update({ del_yn: "Y" , delete_at: date_ob}, {
       where: {
         id: id,
         user_id: session_id
@@ -101,8 +99,8 @@ router.post('/v1/board/insert', async function (req, res, next) {
     })
     console.log('todo => ', todo)
 
-    const data = todo.get({plain:true})
-    res.json({ 'result': 'success', 'data': data })  
+    const data = todo.get({ plain: true })
+    res.json({ 'result': 'success', 'data': data })
   } catch (e) {
     res.json({ 'result': 'fail' })
   }
@@ -184,9 +182,6 @@ router.post('/v1/login', async function (req, res, next) {
   const session_id = req.session.user_id;
   const session = req.session
 
-
-  
-
   console.log('inputName = ', inputName);
   console.log('inputPw = ', hash);
   console.log("session_id = ", session_id)
@@ -200,8 +195,6 @@ router.post('/v1/login', async function (req, res, next) {
   }
 
   const users = Users();
-  var user_id = user.id;
-  console.log('@@user_id=>',user_id)
 
   const users_login = UsersLogin();
 
@@ -212,17 +205,16 @@ router.post('/v1/login', async function (req, res, next) {
     },
     raw: true
   })
-  
-  
+
   console.log('user => ', user)
   console.log('user.length => ', user.length)
 
-  if (user.length === 0) {     
-    await users_login.update({ login_cnt : sequelize.literal('login_cnt + 1')}, {
+  if (user.length === 0) {
+    await users_login.update({ login_cnt: sequelize.literal('login_cnt + 1') }, {
       where: {
         user_id: 174
       }
-    });        
+    });
     res.json({ 'result': 'fail' })
   } else {
     // session up
