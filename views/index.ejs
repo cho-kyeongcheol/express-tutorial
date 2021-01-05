@@ -57,6 +57,7 @@
             <span aria-hidden="true">&laquo;</span>
           </a>
         </li>
+        
         <% for(i=1;i<10;i++){ %>
 
         <li class="page-item"><a class="page-link" href="board/read/page/"><%= {i} %></a></li>
@@ -76,16 +77,7 @@
       </button>
     
   <%- include('./common/javascript') -%>
-  <script>
-    // pass
-    function test() {    
-      var inputTodo2 = $('#inputTodo2').val();
-      alert(inputTodo2)
-      console.log("inputTodo2=>",inputTodo2)
-    }
-
-  </script>
-  <script>
+    <script>
     // enter key bind
     $("#inputText").keydown(function (key) {
       if (key.keyCode == 13) {

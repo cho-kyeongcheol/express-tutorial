@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var crypto = require('crypto');
+
 const { getConnection, Users, UsersLogin, Todos } = require('../connection')
 
 router.post('/vi/board/update', async function (req, res, next) {
@@ -51,6 +52,7 @@ router.post('/vi/board/read', async function (req, res, next) {
 
   res.json({ 'result': 'success', 'data': todo_list })
 })
+
 
 router.post('/vi/board/delete', async function (req, res, next) {
 
