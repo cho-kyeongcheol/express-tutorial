@@ -72,14 +72,21 @@ exports.Users = function() {
           primaryKey: true,
           autoIncrement: true
         },
-        username: {
+        user_id: {
           type: DataTypes.STRING(255),
           allowNull: false,
           unique: true
         },
+        username: {
+          type: DataTypes.STRING(255),
+          allowNull: false
+        },
         password: {
           type: DataTypes.STRING(255),
           allowNull: false
+        },
+        email: {
+          type: DataTypes.STRING(255)
         },
         create_at: {
           type: DataTypes.DATE,

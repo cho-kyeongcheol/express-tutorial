@@ -9,13 +9,21 @@
         회원가입
       </h1>   
       <div class="mb-3">
+        <label for="user_Id" class="form-label">아이디</label>
+        <input type="text" class="form-control" id="user_Id">
+      </div>
+      <div class="mb-3">
         <label for="inputName" class="form-label">이름</label>
         <input type="text" class="form-control" id="inputName">
-      </div>
+      </div>      
       <div class="mb-3">
         <label for="inputPw" class="form-label">비밀번호</label>
         <input type="password" class="form-control" id="inputPw">
       </div>
+      <div class="mb-3">
+        <label for="inputEmail" class="form-label">이메일</label>
+        <input type="text" class="form-control" id="inputEmail">
+      </div>      
       <div>
         <button onclick="regist()" type="submit" class="btn btn-secondary w-100p mb-15">회원가입</button>
       </div>
@@ -37,13 +45,19 @@
     function regist() {
       var inputName = $('#inputName').val();
       var inputPw = $('#inputPw').val();
+      var user_Id = $('#user_Id').val();
+      var inputEmail = $('#inputEmail').val();
 
       console.log('inputName = ', inputName)
       console.log('inputPw = ', inputPw)      
+      console.log('user_Id = ', user_Id)     
+      console.log('inputEmail = ', inputEmail)     
 
       $.post( "/api/v1/regist", {         
         inputName: inputName,
-        inputPw: inputPw
+        inputPw: inputPw,
+        user_Id: user_Id,
+        inputEmail: inputEmail
       })
       .done(function( data ) {
         if (data.result === 'fail') {

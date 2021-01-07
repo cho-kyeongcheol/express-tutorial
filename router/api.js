@@ -113,15 +113,23 @@ router.post('/v1/board/insert', async function (req, res, next) {
 
 router.post('/v1/regist', async function (req, res, next) {
 
-  console.log('req.body = ', req.body);
+  console.log('req.body = ', req.body);  
+  console.log("@@@@REGIST CLICK!!!@@##")
 
   var inputName = req.body.inputName;
   var inputPw = req.body.inputPw;
+  var user_Id = req.body.user_Id;
+  var inputEmail = req.body.inputEmail;
   var hash = crypto.createHash('md5').update(inputPw).digest('hex');
 
   console.log('inputName = ', inputName);
   console.log('hash#inputPw = ', hash);
+  console.log('inputName = ', user_Id);
+  console.log('inputName = ', inputEmail);
 
+  if (user_Id === '') {
+    res.json({ 'result': 'fail' })
+  }
   if (inputName === '') {
     res.json({ 'result': 'fail' })
   }
@@ -143,7 +151,9 @@ router.post('/v1/regist', async function (req, res, next) {
   try {
     const user = await users.create({
       username: inputName,
-      password: hash
+      password: hash,
+      user_id: user_Id,
+      email: inputEmail
     }, { transaction: t });
 
     const user_login = await users_login.create({
@@ -159,7 +169,6 @@ router.post('/v1/regist', async function (req, res, next) {
 
   res.json({ 'result': 'success' })
 });
-
 
 
 router.post('/v1/logout', async function (req, res, next) {
@@ -180,18 +189,18 @@ router.post('/v1/login', async function (req, res, next) {
   console.log('req.body = ', req.body);
 
   const sequelize = getConnection();
-  var inputName = req.body.inputName;
+  var inputId = req.body.inputId;
   var inputPw = req.body.inputPw;
   var hash = crypto.createHash('md5').update(inputPw).digest('hex');
   const session_id = req.session.user_id;
   const session = req.session
 
-  console.log('inputName = ', inputName);
+  console.log('inputName = ', inputId);
   console.log('inputPw = ', hash);
   console.log("session_id = ", session_id)
   console.log("session = ", session)
 
-  if (inputName === '') {
+  if (inputId === '') {
     res.json({ 'result': 'fail' })
   }
   if (hash === '') {
@@ -204,7 +213,7 @@ router.post('/v1/login', async function (req, res, next) {
 
   const user = await users.findAll({
     where: {
-      username: inputName,
+      user_id: inputId,
       password: hash
     },
     raw: true
@@ -226,5 +235,7 @@ router.post('/v1/login', async function (req, res, next) {
     res.json({ 'result': 'success' })
   }
 });
+
+
 
 module.exports = router;
