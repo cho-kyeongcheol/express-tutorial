@@ -16,10 +16,14 @@ const { path } = require('../server');
 
  
 router.post('/upload',  function (req, res) {
+  console.log('ajaxfile insert@@')
   var file = req.body;
   console.log('req.body =>', file)
 
   const post_file = PostFile();
+
+  const sequelize = getConnection();
+
 
   console.log('postfile =>', post_file)
 
@@ -37,12 +41,32 @@ router.post('/upload',  function (req, res) {
         console.log("path : ",path);
         res.send(path); // 파일과 예외 처리를 한 뒤 브라우저로 응답해준다.  
         
+        const t = await sequelize.transaction();
+
+      //   try{
+      //   const post_files = await post_file.create({
+      //     user_id: 'aaa',
+      //     filepath: 'aaa',
+      //     filename: 'qqq' 
+      //   }, { transaction: t })    
+      // } catch (error) {
+      //   await t.rollback();
+      //   console.log('error =>', error)
+      //   res.json({ 'result': 'fail' })
+      // }
+      // res.json({ 'result': 'success' })
+
+      var str = path.substring(8,1000);
+      console.log('@@str@@ =>', str)
+
+
+
         const post_files = await post_file.create({
           user_id: 'aaa',
-          filepath: 'aaa',
-          filename: 'qqq' 
+          filepath: path,
+          filename: str
         })    
-        
+              
         console.log('post_files=>',post_files)
           
     });
@@ -66,7 +90,7 @@ router.post('/upload',  function (req, res) {
 
 
 router.post('/vi/board/update', async function (req, res, next) {
-
+  
   console.log('req.body = ', req.body);
   const inputText = req.body.content;
   const id = req.body.id;

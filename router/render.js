@@ -8,6 +8,12 @@ router.get('/test', async (req, res) => {
     res.render('test', context); 
 })
 
+router.get('/usermidify', async (req, res) => {
+    var context = {};
+    res.render('usermidify', context); 
+})
+
+
 
 router.get('/', async (req, res) => {
 
