@@ -68,6 +68,7 @@ router.get('/', async (req, res) => {
 })
 
 
+
 router.get('/regist', (req, res) => {
     var context = {};
     res.render('regist', context);
