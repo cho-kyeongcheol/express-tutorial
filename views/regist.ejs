@@ -24,6 +24,20 @@
         <label for="inputEmail" class="form-label">이메일</label>
         <input type="text" class="form-control" id="inputEmail">
       </div>      
+      <!-- <div class="mb-3">
+        <form method="post" enctype="multipart/form-data" action="/upload">
+          <input id=file type="file" name="file">
+          <input type="submit" onclick="fileSubmit()" value="Submit">
+          <img src="/image.png" />
+      </form> -->
+
+      <form action="/upload" method="post" enctype="multipart/form-data" id="fileForm">
+        <input type="file" id="fileInput" name="fileInput">
+      </form>
+      <input type="text" id="filePath">
+      <img src="/image.png" />
+
+      </div>
       <div>
         <button onclick="regist()" type="submit" class="btn btn-secondary w-100p mb-15">회원가입</button>
       </div>
@@ -34,6 +48,7 @@
   </div>
 
   <%- include('./common/javascript') -%>
+  <script src="http://code.jquery.com/jquery-1.7.1.js"></script>
   <script>
 
     $("#inputPw").keydown(function(key) {
@@ -41,6 +56,54 @@
         regist();
       }
     });
+
+    $('#filePath').on('change', function () {
+      alert("!!!")
+      
+    })
+
+    $('#fileInput').on('change', function () {
+        var form = $('#fileForm')[0];
+        var formData = new FormData(form);
+        console.log('form =>', form)
+        console.log('formData =>', formData)
+ 
+        $.ajax({
+            type: 'post',
+            url: '/api/upload',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                $('#filePath').val(data);
+                console.log('data=>',data)
+                console.log('success')
+            },
+            error: function (err) {
+                console.log('error=>', err);
+            }            
+        });
+    });
+
+    //   function fileupload(e) {
+    //   alert("!!")    
+    //   var fileinput = $('#fileinput')[0];
+    //   var formData = new FormData();
+    //   console.log('fileinput =>', fileinput)
+    //   $.ajax({
+    //       type: "POST",
+    //       url: "/upload",
+    //       data: formData,
+    //       processData: false,
+    //       contentType: false,
+    //       success: function(r){
+    //           console.log("result",r)
+    //       },
+    //       error: function (e) {
+    //           console.log("some error", e);
+    //       }
+    //   });
+    // }
 
     function regist() {
       var inputName = $('#inputName').val();

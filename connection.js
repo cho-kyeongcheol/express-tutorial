@@ -15,6 +15,48 @@ exports.getConnection = function() {
     return sequelize;
 }
 
+
+exports.PostFile = function() {
+    
+  const sequelize = exports.getConnection();
+
+  const post_file = sequelize.define('post_file', {
+      id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        primaryKey: true,
+        autoIncrement: true
+      },
+      user_id: {
+        type: DataTypes.STRING(255),
+        allowNull: false
+      },
+      filepath: {
+        type: DataTypes.STRING(255),
+        allowNull: false
+      },
+      filename: {
+        type: DataTypes.STRING(255),
+        allowNull: false
+      },
+      del_yn: {
+        type: DataTypes.STRING(2),
+        defaultValue: 'y'
+      },
+      create_date: {
+        type: DataTypes.DATE,
+        defaultValue: Sequelize.NOW
+    }, 
+  }, {
+      // Other model options go here
+      timestamps: false,
+      tableName: 'post_file'
+  });
+  return post_file;
+}
+
+
+
 exports.Todos = function() {
 
   const sequelize = exports.getConnection();

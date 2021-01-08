@@ -9,7 +9,6 @@ router.get('/test', async (req, res) => {
 })
 
 
-
 router.get('/', async (req, res) => {
 
     console.log('req.session = ', req.session);
