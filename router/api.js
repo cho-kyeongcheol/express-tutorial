@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var crypto = require('crypto');
-var multer  = require('multer');
+var multer = require('multer');
 
 var fs = require('fs');
 var multiparty = require('multiparty');
@@ -14,83 +14,93 @@ const { path } = require('../server');
 //   res.render('index', { title: 'Express' });
 // });
 
- 
-router.post('/upload',  function (req, res) {
+
+router.post('/vi/imgae/load', async (req, res) => {
+  const session_id = req.session.user_id;
+  const post_file = PostFile();
+
+  const postfile = await post_file.findAll({
+    where: { user_id: session_id ,del_yn:'N'}
+  });
+  var context = {};
+  console.log('session_id',session_id)
+  console.log('=================', postfile[0].dataValues.filepath)
+  // res.render('index', context);  
+
+  res.json({ 'result': 'success', 'data': postfile[0].dataValues.filepath })
+  // res.sendFile(path.join(__dirname, "./uploads/image.png"));
+})
+
+router.post('/upload', function (req, res) {
   console.log('ajaxfile insert@@')
   var file = req.body;
+  const session_id = req.session.user_id;
   console.log('req.body =>', file)
-
+  console.log('session_id =>', session_id)
+  console.log('@@@=>', running)
+  if (running == 'load_image') {
+    //DB select 
+    //select 경로 from 이미지_저장_테이블
+    return false
+  }
   const post_file = PostFile();
 
   const sequelize = getConnection();
 
-
   console.log('postfile =>', post_file)
 
-    var form = new multiparty.Form({
-        autoFiles: false, // 요청이 들어오면 파일을 자동으로 저장할 것인가
-        uploadDir: 'uploads/', // 파일이 저장되는 경로(프로젝트 내의 temp 폴더에 저장됩니다.)
-        maxFilesSize: 1024 * 1024 * 5 // 허용 파일 사이즈 최대치
-    });
- 
-    form.parse(req, async function (error, fields, files) {
-        // 파일 전송이 요청되면 이곳으로 온다.
-        // 에러와 필드 정보, 파일 객체가 넘어온다.
-        var path = files.fileInput[0].path;
-        console.log('files =>' , files)
-        console.log("path : ",path);
-        res.send(path); // 파일과 예외 처리를 한 뒤 브라우저로 응답해준다.  
-        
-        const t = await sequelize.transaction();
+  var form = new multiparty.Form({
+    autoFiles: false, // 요청이 들어오면 파일을 자동으로 저장할 것인가
+    uploadDir: 'uploads/', // 파일이 저장되는 경로(프로젝트 내의 temp 폴더에 저장됩니다.)
+    maxFilesSize: 1024 * 1024 * 5 // 허용 파일 사이즈 최대치
+  });
 
-      //   try{
-      //   const post_files = await post_file.create({
-      //     user_id: 'aaa',
-      //     filepath: 'aaa',
-      //     filename: 'qqq' 
-      //   }, { transaction: t })    
-      // } catch (error) {
-      //   await t.rollback();
-      //   console.log('error =>', error)
-      //   res.json({ 'result': 'fail' })
-      // }
-      // res.json({ 'result': 'success' })
+  form.parse(req, async function (error, fields, files) {
+    // 파일 전송이 요청되면 이곳으로 온다.
+    // 에러와 필드 정보, 파일 객체가 넘어온다.
+    var path = files.fileInput[0].path;
+    console.log('files =>', files)
+    console.log("path : ", path);
+    res.send(path); // 파일과 예외 처리를 한 뒤 브라우저로 응답해준다.  
 
-      var str = path.substring(8,1000);
-      console.log('@@str@@ =>', str)
+    const t = await sequelize.transaction();
 
+    var str = path.substring(8, 1000);
+    console.log('@@str@@ =>', str)
 
-
-        const post_files = await post_file.create({
-          user_id: 'aaa',
-          filepath: path,
-          filename: str
-        })    
-              
-        console.log('post_files=>',post_files)
-          
-    });
-    
-    console.log("path222@@@ : ",path);
-    // const sequelize = getConnection();
-
-    // try {
+    //   try{
     //   const post_files = await post_file.create({
-    //     user_id: session_id,
-    //     filepath: 'aaa',
-    //     filename: 'qqq' 
-    //   })      
-    //   res.json({ 'result': 'success'})
-    // } catch (e) {
+    //     user_id: 'aaa',
+    //     filepath: 'path',
+    //     filename: 'str' 
+    //   }, { transaction: t })    
+    // } catch (error) {
+    //   await t.rollback();
+    //   console.log('error =>', error)
     //   res.json({ 'result': 'fail' })
     // }
+    // res.json({ 'result': 'success' })
+
+    const post_files = await post_file.create({
+      user_id: session_id,
+      filepath: path,
+      filename: str
+    })
+
+    console.log('post_files=>', post_files)
+
+  });
+
+  console.log("path222@@@ : ", path);
+  // const sequelize = getConnection();
+
 
 });
 
 
 
 router.post('/vi/board/update', async function (req, res, next) {
-  
+
   console.log('req.body = ', req.body);
   const inputText = req.body.content;
   const id = req.body.id;
@@ -99,7 +109,7 @@ router.post('/vi/board/update', async function (req, res, next) {
   const todos = Todos();
 
   console.log("@@inputText =>", inputText)
-  console.log("date_ob=>" , date_ob)
+  console.log("date_ob=>", date_ob)
 
   try {
     await todos.update({ content: inputText, update_at: date_ob }, {
@@ -122,7 +132,7 @@ router.post('/vi/board/read', async function (req, res, next) {
 
   const todo_list = await todos.findAll({
     offset: 0,
-    limit : 5,
+    limit: 5,
     where: {
       del_yn: 'N',
       user_id: session_id
@@ -140,17 +150,17 @@ router.post('/vi/board/read', async function (req, res, next) {
 
 
 router.post('/vi/board/delete', async function (req, res, next) {
-
+  console.log('running@@ =>', running)
   console.log('req.body = ', req.body);
 
   const session_id = req.session.user_id;
   const id = req.body.id;
   let date_ob = new Date();
 
-  const todos = Todos();  
+  const todos = Todos();
 
   try {
-    await todos.update({ del_yn: "Y" , delete_at: date_ob}, {
+    await todos.update({ del_yn: "Y", delete_at: date_ob }, {
       where: {
         id: id,
         user_id: session_id
@@ -166,6 +176,7 @@ router.post('/vi/board/delete', async function (req, res, next) {
 
 router.post('/v1/board/insert', async function (req, res, next) {
 
+  console.log('running@@@ => ', running)
   console.log('req.body = ', req.body);
 
   const session_id = req.session.user_id;
@@ -198,7 +209,7 @@ router.post('/v1/board/insert', async function (req, res, next) {
 
 router.post('/v1/regist', async function (req, res, next) {
 
-  console.log('req.body = ', req.body);  
+  console.log('req.body = ', req.body);
   console.log("@@@@REGIST CLICK!!!@@##")
 
   var inputName = req.body.inputName;
@@ -324,3 +335,4 @@ router.post('/v1/login', async function (req, res, next) {
 
 
 module.exports = router;
+

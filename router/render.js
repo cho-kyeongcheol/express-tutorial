@@ -1,24 +1,54 @@
 var express = require('express');
 var router = express.Router();
+const path = require("path");
 
-const { getConnection, Users, UsersLogin, Todos } = require('../connection')
+const { getConnection, Users, UsersLogin, Todos, PostFile } = require('../connection')
 
 router.get('/test', async (req, res) => {
     var context = {};
-    res.render('test', context); 
+    res.render('test', context);
 })
 
-router.get('/usermidify', async (req, res) => {
-    var context = {};
-    res.render('usermidify', context); 
+router.get('/usermodify', async (req, res) => {
+    var context = { "qqq": "aaaa" };
+
+
+    const session_id = req.session.user_id;
+    // var context = {};
+    const post_file = PostFile();
+
+    const postfile = await post_file.findAll({
+        where: { user_id: session_id, del_yn: 'N' }
+    });
+    console.log('==1=1=1=1=1=1===', postfile[0].dataValues.filepath)
+    context.img_src =  postfile[0].dataValues.filepath
+    console.log("contextcontext",context)
+    res.render('usermodify', context);
+    // res.sendFile(path.join(__dirname, "../uploads/image.png"));
 })
 
+// router.get('/image', async(req, res) => {
+//     const session_id = req.session.user_id;
 
+//     var context = {};
+
+//     const post_file = PostFile();
+
+//     const postfile = await post_file.findAll({
+//         where: {
+//             user_id: session_id
+//         }       
+
+//     });
+
+//     res.render('index', context);  
+//     res.sendFile(path.join(__dirname, "./uploads/image.png"));
+// })
 
 router.get('/', async (req, res) => {
 
     console.log('req.session = ', req.session);
-    
+
     const user_id = req.session.user_id;
     var context = {};
 
@@ -40,8 +70,8 @@ router.get('/', async (req, res) => {
 
         const todo = await todos.findAll({
             where: {
-                user_id : user_id,
-              },              
+                user_id: user_id,
+            },
             raw: true
         });
         const todo_list = await todos.findAll({
@@ -49,7 +79,7 @@ router.get('/', async (req, res) => {
                 del_yn: 'N'
             },
             order: [
-                ['id', 'DESC']               
+                ['id', 'DESC']
             ],
             raw: true
         });
@@ -63,8 +93,8 @@ router.get('/', async (req, res) => {
         context.user_list = undefined
         context.todo = undefined
         context.user_list = undefined
-    }   
-    res.render('index', context);    
+    }
+    res.render('index', context);
 })
 
 
@@ -76,7 +106,7 @@ router.get('/regist', (req, res) => {
 
 router.get('/login', (req, res) => {
     var context = {};
-    res.render('login', context);   
+    res.render('login', context);
 })
 
 router.get('/test', (req, res) => {
