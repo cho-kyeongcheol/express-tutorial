@@ -114,9 +114,9 @@
       var user_Id = $('#user_Id').val();
       var inputEmail = $('#inputEmail').val();
 
+      console.log('user_Id = ', user_Id)   
       console.log('inputName = ', inputName)
       console.log('inputPw = ', inputPw)      
-      console.log('user_Id = ', user_Id)     
       console.log('inputEmail = ', inputEmail)     
 
       $.post( "/api/v1/regist", {         

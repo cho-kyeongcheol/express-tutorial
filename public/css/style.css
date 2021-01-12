@@ -31,9 +31,10 @@
   max-width: 100%;
 }
 
-.input {
+.input300 {
   width: 300px;
 }
+
 .regist-box {
   padding: 30px;
   width: 500px;
@@ -45,13 +46,15 @@
 }
 
 .todo_list {
-  margin-left: 10px;
+  margin-left: 20px;
+  margin-right: 20px;
 }
-
-
-
-
 .title {
   font-weight: bold;
   margin-top: 20px;
 }
+
+.main_list {
+  margin-left: 30px;
+}
+

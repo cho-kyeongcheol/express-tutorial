@@ -23,7 +23,7 @@ sudo service mysql restart
 </form>
 ```
 
-``` javascript
+``` js
 const  handleError = (err, res) => {
 	res
 		.status(500)
@@ -66,7 +66,7 @@ const  handleError = (err, res) => {
 );
 ```
 
-#### file 바로넣기
+## file 바로넣기
 ```  html
 <form  action="/upload"  method="post"  enctype="multipart/form-data"  id="fileForm">
 <input  type="file"  id="fileInput"  name="fileInput">
@@ -144,6 +144,7 @@ console.log('@@str@@ =>', str)
 // res.json({ 'result': 'fail' })
 // }
 // res.json({ 'result': 'success' })
+// transaction 사용(transaction 에러로 잠시 주석처리중)
   
   
 const  post_files = await  post_file.create({
@@ -156,5 +157,62 @@ console.log('post_files=>',post_files)
 console.log("path222@@@ : ",path);
 // const sequelize = getConnection(); 	
 });
+
+```
+
+### 회원가입 트랜잭션처리
+``` js
+try {
+const user = await users.create({
+username: inputName,
+password: hash,
+user_id: user_Id,
+email: inputEmail
+}, { transaction: t });
+
+ const user_login = await users_login.create({
+user_id: user.id
+}, { transaction: t });
+
+await t.commit();
+
+} catch (error) {
+await t.rollback();
+res.json({ 'result': 'fail' })
+}
+```
+
+###  컬럼 is null 
+```
+connection 안에 allowNull 확인
+```
+
+#### TypeError: Cannot read property 'substring' of null
+``` js 
+file이 현재 없어서 router.get('/usermodify' 에서 에러 
+
+/render.js
+
+if(post/file[0].dataValues.filename != null) {
+	context.user = user[0]
+	context.img_src = postfile[0].dataValues.filepath
+	var  str = context.img_src.substring(8, 1000);
+	context.src = str
+else{
+	context.user = user[0]
+	context.img_src = postfile[0].dataValues.filepath
+	context.post_file = undefined
+}
+```
+
+####  usermodify.ejs
+``` js
+<% if(img_src != undefined) { %>
+	<img  src="<%= src %>"  style="width: 200px; height: 300px;"/>
+<% } %>
+  
+<% if(img_src == undefined) { %>
+	<div>이미지를 선택하세요</div>
+<% } %>
 
 ```

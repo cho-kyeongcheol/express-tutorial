@@ -20,13 +20,12 @@ router.post('/vi/imgae/load', async (req, res) => {
   const post_file = PostFile();
 
   const postfile = await post_file.findAll({
-    where: { user_id: session_id ,del_yn:'N'}
+    where: { user_id: session_id }
   });
   var context = {};
-  console.log('session_id',session_id)
+  console.log('session_id', session_id)
   console.log('=================', postfile[0].dataValues.filepath)
-  // res.render('index', context);  
-
+  var str = context.img_src.substring(8, 1000);
   res.json({ 'result': 'success', 'data': postfile[0].dataValues.filepath })
   // res.sendFile(path.join(__dirname, "./uploads/image.png"));
 })
@@ -37,12 +36,7 @@ router.post('/upload', function (req, res) {
   const session_id = req.session.user_id;
   console.log('req.body =>', file)
   console.log('session_id =>', session_id)
-  console.log('@@@=>', running)
-  if (running == 'load_image') {
-    //DB select 
-    //select 경로 from 이미지_저장_테이블
-    return false
-  }
+  
   const post_file = PostFile();
 
   const sequelize = getConnection();
@@ -68,26 +62,18 @@ router.post('/upload', function (req, res) {
     var str = path.substring(8, 1000);
     console.log('@@str@@ =>', str)
 
-    //   try{
-    //   const post_files = await post_file.create({
-    //     user_id: 'aaa',
-    //     filepath: 'path',
-    //     filename: 'str' 
-    //   }, { transaction: t })    
-    // } catch (error) {
-    //   await t.rollback();
-    //   console.log('error =>', error)
-    //   res.json({ 'result': 'fail' })
-    // }
-    // res.json({ 'result': 'success' })
+    try {
+      await post_file.update({ filepath: path, filename: str }, {
+        where: {
+          user_id: session_id
+        }
+      });
+    } catch (e) {
+      res.json({ 'result': 'fail' })
+    }
+    
 
-    const post_files = await post_file.create({
-      user_id: session_id,
-      filepath: path,
-      filename: str
-    })
-
-    console.log('post_files=>', post_files)
+    console.log('post_files=>', post_file)
 
   });
 
@@ -98,6 +84,28 @@ router.post('/upload', function (req, res) {
 });
 
 
+router.post('/vi/user/update', async function (req, res, next) {
+  console.log('req.body =>', req.body)
+  const inputId = req.body.id;
+  const inputUsername = req.body.userName;
+  const inputPw = req.body.password;
+  const inputEmail = req.body.email;  
+  const session_id = req.session.user_id;
+  const users = Users();
+
+  try {
+    await users.update({ user_id: inputId, username: inputUsername, password: inputPw, email: inputEmail }, {
+      where: {
+        id: session_id
+      }
+    });
+  } catch (e) {
+    res.json({ 'result': 'fail' })
+  }
+
+  res.json({ 'result': 'success' })
+
+})
 
 router.post('/vi/board/update', async function (req, res, next) {
 
@@ -175,10 +183,8 @@ router.post('/vi/board/delete', async function (req, res, next) {
 
 
 router.post('/v1/board/insert', async function (req, res, next) {
-
-  console.log('running@@@ => ', running)
   console.log('req.body = ', req.body);
-
+  console.log('BOARDINSERT1');
   const session_id = req.session.user_id;
   const inputText = req.body.inputText;
 
@@ -191,19 +197,26 @@ router.post('/v1/board/insert', async function (req, res, next) {
 
   // Model Basics
   const todos = Todos();
+  console.log('BOARDINSERT1231123@@');   
 
   try {
+    console.log('BOA$$$$$%%%@@@RDINSERT');
     const todo = await todos.create({
+      user_id: session_id,
       content: inputText,
-      user_id: session_id
+  title : 'title!@!@!'     
     })
+    console.log('creat 후에');
     console.log('todo => ', todo)
 
     const data = todo.get({ plain: true })
+    console.log('BOARDINSERT22');
     res.json({ 'result': 'success', 'data': data })
   } catch (e) {
+    console.log('실패!!');
     res.json({ 'result': 'fail' })
   }
+
 });
 
 
@@ -212,16 +225,16 @@ router.post('/v1/regist', async function (req, res, next) {
   console.log('req.body = ', req.body);
   console.log("@@@@REGIST CLICK!!!@@##")
 
+  var user_Id = req.body.user_Id;
   var inputName = req.body.inputName;
   var inputPw = req.body.inputPw;
-  var user_Id = req.body.user_Id;
   var inputEmail = req.body.inputEmail;
   var hash = crypto.createHash('md5').update(inputPw).digest('hex');
 
   console.log('inputName = ', inputName);
   console.log('hash#inputPw = ', hash);
   console.log('inputName = ', user_Id);
-  console.log('inputName = ', inputEmail);
+  console.log('inputEmail = ', inputEmail);
 
   if (user_Id === '') {
     res.json({ 'result': 'fail' })
@@ -241,28 +254,31 @@ router.post('/v1/regist', async function (req, res, next) {
   // Model Basics
   const users_login = UsersLogin();
 
+  // Model Basics
+  const post_file = PostFile();
+  
   // Transaction
   const t = await sequelize.transaction();
 
+
   try {
-    const user = await users.create({
-      username: inputName,
-      password: hash,
-      user_id: user_Id,
-      email: inputEmail
-    }, { transaction: t });
+  const user = await users.create({
+    user_id: user_Id,
+    username: inputName,
+    password: hash,
+    email: inputEmail
+  });
+  const user_login = await users_login.create({
+    user_id: user.id
+  });
+  const post_files = await post_file.create({
+    user_id: user.id
+  })
 
-    const user_login = await users_login.create({
-      user_id: user.id
-    }, { transaction: t });
 
-    await t.commit();
-
-  } catch (error) {
-    await t.rollback();
-    res.json({ 'result': 'fail' })
-  }
-
+ } catch(e) {
+  res.json({ 'result': 'fail' })
+ }
   res.json({ 'result': 'success' })
 });
 

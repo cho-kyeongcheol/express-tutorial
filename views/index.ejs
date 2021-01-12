@@ -2,9 +2,9 @@
 <html>
 <%- include('./common/head') -%>
 
-<body>
-  <div class="container w100">
-    <% if (user) { %>   
+  <body>
+    <div class="container w100">
+      <% if (user) { %>
         <div class="title">
           현재 상태
         </div>
@@ -18,96 +18,120 @@
           <%= user.username %>
         </div>
         <button onclick="logout()" type="button" class="loginBtn btn btn-secondary mt-20">로그아웃</button>
-        
+
         <div>
           <button onclick="goModify()" type="submit" class="btn btn-light">회원수정</button>
         </div>
 
-    <% } else { %>
-      <div class="title">
-        현재 상태
-      </div>
-      <div>
-        비로그인
-      </div>
-      <button onclick="login()" type="button" class="loginBtn btn btn-secondary mt-20">로그인</button>
-    <% } %>
+        <% } else { %>
+          <div class="title">
+            현재 상태
+          </div>
+          <div>
+            비로그인
+          </div>
+          <button onclick="login()" type="button" class="loginBtn btn btn-secondary mt-20">로그인</button>
+          <% } %>
 
-    <div class="row mt-20">
-      <div class="col">
-        <input id="inputText" type='text' class='form-control' placeholder="입력하세요"> 
-      </div>
-      <div class="col">
-        <button class="btn btn-secondary" onclick="insertTodo()">등록</button>
-      </div>
-    </div>    
+            <div class="row mt-20">
+              <div class="col">
+                <input id="inputText" type='text' class='form-control' placeholder="입력하세요">
+              </div>
+              <div class="col">
+                <button class="btn btn-secondary" onclick="insertTodo()">등록</button>
+              </div>
+            </div>
 
-  </div>
+    </div>
 
-  <input class='form-control input ml-10 mt-10 mb-15' type="text" id="searchTodo" placeholder="검색어를 입력하세요"> 
-  <button class="btn btn-primary ml-10">검색</button>
+    <input class='form-control input300 ml-10 mt-10 mb-15' type="text" id="searchTodo" placeholder="검색어를 입력하세요">
+    <button class="btn btn-primary ml-10">검색</button>
 
     <div class="todo_list mt-20">
       게시판 출력
     </div>
 
-    <table id="todo_list" >
-    </table> 
-    
-  
-      <ul class="pagination" >
-        <li class="page-item">
-          <a class="page-link" href="#" aria-label="Previous">
-            <span aria-hidden="true">&laquo;</span>
-          </a>
-        </li>
-        
-        <% for(i=1;i<10;i++){ %>
-
-        <li class="page-item"><a class="page-link" href="board/read/page/"><%= {i} %></a></li>
-        
-        <% } %>
-        <li class="page-item">
-          <a class="page-link" href="#" aria-label="Next">
-            <span aria-hidden="true">&raquo;</span>
-          </a>
-        </li>
-      </ul>
+    <table class="todo_list">
       
-      <div id="inputTodo2">tesfdst22</div>
-      <!-- <input type="text" id="inputTodo2"> -->
-      <button onclick="test()">
-        test
-      </button>
-    
-  <%- include('./common/javascript') -%>
-    <script>
+    </table>
 
-      function goModify() {
-
-
-        window.location.href = "/usermodify";
-
-      }
-    // enter key bind
-    $("#inputText").keydown(function (key) {
-      if (key.keyCode == 13) {
-        insertTodo();        
-      }
-    });
+    <table id="todo_list">
+      <tr>
+        <td>title</td>
+        <td>user_id</td>
+        <td>content</td>
+        <td>board_type</td>
+        <td>조회수</td>        
+      </tr>   
+    </table>
 
 
-    function readTodo(){
-      $.post("/api/vi/board/read/", {
-        // pass
-      }).done(function (data) {
-        var todos = data.data;
-        console.log('todos = ', todos);
-        todos.forEach(el => {          
-          const content = `          
+    <ul class="pagination">
+      <li class="page-item">
+        <a class="page-link" href="#" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      </li>
+
+      <% for(i=1;i<10;i++){ %>
+
+        <li class="page-item"><a class="page-link" href="board/read/page/">
+            <%= {i} %>
+          </a></li>
+
+        <% } %>
+          <li class="page-item">
+            <a class="page-link" href="#" aria-label="Next">
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          </li>
+    </ul>
+
+    <div id="inputTodo2">tesfdst22</div>
+    <!-- <input type="text" id="inputTodo2"> -->
+    <button onclick="test()">
+      test
+    </button>
+
+    <%- include('./common/javascript') -%>
+      <script>
+
+        function goModify() {
+
+          window.location.href = "/usermodify";
+
+        }
+        // enter key bind
+        $("#inputText").keydown(function (key) {
+          if (key.keyCode == 13) {
+            insertTodo();
+          }
+        });
+
+
+        function readTodo() {
+          $.post("/api/vi/board/read/", {
+            // pass
+          }).done(function (data) {
+            var todos = data.data;
+            console.log('todos = ', todos);
+            todos.forEach(el => {
+              const content = `                      
           <tr id="row_${el.id}">
             <td>
-              <input onkeyup="enterkey(${el.id});" id="inputTodo_${el.id}" type='text' class='form-control ml-10 mt-10 mb-15' placeholder="${el.content}" value="${el.content}">
+              ${el.title}
+            </td>     
+            <td>
+              ${el.user_id}
+            </td>       
+            <td>
+              <input id="inputTodo_${el.id}" type='text' class='form-control ml-10 mt-10 mb-15' placeholder="${el.content}" value="${el.content}">
+            </td>
+            <td>
+              ${el.board_type}
+            </td>
+            <td>
+              ${el.count}
             </td>
             <td>
               <button class="btn btn-primary" onclick="updateTodo(${el.id})">수정</button>
@@ -116,88 +140,97 @@
               <button class="btn btn-secondary" onclick="deleteTodo(${el.id})">삭제</button>
             </td>
           </tr>
-          `        
-          $('#todo_list').prepend(content);
-        });
-        
-      })
-    }
-    
-    $(function() {
-      readTodo();
-    })
+          `
+              $('#todo_list').append (content);
+            });
 
-    function updateTodo(id) {
-      // var inputTodo = document.getElementById('#inputTodo');
-      var inputTodo = $('#inputTodo_'+id).val();       
-      console.log('id = ', id)             
-      console.log("inputTodo => ",inputTodo)
-      $.post("/api/vi/board/update/", {
-        id:id,
-        content:inputTodo
-      }).done(function (data) {
-        if (data.result === 'fail') {
-          Swal.fire({
-            icon: 'error',
-            title: '수정',
-            text: '실패!'
           })
-        } else {
-          Swal.fire({
-            icon: 'success',
-            title: '수정',
-            text: '성공!'
-          })
-        }   
-      })
-      return id;
-    }
-
-    function enterkey(id) {
-              if (window.event.keyCode == 13) {                  
-                updateTodo(id)  
         }
-      }
 
+        $(function () {
+          readTodo();
+        })
 
-    function deleteTodo(id) {
-      console.log('id = ', id)
-      var inputTodo = $('#inputTodo').val();  
-      console.log("inputTodo => ",inputTodo)
-      $.post("/api/vi/board/delete/", {
-        id: id
-      }).done(function (data) {
-        if (data.result === 'fail') {
-          Swal.fire({
-            icon: 'error',
-            title: '삭제!',
-            text: '실패!'
+        function updateTodo(id) {
+          // var inputTodo = document.getElementById('#inputTodo');
+          var inputTodo = $('#inputTodo_' + id).val();
+          console.log('id = ', id)
+          console.log("inputTodo => ", inputTodo)
+          $.post("/api/vi/board/update/", {
+            id: id,
+            content: inputTodo
+          }).done(function (data) {
+            if (data.result === 'fail') {
+              Swal.fire({
+                icon: 'error',
+                title: '수정',
+                text: '실패!'
+              })
+            } else {
+              Swal.fire({
+                icon: 'success',
+                title: '수정',
+                text: '성공!'
+              })
+            }
           })
-        } else {
-          $('#row_' + id).remove();
+          return id;
         }
-      })
-    }
-    
-    function insertTodo() {
-      var inputText = $('#inputText').val();
-      console.log("inputText =>" , inputText)
-      $.post("/api/v1/board/insert", {
-        inputText: inputText
-      }).done(function (data) {
-        if (data.result === 'fail') {
-          Swal.fire({
-            icon: 'error',
-            title: '등록!',
-            text: '실패!'
+
+        function enterkey(id) {
+          if (window.event.keyCode == 13) {
+            updateTodo(id)
+          }
+        }
+
+
+        function deleteTodo(id) {
+          console.log('id = ', id)
+          var inputTodo = $('#inputTodo').val();
+          console.log("inputTodo => ", inputTodo)
+          $.post("/api/vi/board/delete/", {
+            id: id
+          }).done(function (data) {
+            if (data.result === 'fail') {
+              Swal.fire({
+                icon: 'error',
+                title: '삭제!',
+                text: '실패!'
+              })
+            } else {
+              $('#row_' + id).remove();
+            }
           })
-        } else {
-          // success
-          var data = data.data;
-          const content = `
+        }
+
+        function insertTodo() {
+          var inputText = $('#inputText').val();
+          console.log("inputText =>", inputText)
+          $.post("/api/v1/board/insert", {
+            inputText: inputText
+          }).done(function (data) {
+            if (data.result === 'fail') {
+              Swal.fire({
+                icon: 'error',
+                title: '등록!',
+                text: '실패!'
+              })
+            } else {
+              // success
+              var data = data.data;
+              const content = `         
           <tr id="row_${data.id}">
             <td>
+              ${data.title}
+            </td>     
+            <td>
+              ${data.user_id}
+            </td> 
+            <td>              
               <input id="inputTodo" type='text' class='form-control mt-10 mb-15' placeholder="${data.content}">
+            </td>
+            <td>
+              ${data.board_type}
             </td>
             <td>
               <button class="btn btn-primary" onclick="updateTodo(${data.id})">수정</button>
@@ -207,28 +240,29 @@
             </td>
           </tr>
           `
-          console.log(content);
-          $('#todo_list').prepend(content);
+              console.log(content);
+              $('#todo_list').append (content);
+            }
+          });
         }
-      });
-    }
 
-    function login() {
-      window.location.href = "/login";
-    }
-
-    function logout() {
-      var inputName = $('#inputName').val();
-      $.post("/api/v1/logout", {
-        inputName: inputName
-      }).done(function (data) {
-        if (data.result === 'fail') {
-          alert('로그아웃에 실패하였습니다.')
-        } else {
-          window.location.href = "/";
+        function login() {
+          window.location.href = "/login";
         }
-      });
-    }
-  </script>
-</body>
+
+        function logout() {
+          var inputName = $('#inputName').val();
+          $.post("/api/v1/logout", {
+            inputName: inputName
+          }).done(function (data) {
+            if (data.result === 'fail') {
+              alert('로그아웃에 실패하였습니다.')
+            } else {
+              window.location.href = "/";
+            }
+          });
+        }
+      </script>
+  </body>
+
 </html>

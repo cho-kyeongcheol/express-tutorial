@@ -32,12 +32,10 @@ exports.PostFile = function() {
         allowNull: false
       },
       filepath: {
-        type: DataTypes.STRING(255),
-        allowNull: false
+        type: DataTypes.STRING(255)
       },
       filename: {
-        type: DataTypes.STRING(255),
-        allowNull: false
+        type: DataTypes.STRING(255)
       },
       del_yn: {
         type: DataTypes.STRING(2),
@@ -46,7 +44,9 @@ exports.PostFile = function() {
       create_date: {
         type: DataTypes.DATE,
         defaultValue: Sequelize.NOW
-    }, 
+    },extension: {
+      type: DataTypes.STRING(10)
+    }
   }, {
       // Other model options go here
       timestamps: false,
@@ -72,6 +72,10 @@ exports.Todos = function() {
       type: DataTypes.STRING(255),
       allowNull: false
     },   
+    title: {
+      type: DataTypes.STRING(60),
+      allowNull: false
+    },   
     user_id: {
       type: DataTypes.INTEGER,
       allowNull: false
@@ -89,6 +93,16 @@ exports.Todos = function() {
     },
     delete_at: {
       type: DataTypes.DATE
+    },
+    count: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0
+    },
+    board_type: {
+      type: DataTypes.STRING(20)
+    }, 
+    reply: {
+      type: DataTypes.STRING(45)
     }
 
   }, {

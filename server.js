@@ -52,6 +52,8 @@ global.running = running;
 
 app.use(express.static('./uploads'));
 
+// app.use( express.static( "public" ) );
+
 
 
 app.listen(port, () => {

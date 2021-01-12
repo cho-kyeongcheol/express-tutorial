@@ -9,41 +9,53 @@ router.get('/test', async (req, res) => {
     res.render('test', context);
 })
 
-router.get('/usermodify', async (req, res) => {
-    var context = { "qqq": "aaaa" };
 
+router.get('/usermodify', async (req, res) => {
+    // var context = { "qqq": "aaaa" };
 
     const session_id = req.session.user_id;
-    // var context = {};
+    var context = {};
+    
+    
     const post_file = PostFile();
+    const users = Users();
 
     const postfile = await post_file.findAll({
-        where: { user_id: session_id, del_yn: 'N' }
+        where: { user_id: session_id }
     });
-    console.log('==1=1=1=1=1=1===', postfile[0].dataValues.filepath)
+    const user = await users.findAll({
+        where: {
+            id: session_id
+        },
+        raw: true
+    });    
+    if(postfile[0].dataValues.filename != null) {
+    context.user = user[0]
     context.img_src =  postfile[0].dataValues.filepath
-    console.log("contextcontext",context)
-    res.render('usermodify', context);
-    // res.sendFile(path.join(__dirname, "../uploads/image.png"));
+    var str = context.img_src.substring(8, 1000);
+    context.src = str
+
+    console.log('==1=1=1=1postfile=1=1===', postfile)
+    console.log('#@#@#user@#@# =>' , user)
+    console.log('==1=1=1=1=1=1===', postfile[0].dataValues.filepath)
+    console.log('@@@FILENAME', postfile[0].dataValues.filename)
+    console.log('@@str@@ =>', str)
+
+} else{
+    console.log('@@!!##undefined')    
+    context.user = user[0]
+    context.img_src =  postfile[0].dataValues.filepath
+    context.post_file = undefined
+    console.log('@@#!#!#!#!qwqwqwqw',context.post_file)
+
+}
+ 
+// console.log("contextcontext",context)
+    
+    res.render('usermodify', context);    
+    
 })
 
-// router.get('/image', async(req, res) => {
-//     const session_id = req.session.user_id;
-
-//     var context = {};
-
-//     const post_file = PostFile();
-
-//     const postfile = await post_file.findAll({
-//         where: {
-//             user_id: session_id
-//         }       
-
-//     });
-
-//     res.render('index', context);  
-//     res.sendFile(path.join(__dirname, "./uploads/image.png"));
-// })
 
 router.get('/', async (req, res) => {
 
@@ -92,7 +104,7 @@ router.get('/', async (req, res) => {
         context.user = undefined
         context.user_list = undefined
         context.todo = undefined
-        context.user_list = undefined
+        context.todo_list = undefined
     }
     res.render('index', context);
 })
