@@ -72,7 +72,8 @@
     <div class="todo_list mt-20">
       <h2>게시판 출력</h2>
 
-      <table id="todo_list">       
+      <table id="todo_list">
+       
         <tr>
           <td>no</td>
           <td>title</td>
@@ -80,11 +81,8 @@
           <td class="content">content</td>
           <td>board_type</td>
           <td>조회수</td>
-        </tr>    
-      </table>
-
-      <table id="todo_list">      
-           
+        </tr>
+    
       </table>
 
 
@@ -123,6 +121,11 @@
     </button>
 
     <%- include('./common/javascript') -%>
+
+    <script>
+
+   
+    </script>
       <script>
 
         function goModify() {
@@ -170,6 +173,9 @@
             <td>
               <button class="btn btn-secondary" onclick="deleteTodo(${el.id})">삭제</button>
             </td>
+            <td>
+              <button id="board_reply" class="btn btn-secondary" >댓글</button>
+            </td>
           </tr>
           `
               $('#todo_list').append(content);
@@ -178,6 +184,19 @@
           })
         }
 
+
+        var el = document.getElementById('board_reply');
+          if(el){
+            el.addEventListener('click', swapper, false);
+            alert('1!!')
+          }
+
+       
+
+          
+        // function replyTodo33(){
+        //   alert('!!')
+        // }
 
         $(function () {
           readTodo();
@@ -278,10 +297,13 @@
             <td>
               <button class="btn btn-secondary" onclick="deleteTodo(${data.id})">삭제</button>
             </td>
+            <td>
+              <button class="btn btn-secondary" onclick="deleteTodo(${data.id})">댓글</button>
+            </td>
           </tr>
           `
               console.log(content);
-              $('#todo_list').prepend(content);
+              $('#todo_list').append(content);
             }
           });
         }

@@ -56,12 +56,18 @@
   border-spacing: 10px
 }
 
+.todo_list2 {
+  margin-left: 20px;
+  margin-right: 20px;
+  border-spacing: 10px
+}
+
 .todo_list tr td {
   width : 80px;
 }
 
 .todo_list tr .content {
-  width: 300px
+  width: 230px
 
 }
 

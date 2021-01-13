@@ -159,7 +159,28 @@ $('#fileInput').on('change', function () {
 		console.log('error=>', error);
 		}
 	});
+	readUpload() // read로 파일넣고 바로출력
 });
+```
+#### readUplod
+``` js
+function  readUpload() {
+	$.post("/api/vi/upload/read/", {
+	// pass
+		}).done(function (data) {
+			var  post_file = data.data;
+			const  content = `
+				<% if(img_src != undefined) { %>
+				<img src="<%= src %>" style="width: 200px; height: 300px;"/>
+				<% } %>
+				  
+				<% if(img_src == undefined) { %>
+				<div>이미지를 선택하세요</div>
+				<% } %>
+			`
+	$('#imageload').prepend(content);
+	})
+}
 ```
 
 
@@ -279,3 +300,11 @@ else{
 <% } %>
 
 ```
+
+###  raw : true 
+```
+{ raw: true }
+
+`findOne()` 및 `findAll()`에서 json형태로 보거나 가공하고 싶을 때 사용합니다. sequelize 쿼리문 안에 아래와 같이 작성합니다.
+```
+
