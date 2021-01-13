@@ -99,7 +99,8 @@ exports.Todos = function() {
       defaultValue: 0
     },
     board_type: {
-      type: DataTypes.STRING(20)
+      type: DataTypes.STRING(20),
+      defaultValue: 'news'
     }, 
     reply: {
       type: DataTypes.STRING(45)

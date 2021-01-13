@@ -14,8 +14,7 @@ router.get('/usermodify', async (req, res) => {
     // var context = { "qqq": "aaaa" };
 
     const session_id = req.session.user_id;
-    var context = {};
-    
+    var context = {};    
     
     const post_file = PostFile();
     const users = Users();

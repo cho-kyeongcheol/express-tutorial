@@ -133,6 +133,19 @@ router.post('/vi/board/update', async function (req, res, next) {
 })
 
 
+router.post('/vi/upload/read', async function (req, res, next) {
+const postfile = PostFile();  
+const session_id = req.session.user_id;
+console.log('@@@upload/read', postfile)
+
+const post_file = await postfile.findAll({
+  user_id : session_id
+})
+console.log('@@@upload/read 뒷부분', postfile)
+
+res.json({ 'result': 'success', 'data': post_file })
+})
+
 router.post('/vi/board/read', async function (req, res, next) {
 
   const session_id = req.session.user_id;
@@ -188,11 +201,13 @@ router.post('/v1/board/insert', async function (req, res, next) {
   const session_id = req.session.user_id;
   const inputTitle = req.body.inputTitle;
   const inputText = req.body.inputText;
+  const board_type = req.body.board_type;
   
 
   console.log('session_id = ', session_id);
   console.log('inputTitle = ', inputTitle);
   console.log('inputText = ', inputText);
+  console.log('board_type = ', board_type);
   
   if (inputText === '') {
     res.json({ 'result': 'fail' })
@@ -201,24 +216,22 @@ router.post('/v1/board/insert', async function (req, res, next) {
   if (inputTitle === '') {
     res.json({ 'result': 'fail' })
   }
+ 
 
   // Model Basics
   const todos = Todos();
-  console.log('BOARDINSERT1231123@@');   
+  console.log('BOARDINSERT');   
 
   try {
-    console.log('BOA$$$$$%%%@@@RDINSERT');
     const todo = await todos.create({
       user_id: session_id,
       title: inputTitle,
       content: inputText,
-      board_type: 'news'
+      board_type: board_type
     })
-    console.log('creat 후에');
     console.log('todo => ', todo)
 
     const data = todo.get({ plain: true })
-    console.log('BOARDINSERT22');
     res.json({ 'result': 'success', 'data': data })
   } catch (e) {
     console.log('실패!!');

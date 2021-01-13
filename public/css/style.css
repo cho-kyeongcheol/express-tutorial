@@ -53,7 +53,18 @@
 .todo_list {
   margin-left: 20px;
   margin-right: 20px;
+  border-spacing: 10px
 }
+
+.todo_list tr td {
+  width : 80px;
+}
+
+.todo_list tr .content {
+  width: 300px
+
+}
+
 .title {
   font-weight: bold;
   margin-top: 20px;

@@ -44,6 +44,15 @@
                 <input id="inputText" type='text' class='form-control input300' placeholder="내용을 입력하세요">
               </div>
               <div class="col">
+                <span>board_type</span><br>
+                <select class="custom-select" name="pets" id="board_select">
+                  <option value="news">news</option>
+                  <option value="Gallery">Gallery</option>
+                  <option value="Q&A">Q&A</option>
+                </select>
+              </div>
+              
+              <div class="col">
                 <button class="btn btn-secondary insertBtn" onclick="insertTodo()">등록</button>
               </div>
             </div>
@@ -61,22 +70,29 @@
 
 
     <div class="todo_list mt-20">
-      게시판 출력
+      <h2>게시판 출력</h2>
+
+      <table id="todo_list">       
+        <tr>
+          <td>no</td>
+          <td>title</td>
+          <td>user_id</td>
+          <td class="content">content</td>
+          <td>board_type</td>
+          <td>조회수</td>
+        </tr>    
+      </table>
+
+      <table id="todo_list">      
+           
+      </table>
+
+
+
     </div>
 
-    <table class="todo_list">
+    
 
-    </table>
-
-    <table id="todo_list">
-      <tr>
-        <td>title</td>
-        <td>user_id</td>
-        <td>content</td>
-        <td>board_type</td>
-        <td>조회수</td>
-      </tr>
-    </table>
 
 
     <ul class="pagination">
@@ -110,10 +126,9 @@
       <script>
 
         function goModify() {
-
           window.location.href = "/usermodify";
-
         }
+
         // enter key bind
         $("#inputText").keydown(function (key) {
           if (key.keyCode == 13) {
@@ -131,6 +146,9 @@
             todos.forEach(el => {
               const content = `                      
           <tr id="row_${el.id}">
+            <td>
+              ${el.id}
+            </td>  
             <td>
               ${el.title}
             </td>     
@@ -159,6 +177,7 @@
 
           })
         }
+
 
         $(function () {
           readTodo();
@@ -217,12 +236,15 @@
      
         function insertTodo() {
           var inputTitle = $('#inputTitle').val();
-          var inputText = $('#inputText').val();
+          var inputText = $('#inputText').val();      
+          var board_select = $('#board_select').val();
           console.log("inputTitle =>", inputTitle)
           console.log("inputText =>", inputText)
+          console.log("board_select =>", board_select)          
           $.post("/api/v1/board/insert", {
             inputTitle: inputTitle,
-            inputText: inputText
+            inputText: inputText,
+            board_type: board_select
           }).done(function (data) {
             if (data.result === 'fail') {
               Swal.fire({
@@ -235,6 +257,9 @@
               var data = data.data;
               const content = `         
           <tr id="row_${data.id}">
+            <td>
+              ${data.id}
+            </td>  
             <td>
               ${data.title}
             </td>     
@@ -256,7 +281,7 @@
           </tr>
           `
               console.log(content);
-              $('#todo_list').append(content);
+              $('#todo_list').prepend(content);
             }
           });
         }
