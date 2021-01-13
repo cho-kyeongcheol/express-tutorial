@@ -38,7 +38,7 @@ router.post('/upload', function (req, res) {
   console.log('session_id =>', session_id)
   
   const post_file = PostFile();
-
+00
   const sequelize = getConnection();
 
   console.log('postfile =>', post_file)
@@ -186,12 +186,19 @@ router.post('/v1/board/insert', async function (req, res, next) {
   console.log('req.body = ', req.body);
   console.log('BOARDINSERT1');
   const session_id = req.session.user_id;
+  const inputTitle = req.body.inputTitle;
   const inputText = req.body.inputText;
+  
 
   console.log('session_id = ', session_id);
+  console.log('inputTitle = ', inputTitle);
   console.log('inputText = ', inputText);
-
+  
   if (inputText === '') {
+    res.json({ 'result': 'fail' })
+  }
+
+  if (inputTitle === '') {
     res.json({ 'result': 'fail' })
   }
 
@@ -203,8 +210,9 @@ router.post('/v1/board/insert', async function (req, res, next) {
     console.log('BOA$$$$$%%%@@@RDINSERT');
     const todo = await todos.create({
       user_id: session_id,
+      title: inputTitle,
       content: inputText,
-  title : 'title!@!@!'     
+      board_type: 'news'
     })
     console.log('creat 후에');
     console.log('todo => ', todo)

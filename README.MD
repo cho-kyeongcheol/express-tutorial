@@ -1,17 +1,80 @@
 
 # DB 설정
 
+### 로컬DB
+```
+host : 192.168.33.80
+port : 3306
+id : dev
+pw : password
 ```
 
+
+``` RUBY
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+MEMORY = 1024
+CPU_COUNT = 1
+
+Vagrant.configure("2") do |config|
+	config.vm.box = "ubuntu/xenial64"
+	config.vm.network "private_network", ip: "192.168.33.80"
+	# config.vm.network "forwarded_port", guest: 80, host: 8080
+	config.vm.synced_folder ".", "/vagrant", disabled: true
+	config.vm.provider "virtualbox" do |vb|
+	vb.customize ["modifyvm", :id, "--memory", MEMORY.to_s]
+	vb.customize ["modifyvm", :id, "--cpus", CPU_COUNT.to_s]
+	end
+end
+
+```
+### DB 처음세팅
+
+
+```
+ mysql 서비스 확인
+- sudo service mysql status
+- 
+외부접속 허용
+- sudo vi /etc/mysql/mysql.conf.d/mysqld.cnf
+	bind-address          = 0.0.0.0
+	or
+	 bind-address          = 127.0.0.1
+	 
+ mysql 서비스 재실행
+-sudo service mysql restart
+
+# 권한 부여
+mysql -u root -p
+0000
+
+grant all privileges on *.* to 'dev'@'%' identified by 'password' with grant option;
+flush privileges;
+```
+
+
+
+### DB구축된 상태
+```
 /workspace/board_db
   
- vagrant up
-
-vagrant ssh
-
-sudo service mysql restart
-
+ 서버실행
+- vagrant up
+서버접속
+- vagrant ssh
+mysql 재시작
+- sudo service mysql restart
   ```
+
+### 카카오 레포지토리 변경
+```
+sudo vi /etc/apt/sources.list
+
+:%s/archive.ubuntu.com/ftp.daum.net/g
+:%s/security.ubuntu.com/ftp.daum.net/g 
+```
+
 
 ### file subimt button
 

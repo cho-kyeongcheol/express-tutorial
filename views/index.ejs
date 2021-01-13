@@ -33,26 +33,39 @@
           <button onclick="login()" type="button" class="loginBtn btn btn-secondary mt-20">로그인</button>
           <% } %>
 
+            <div class="col">
+              <span>Title</span>
+              <input id="inputTitle" type='text' class='form-control input300' placeholder="제목을 입력하세요.">
+            </div>
+
             <div class="row mt-20">
               <div class="col">
-                <input id="inputText" type='text' class='form-control' placeholder="입력하세요">
+                <span>Content</span>
+                <input id="inputText" type='text' class='form-control input300' placeholder="내용을 입력하세요">
               </div>
               <div class="col">
-                <button class="btn btn-secondary" onclick="insertTodo()">등록</button>
+                <button class="btn btn-secondary insertBtn" onclick="insertTodo()">등록</button>
+              </div>
+            </div>
+
+            <div class="row mt-20 mt-10">
+              <input class='form-control input300 ml-10 mt-10 mb-15' type="text" id="searchTodo"
+                placeholder="검색어를 입력하세요">
+              <div class="col">
+                <button class="btn btn-primary ml-10 mt-10">검색</button>
               </div>
             </div>
 
     </div>
 
-    <input class='form-control input300 ml-10 mt-10 mb-15' type="text" id="searchTodo" placeholder="검색어를 입력하세요">
-    <button class="btn btn-primary ml-10">검색</button>
+
 
     <div class="todo_list mt-20">
       게시판 출력
     </div>
 
     <table class="todo_list">
-      
+
     </table>
 
     <table id="todo_list">
@@ -61,8 +74,8 @@
         <td>user_id</td>
         <td>content</td>
         <td>board_type</td>
-        <td>조회수</td>        
-      </tr>   
+        <td>조회수</td>
+      </tr>
     </table>
 
 
@@ -141,7 +154,7 @@
             </td>
           </tr>
           `
-              $('#todo_list').append (content);
+              $('#todo_list').append(content);
             });
 
           })
@@ -183,7 +196,6 @@
           }
         }
 
-
         function deleteTodo(id) {
           console.log('id = ', id)
           var inputTodo = $('#inputTodo').val();
@@ -201,12 +213,15 @@
               $('#row_' + id).remove();
             }
           })
-        }
-
+        }  
+     
         function insertTodo() {
+          var inputTitle = $('#inputTitle').val();
           var inputText = $('#inputText').val();
+          console.log("inputTitle =>", inputTitle)
           console.log("inputText =>", inputText)
           $.post("/api/v1/board/insert", {
+            inputTitle: inputTitle,
             inputText: inputText
           }).done(function (data) {
             if (data.result === 'fail') {
@@ -241,7 +256,7 @@
           </tr>
           `
               console.log(content);
-              $('#todo_list').append (content);
+              $('#todo_list').append(content);
             }
           });
         }

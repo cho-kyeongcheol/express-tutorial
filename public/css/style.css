@@ -26,6 +26,11 @@
   margin-left: 10px;
 }
 
+.insertBtn {
+  margin-left: -35px;
+  margin-top: 25px;
+}
+
 .w100 {
   width: 100%;
   max-width: 100%;
