@@ -20,7 +20,7 @@ router.post('/vi/imgae/load', async (req, res) => {
   const post_file = PostFile();
 
   const postfile = await post_file.findAll({
-    where: { user_id: session_id }
+    where: { post_id: session_id }
   });
   var context = {};
   console.log('session_id', session_id)
@@ -65,7 +65,7 @@ router.post('/upload', function (req, res) {
     try {
       await post_file.update({ filepath: path, filename: str }, {
         where: {
-          user_id: session_id
+          post_id: session_id
         }
       });
     } catch (e) {
@@ -96,7 +96,7 @@ router.post('/vi/user/update', async function (req, res, next) {
   try {
     await users.update({ user_id: inputId, username: inputUsername, password: inputPw, email: inputEmail }, {
       where: {
-        id: session_id
+        user_eq: session_id
       }
     });
   } catch (e) {
@@ -122,7 +122,7 @@ router.post('/vi/board/update', async function (req, res, next) {
   try {
     await todos.update({ content: inputText, update_at: date_ob }, {
       where: {
-        id: id
+        bbs_eq: id
       }
     });
   } catch (e) {
@@ -156,10 +156,10 @@ router.post('/vi/board/read', async function (req, res, next) {
     limit: 5,
     where: {
       del_yn: 'N',
-      user_id: session_id
+      user_eq: session_id
     },
     order: [
-      ['id', 'DESC']
+      ['bbs_eq', 'DESC']
     ],
     raw: true
   });
@@ -183,8 +183,8 @@ router.post('/vi/board/delete', async function (req, res, next) {
   try {
     await todos.update({ del_yn: "Y", delete_at: date_ob }, {
       where: {
-        id: id,
-        user_id: session_id
+        bbs_eq: id,
+        user_eq: session_id
       }
     });
   } catch (e) {
@@ -224,7 +224,7 @@ router.post('/v1/board/insert', async function (req, res, next) {
 
   try {
     const todo = await todos.create({
-      user_id: session_id,
+      user_eq: session_id,
       title: inputTitle,
       content: inputText,
       board_type: board_type

@@ -21,21 +21,28 @@ exports.PostFile = function() {
   const sequelize = exports.getConnection();
 
   const post_file = sequelize.define('post_file', {
-      id: {
+      post_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
         primaryKey: true,
         autoIncrement: true
       },
-      user_id: {
-        type: DataTypes.STRING(255),
-        allowNull: false
-      },
+      target_id: {
+        type: DataTypes.STRING(40)        
+      },     
       filepath: {
         type: DataTypes.STRING(255)
       },
       filename: {
         type: DataTypes.STRING(255)
+      },
+      sort: {
+        type: DataTypes.INTEGER,
+        defaultValue: 'y'
+      },
+      create_id: {
+        type: DataTypes.INTEGER,
+        defaultValue: 'y'
       },
       del_yn: {
         type: DataTypes.STRING(2),
@@ -62,7 +69,7 @@ exports.Todos = function() {
   const sequelize = exports.getConnection();
 
   const todos = sequelize.define('todos', {
-    id: {
+    bbs_eq: {
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
@@ -76,7 +83,7 @@ exports.Todos = function() {
       type: DataTypes.STRING(60),
       allowNull: false
     },   
-    user_id: {
+    user_eq: {
       type: DataTypes.INTEGER,
       allowNull: false
     },    
@@ -102,8 +109,11 @@ exports.Todos = function() {
       type: DataTypes.STRING(20),
       defaultValue: 'news'
     }, 
-    reply: {
-      type: DataTypes.STRING(45)
+    parent_id: {
+      type: DataTypes.INTEGER
+    },
+    reply_levels: {
+      type: DataTypes.INTEGER
     }
 
   }, {
@@ -123,7 +133,7 @@ exports.Users = function() {
     const sequelize = exports.getConnection();
 
     const users = sequelize.define('users', {
-        id: {
+        user_eq: {
           type: DataTypes.INTEGER,
           allowNull: false,
           primaryKey: true,
@@ -167,7 +177,7 @@ exports.UsersLogin = function() {
     const sequelize = exports.getConnection();
 
     const users_login = sequelize.define('users_login', {
-        id: {
+        login_eq: {
           type: DataTypes.INTEGER,
           allowNull: false,
           primaryKey: true,

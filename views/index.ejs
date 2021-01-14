@@ -23,6 +23,10 @@
           <button onclick="goModify()" type="submit" class="btn btn-light">회원수정</button>
         </div>
 
+        <div class="col">
+          <button class="btn btn-secondary insertBtn" onclick="goboardWirte()">글쓰기</button>
+        </div>
+
         <% } else { %>
           <div class="title">
             현재 상태
@@ -33,29 +37,9 @@
           <button onclick="login()" type="button" class="loginBtn btn btn-secondary mt-20">로그인</button>
           <% } %>
 
-            <div class="col">
-              <span>Title</span>
-              <input id="inputTitle" type='text' class='form-control input300' placeholder="제목을 입력하세요.">
-            </div>
-
-            <div class="row mt-20">
-              <div class="col">
-                <span>Content</span>
-                <input id="inputText" type='text' class='form-control input300' placeholder="내용을 입력하세요">
-              </div>
-              <div class="col">
-                <span>board_type</span><br>
-                <select class="custom-select" name="pets" id="board_select">
-                  <option value="news">news</option>
-                  <option value="Gallery">Gallery</option>
-                  <option value="Q&A">Q&A</option>
-                </select>
-              </div>
               
-              <div class="col">
-                <button class="btn btn-secondary insertBtn" onclick="insertTodo()">등록</button>
-              </div>
-            </div>
+           </div>
+         </div>
 
             <div class="row mt-20 mt-10">
               <input class='form-control input300 ml-10 mt-10 mb-15' type="text" id="searchTodo"
@@ -68,12 +52,13 @@
     </div>
 
 
+    
+
 
     <div class="todo_list mt-20">
       <h2>게시판 출력</h2>
 
-      <table id="todo_list">
-       
+      <table id="todo_list">       
         <tr>
           <td>no</td>
           <td>title</td>
@@ -84,14 +69,10 @@
         </tr>
     
       </table>
-
-
-
     </div>
 
     
-
-
+    <div class="parah" id="parah">댓글입력</div>
 
     <ul class="pagination">
       <li class="page-item">
@@ -122,11 +103,16 @@
 
     <%- include('./common/javascript') -%>
 
-    <script>
+    
 
-   
-    </script>
+
+
       <script>
+
+        function goboardWirte() {
+          window.location.href = "/board_write";
+
+        }
 
         function goModify() {
           window.location.href = "/usermodify";
@@ -148,18 +134,18 @@
             console.log('todos = ', todos);
             todos.forEach(el => {
               const content = `                      
-          <tr id="row_${el.id}">
+          <tr id="row_${el.bbs_eq}">
             <td>
-              ${el.id}
+              ${el.bbs_eq}
             </td>  
             <td>
               ${el.title}
             </td>     
             <td>
-              ${el.user_id}
+              ${el.user_eq}
             </td>       
             <td>
-              <input id="inputTodo_${el.id}" type='text' class='form-control ml-10 mt-10 mb-15' placeholder="${el.content}" value="${el.content}">
+              <input id="inputTodo_${el.bbs_eq}" type='text' class='form-control ml-10 mt-10 mb-15' placeholder="${el.content}" value="${el.content}">
             </td>
             <td>
               ${el.board_type}
@@ -168,15 +154,13 @@
               ${el.count}
             </td>
             <td>
-              <button class="btn btn-primary" onclick="updateTodo(${el.id})">수정</button>
+              <button class="btn btn-primary" onclick="updateTodo(${el.bbs_eq})">수정</button>
             </td>
             <td>
-              <button class="btn btn-secondary" onclick="deleteTodo(${el.id})">삭제</button>
-            </td>
-            <td>
-              <button id="board_reply" class="btn btn-secondary" >댓글</button>
+              <button class="btn btn-secondary" onclick="deleteTodo(${el.bbs_eq})">삭제</button>
             </td>
           </tr>
+          
           `
               $('#todo_list').append(content);
             });
@@ -185,19 +169,26 @@
         }
 
 
-        var el = document.getElementById('board_reply');
-          if(el){
-            el.addEventListener('click', swapper, false);
-            alert('1!!')
-          }
+        // var arrInput = new Array(0);
+        // var arrInputValue = new Array(0);
 
-       
-
-          
-        // function replyTodo33(){
-        //   alert('!!')
+        // function reply(){                 
+        //   arrInput.push(arrInput.length);
+        //   arrInputValue.push("");
+        //   display();
         // }
 
+        // function display() {
+        //   document.getElementById('parah').innerHTML="";
+        //   for (intI=0;intI<arrInput.length;intI++) {
+        //     document.getElementById('parah').innerHTML+=createInput(arrInput[intI], arrInputValue[intI]);
+        //   }
+        // }
+        
+        
+
+          
+        
         $(function () {
           readTodo();
         })
@@ -253,60 +244,7 @@
           })
         }  
      
-        function insertTodo() {
-          var inputTitle = $('#inputTitle').val();
-          var inputText = $('#inputText').val();      
-          var board_select = $('#board_select').val();
-          console.log("inputTitle =>", inputTitle)
-          console.log("inputText =>", inputText)
-          console.log("board_select =>", board_select)          
-          $.post("/api/v1/board/insert", {
-            inputTitle: inputTitle,
-            inputText: inputText,
-            board_type: board_select
-          }).done(function (data) {
-            if (data.result === 'fail') {
-              Swal.fire({
-                icon: 'error',
-                title: '등록!',
-                text: '실패!'
-              })
-            } else {
-              // success
-              var data = data.data;
-              const content = `         
-          <tr id="row_${data.id}">
-            <td>
-              ${data.id}
-            </td>  
-            <td>
-              ${data.title}
-            </td>     
-            <td>
-              ${data.user_id}
-            </td> 
-            <td>              
-              <input id="inputTodo" type='text' class='form-control mt-10 mb-15' placeholder="${data.content}">
-            </td>
-            <td>
-              ${data.board_type}
-            </td>
-            <td>
-              <button class="btn btn-primary" onclick="updateTodo(${data.id})">수정</button>
-            </td>
-            <td>
-              <button class="btn btn-secondary" onclick="deleteTodo(${data.id})">삭제</button>
-            </td>
-            <td>
-              <button class="btn btn-secondary" onclick="deleteTodo(${data.id})">댓글</button>
-            </td>
-          </tr>
-          `
-              console.log(content);
-              $('#todo_list').append(content);
-            }
-          });
-        }
+        
 
         function login() {
           window.location.href = "/login";

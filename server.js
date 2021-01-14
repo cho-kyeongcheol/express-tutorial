@@ -36,24 +36,7 @@ app.use(session({
 app.use('/', render);
 app.use('/api', api);
 
-let running = "load_image";
-global.running = running;
-
-
-// let test = require('./router/api.js'); 
-// test.running = 'AAAAA';
-//  console.log(test.running);
-
-// console.log('running!@!@#=>', running)
-
-// app.get("/usermodify_img", (req, res) => {  
-//   res.sendFile(path.join(__dirname, "./uploads/image.png"));
-// });
-
 app.use(express.static('./uploads'));
-
-// app.use( express.static( "public" ) );
-
 
 
 app.listen(port, () => {

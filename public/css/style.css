@@ -27,7 +27,7 @@
 }
 
 .insertBtn {
-  margin-left: -35px;
+  margin-left: 20px;
   margin-top: 25px;
 }
 
@@ -71,6 +71,9 @@
 
 }
 
+.parah {
+  width : 500px;
+}
 .title {
   font-weight: bold;
   margin-top: 20px;

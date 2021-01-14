@@ -20,11 +20,11 @@ router.get('/usermodify', async (req, res) => {
     const users = Users();
 
     const postfile = await post_file.findAll({
-        where: { user_id: session_id }
+        where: { target_id: session_id }
     });
     const user = await users.findAll({
         where: {
-            id: session_id
+            user_eq: session_id
         },
         raw: true
     });    
@@ -70,7 +70,7 @@ router.get('/', async (req, res) => {
 
         const user = await users.findAll({
             where: {
-                id: user_id
+                user_eq: user_id
             },
             raw: true
         });
@@ -81,7 +81,7 @@ router.get('/', async (req, res) => {
 
         const todo = await todos.findAll({
             where: {
-                user_id: user_id,
+                user_eq: user_id,
             },
             raw: true
         });
@@ -90,7 +90,7 @@ router.get('/', async (req, res) => {
                 del_yn: 'N'
             },
             order: [
-                ['id', 'DESC']
+                ['bbs_eq', 'DESC']
             ],
             raw: true
         });
@@ -108,6 +108,29 @@ router.get('/', async (req, res) => {
     res.render('index', context);
 })
 
+
+router.get('/board_write', async(req, res) => {
+    const user_id = req.session.user_id;
+    var context = {};
+
+    if (user_id) {
+        const users = Users();
+
+        const user = await users.findAll({
+            where: {
+                user_eq: user_id
+            },
+            raw: true
+        });  
+
+        context.user = user[0]       
+    } else {
+        context.user = undefined       
+    }
+
+
+    res.render('board/board_write', context);
+})
 
 
 router.get('/regist', (req, res) => {
