@@ -128,9 +128,42 @@ router.get('/board_write', async(req, res) => {
         context.user = undefined       
     }
 
-
     res.render('board/board_write', context);
 })
+
+router.get('/board_view', async(req, res) => {
+    const user_id = req.session.user_id;
+    var context = {};
+
+    if (user_id) {
+        const users = Users();
+
+        const todos = Todos();
+
+        const user = await users.findAll({
+            where: {
+                user_eq: user_id
+            },
+            raw: true
+        });  
+
+        const todo = await todos.findAll({
+            where: {
+                user_eq: user_id,
+            },
+            raw: true
+        });
+        context.todo = todo[0]
+        context.user = user[0]       
+    } else {
+        context.user = undefined       
+        context.todo = undefined
+    }
+
+    res.render('board/board_view', context);
+})
+
+
 
 
 router.get('/regist', (req, res) => {

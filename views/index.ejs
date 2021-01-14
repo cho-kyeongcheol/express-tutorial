@@ -139,7 +139,7 @@
               ${el.bbs_eq}
             </td>  
             <td>
-              ${el.title}
+              <a href="/board_view?${el.bbs_eq}"> ${el.title} </a>
             </td>     
             <td>
               ${el.user_eq}
@@ -167,25 +167,7 @@
 
           })
         }
-
-
-        // var arrInput = new Array(0);
-        // var arrInputValue = new Array(0);
-
-        // function reply(){                 
-        //   arrInput.push(arrInput.length);
-        //   arrInputValue.push("");
-        //   display();
-        // }
-
-        // function display() {
-        //   document.getElementById('parah').innerHTML="";
-        //   for (intI=0;intI<arrInput.length;intI++) {
-        //     document.getElementById('parah').innerHTML+=createInput(arrInput[intI], arrInputValue[intI]);
-        //   }
-        // }
-        
-        
+       
 
           
         
@@ -243,8 +225,7 @@
             }
           })
         }  
-     
-        
+            
 
         function login() {
           window.location.href = "/login";

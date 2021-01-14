@@ -1,95 +1,99 @@
 <!DOCTYPE html>
 <html>
-    <%- include('../common/head') -%>
-<body>
-    <h1>Wirte</h1>
+<%- include('../common/head') -%>
 
-    <div class="container w100">
-    <% if (user) { %>
-        <div class="title">
-            사용자명
-          </div>
-          <div id="username">
-            <%= user.username %>
-          </div>
-      <% } %>
+    <body>
+        <h1>Wirte</h1>
 
-
-
-      <div class="col">
-        <span>Title</span>
-        <input id="inputTitle" type='text' class='form-control input300' placeholder="제목을 입력하세요.">
-      </div>
-
-      <div class="row mt-20">
-        <div class="col">
-          <span>Content</span>
-          <input id="inputText" type='text' class='form-control input300' placeholder="내용을 입력하세요">
-        </div>
-        <div class="col">
-          <span>board_type</span><br>
-          <select class="custom-select" name="pets" id="board_select">
-            <option value="news">news</option>
-            <option value="Gallery">Gallery</option>
-            <option value="Q&A">Q&A</option>
-          </select>
-        </div>
-
-        <div class="col">
-            <button class="btn btn-secondary insertBtn" onclick="insertTodo()">작성</button>
-          </div>
-
-          <button class="btn btn-primary insertBtn" onclick="goIndex()">홈페이지로이동</button>
-     
-    </div>
-
-    <%- include('../common/javascript') -%>
-<script>
-
-
-function goIndex() {
-    window.location.href = "/";
-}
-    
-function insertTodo() {
-          var inputTitle = $('#inputTitle').val();
-          var inputText = $('#inputText').val();      
-          var board_select = $('#board_select').val();
-          console.log("inputTitle =>", inputTitle)
-          console.log("inputText =>", inputText)
-          console.log("board_select =>", board_select)          
-          $.post("/api/v1/board/insert", {
-            inputTitle: inputTitle,
-            inputText: inputText,
-            board_type: board_select
-          }).done(function (data) {
-            if (data.result === 'fail') {
-              Swal.fire({
-                icon: 'error',
-                title: '등록!',
-                text: '실패!'
-              })
-            } else {
-              // success
-              Swal.fire({
-                icon: 'success',
-                title: '등록!',
-                text: '성공!'
-              })
-      
-            }
-          });
-        }
+        <div class="container w100">
+            <% if (user) { %>
+                <div class="title">
+                    사용자명
+                </div>
+                <div id="username">
+                    <%= user.username %>
+                </div>
+                <% } %>
 
 
 
+                <div class="col">
+                    <span>Title</span>
+                    <input id="inputTitle" type='text' class='form-control input300' placeholder="제목을 입력하세요.">
+                </div>
+
+                <div class="row mt-20">
+                    <div class="col">
+                        <span>Content</span>
+                        <input id="inputText" type='text' class='form-control input600' placeholder="내용을 입력하세요">
+                    </div>
+                    <div class="col">
+                        <span>board_type</span><br>
+                        <select class="custom-select" name="pets" id="board_select">
+                            <option value="news">news</option>
+                            <option value="Gallery">Gallery</option>
+                            <option value="Q&A">Q&A</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3 mt-20">
+                        <div class="col"></div>
+                        <form action="/upload" method="post" enctype="multipart/form-data" id="fileForm">
+                            <input type="file" id="fileInput" name="fileInput">
+                        </form>
+                        <input type="text" id="filePath">
+                        <button class="btn btn-secondary ml-30" onclick="insertTodo()">작성</button>
+                    </div>
+                </div>
+            </div>
+        <button class="btn btn-primary insertBtn w200" onclick="goIndex()">홈페이지로이동</button>
+
+
+        <%- include('../common/javascript') -%>
+            <script>
+
+
+                function goIndex() {
+                    window.location.href = "/";
+                }
+
+                function insertTodo() {
+                    var inputTitle = $('#inputTitle').val();
+                    var inputText = $('#inputText').val();
+                    var board_select = $('#board_select').val();
+                    console.log("inputTitle =>", inputTitle)
+                    console.log("inputText =>", inputText)
+                    console.log("board_select =>", board_select)
+                    $.post("/api/v1/board/insert", {
+                        inputTitle: inputTitle,
+                        inputText: inputText,
+                        board_type: board_select
+                    }).done(function (data) {
+                        if (data.result === 'fail') {
+                            Swal.fire({
+                                icon: 'error',
+                                title: '등록!',
+                                text: '실패!'
+                            })
+                        } else {
+                            // success
+                            Swal.fire({
+                                icon: 'success',
+                                title: '등록!',
+                                text: '성공!'
+                            })
+
+                        }
+                    });
+                }
 
 
 
 
-</script>
-</body>
+
+
+
+            </script>
+    </body>
+
 </html>
-
-
-

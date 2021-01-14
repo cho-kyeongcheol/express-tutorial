@@ -309,6 +309,7 @@ else{
 ```
 ####  DB수정 이슈
 ```
+디비 컬럼명을 많이 수정하게 되었다.
 (node:12160) UnhandledPromiseRejectionWarning: SequelizeDatabaseError: Unknown column 'todos.id' in 'order clause'
     at Query.formatError (C:\Users\dev\workspace\express-tutorial\node_modules\sequelize\lib\dialects\mysql\query.js:239:16)
 ```
@@ -318,6 +319,14 @@ else{
 connection.js -> model 과 DB컬럼명을 맞춰준다
 그래도 없다면 에러난 컬럼명을 찾아 api.js or render.js 에 값이 들어가는 부분을 찾아 컬럼명 확인
 ```
+
+### board_list 에서 board_view로 넘어갈때
+```
+<a href="/board_view?${el.bbs_eq}"> ${el.title} </a>
+
+title을 누르면 bbs_eq값을 뒤에 붙혀서 id값을 뒤에 물고감
+```
+
 
     
 

@@ -9,13 +9,7 @@
         회원가입수정
       </h1>   
 
-      <div class="mb-3" id="imageload">
-
-        
-
-     
-        
-      
+      <div class="mb-3" id="imageload">    
        
       </div>
 
@@ -45,15 +39,7 @@
         <label for="inputEmail" class="form-label">이메일</label>
         <input type="text" class="form-control" id="inputEmail" value="<%= user.email %>">
       </div>      
-      <!-- <div class="mb-3">
-        <form method="post" enctype="multipart/form-data" action="/upload">
-          <input id=file type="file" name="file">
-          <input type="submit" onclick="fileSubmit()" value="Submit">
-          <img src="/image.png" />
-      </form> -->
-
-      
-
+     
       </div>
       <div>
         <button onclick="updateUser()" type="submit" class="btn btn-secondary w-100p mb-15">회원수정</button>
@@ -67,46 +53,6 @@
   <%- include('./common/javascript') -%>
   <script src="http://code.jquery.com/jquery-1.7.1.js"></script>
   <script>
-// function imageload(){
-//   var imageload = $('#imageload').val()
-//       $.post("/api/vi/imgae/load", {    
-//       }).done(function(data){
-//         var post = data.data;
-//         console.log('post = ', post);
-      
-                
-//         $('#imageload').prepend(content);
-//       })
-//     }
-    
-//     imageload();
-  
-    // function imageload () {
-    //   var imageload = $('#imageload').val()
-    //   var form = $('#fileForm')[0];
-    //   var formData = new FormData(form);
-    //   console.log('imageload =>', imageload)
-    //   console.log('form =>', form)
-    //   console.log('formData =>', formData)
-      
-    //   $.ajax({
-    //     type: 'get',
-    //         url: '/upload',
-    //         data: formData,
-    //         processData: false,
-    //         contentType: false,
-    //         success: function (data) {
-    //             $('#filePath').val(data);
-    //             console.log('data=>',data)
-    //             console.log('success')
-    //         },
-    //         error: function (error) {
-    //             console.log('error=>', error);
-    //         }  
-        
-    //   })
-    // }
-    // imageload();
     $("#inputPw").keydown(function(key) {
       if (key.keyCode == 13) {
         regist();
