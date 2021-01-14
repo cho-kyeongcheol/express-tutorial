@@ -17,40 +17,113 @@
 
 
 
-                <div class="col">
-                    <span>Title</span>
-                    <input id="inputTitle" type='text' class='form-control input300' placeholder="제목을 입력하세요.">
-                </div>
 
-                <div class="row mt-20">
-                    <div class="col">
-                        <span>Content</span>
-                        <input id="inputText" type='text' class='form-control input600' placeholder="내용을 입력하세요">
-                    </div>
-                    <div class="col">
-                        <span>board_type</span><br>
-                        <select class="custom-select" name="pets" id="board_select">
-                            <option value="news">news</option>
-                            <option value="Gallery">Gallery</option>
-                            <option value="Q&A">Q&A</option>
-                        </select>
+
+                    <div class="col mt-20">
+                        <span>board_no</span> <br>
+                        <span id="bbs_eq"><%= todo.bbs_eq %></span>
+
                     </div>
 
-                    <div class="mb-3 mt-20">
-                        <div class="col"></div>
-                        <form action="/upload" method="post" enctype="multipart/form-data" id="fileForm">
-                            <input type="file" id="fileInput" name="fileInput">
-                        </form>
-                        <input type="text" id="filePath">
-                        <button class="btn btn-secondary ml-30" onclick="insertTodo()">작성</button>
+
+                    <div class="col mt-20">
+                        <span>Title</span>
+                        <input id="inputTitle" type='text' class='form-control input300' value="<%= todo.title %>">
                     </div>
-                </div>
-            </div>
+
+                    <div class="row mt-20">
+                        <div class="col">
+                            <span>Content</span>
+                            <input id="inputText" type='text' class='form-control input600' value="<%= todo.content %>">
+                        </div>
+                        <div class="col">
+                            <span>board_type</span><br>
+                            <select class="custom-select" name="pets" id="board_select">
+                                <option value="news">news</option>
+                                <option value="Gallery">Gallery</option>
+                                <option value="Q&A">Q&A</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3 mt-20">
+                            <div class="col"></div>
+                            <form action="/upload" method="post" enctype="multipart/form-data" id="fileForm">
+                                <input type="file" id="fileInput" name="fileInput">
+                            </form>
+                            <input type="text" id="filePath">
+                            <button class="btn btn-secondary ml-30" onclick="insertTodo()">작성</button>
+
+                            <button class="btn btn-primary" onclick="updateTodo()">수정</button>
+
+                            <button class="btn btn-secondary" onclick="deleteTodo(${el.bbs_eq})">삭제</button>
+
+                        </div>
+                    </div>
+        </div>
         <button class="btn btn-primary insertBtn w200" onclick="goIndex()">홈페이지로이동</button>
 
 
         <%- include('../common/javascript') -%>
             <script>
+
+
+                function updateTodo() {
+                    var bbs_eq = $("#bbs_eq").html();
+                    var inputTitle = $('#inputTitle').val();
+                    var inputText = $('#inputText').val();
+                    var board_select = $('#board_select').val();   
+                    console.log("bbs_eq => ", bbs_eq)
+                    console.log("inputTitle => ", inputTitle)
+                    console.log("inputText => ", inputText)
+                    console.log("board_select => ", board_select)
+                    $.post("/api/vi/board/update/", {  
+                        bbs_eq:bbs_eq,                      
+                        inputTitle: inputTitle,
+                        inputText: inputText,
+                        board_select: board_select
+                    }).done(function (data) {
+                        if (data.result === 'fail') {
+                            Swal.fire({
+                                icon: 'error',
+                                title: '수정',
+                                text: '실패!'
+                            })
+                        } else {
+                            Swal.fire({
+                                icon: 'success',
+                                title: '수정',
+                                text: '성공!'
+                            })
+                        }
+                    })                    
+                }
+
+
+                // function updateTodo(id) {
+                //     // var inputTodo = document.getElementById('#inputTodo');
+                //     var inputTodo = $('#inputTodo_' + id).val();
+                //     console.log('id = ', id)
+                //     console.log("inputTodo => ", inputTodo)
+                //     $.post("/api/vi/board/update/", {
+                //         id: id,
+                //         content: inputTodo
+                //     }).done(function (data) {
+                //         if (data.result === 'fail') {
+                //             Swal.fire({
+                //                 icon: 'error',
+                //                 title: '수정',
+                //                 text: '실패!'
+                //             })
+                //         } else {
+                //             Swal.fire({
+                //                 icon: 'success',
+                //                 title: '수정',
+                //                 text: '성공!'
+                //             })
+                //         }
+                //     })
+                //     return id;
+                // }
 
 
                 function goIndex() {

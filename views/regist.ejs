@@ -119,10 +119,10 @@
       console.log('inputPw = ', inputPw)      
       console.log('inputEmail = ', inputEmail)     
 
-      $.post( "/api/v1/regist", {         
+      $.post( "/api/v1/regist", {  
+        user_Id: user_Id,       
         inputName: inputName,
-        inputPw: inputPw,
-        user_Id: user_Id,
+        inputPw: inputPw,       
         inputEmail: inputEmail
       })
       .done(function( data ) {

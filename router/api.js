@@ -15,20 +15,78 @@ const { path } = require('../server');
 // });
 
 
-router.post('/vi/imgae/load', async (req, res) => {
+router.post('/vi/upload/board/read', async function (req, res, next) {
+  const postfile = PostFile();  
   const session_id = req.session.user_id;
-  const post_file = PostFile();
+  console.log('@@@upload/read', postfile)
+  
+  const post_file = await postfile.findAll({
+    user_id : session_id
+  })
+  console.log('@@@upload/read 뒷부분', postfile)
+  
+  res.json({ 'result': 'success', 'data': post_file })
+  })
 
-  const postfile = await post_file.findAll({
-    where: { post_id: session_id }
+router.post('/baord/upload', function (req, res) {
+  console.log('ajaxfile insert@@')
+  var file = req.body;
+  const session_id = req.session.user_id;
+  console.log('req.body =>', file)
+  console.log('session_id =>', session_id)
+  
+  const post_file = PostFile();
+00
+  const sequelize = getConnection();
+
+  console.log('postfile =>', post_file)
+
+  var form = new multiparty.Form({
+    autoFiles: false, // 요청이 들어오면 파일을 자동으로 저장할 것인가
+    uploadDir: 'uploads/', // 파일이 저장되는 경로(프로젝트 내의 temp 폴더에 저장됩니다.)
+    maxFilesSize: 1024 * 1024 * 5 // 허용 파일 사이즈 최대치
   });
-  var context = {};
-  console.log('session_id', session_id)
-  console.log('=================', postfile[0].dataValues.filepath)
-  var str = context.img_src.substring(8, 1000);
-  res.json({ 'result': 'success', 'data': postfile[0].dataValues.filepath })
-  // res.sendFile(path.join(__dirname, "./uploads/image.png"));
-})
+
+  form.parse(req, async function (error, fields, files) {
+    // 파일 전송이 요청되면 이곳으로 온다.
+    // 에러와 필드 정보, 파일 객체가 넘어온다.
+    var path = files.fileInput[0].path;
+    console.log('files =>', files)
+    console.log("path : ", path);
+    res.send(path); // 파일과 예외 처리를 한 뒤 브라우저로 응답해준다.  
+
+    const t = await sequelize.transaction();
+
+    var str = path.substring(8, 1000);
+    console.log('@@str@@ =>', str)
+
+    try {
+      await post_file.update({ filepath: path, filename: str }, {
+        where: {
+          post_id: session_id
+        }
+      });
+    } catch (e) {
+      res.json({ 'result': 'fail' })
+    }
+    console.log('post_files=>', post_file)
+  });
+});
+
+
+
+router.post('/vi/upload/read', async function (req, res, next) {
+  const postfile = PostFile();  
+  const session_id = req.session.user_id;
+  console.log('@@@upload/read', postfile)
+  
+  const post_file = await postfile.findAll({
+    user_id : session_id
+  })
+  console.log('@@@upload/read 뒷부분', postfile)
+  
+  res.json({ 'result': 'success', 'data': post_file })
+  })
 
 router.post('/upload', function (req, res) {
   console.log('ajaxfile insert@@')
@@ -71,16 +129,8 @@ router.post('/upload', function (req, res) {
     } catch (e) {
       res.json({ 'result': 'fail' })
     }
-    
-
     console.log('post_files=>', post_file)
-
   });
-
-  console.log("path222@@@ : ", path);
-  // const sequelize = getConnection();
-
-
 });
 
 
@@ -110,17 +160,21 @@ router.post('/vi/user/update', async function (req, res, next) {
 router.post('/vi/board/update', async function (req, res, next) {
 
   console.log('req.body = ', req.body);
-  const inputText = req.body.content;
-  const id = req.body.id;
+  const inputTitle = req.body.inputTitle;
+  const inputText = req.body.inputText;
+  const board_select = req.body.board_select;
+  const id = req.body.bbs_eq;
   let date_ob = new Date();
 
   const todos = Todos();
 
+  console.log("@@inputTitle =>", inputTitle)
   console.log("@@inputText =>", inputText)
+  console.log("@@board_select =>", board_select)
   console.log("date_ob=>", date_ob)
 
   try {
-    await todos.update({ content: inputText, update_at: date_ob }, {
+    await todos.update({ title: inputTitle, content: inputText, board_tpye: board_select, update_at: date_ob }, {
       where: {
         bbs_eq: id
       }
@@ -132,31 +186,16 @@ router.post('/vi/board/update', async function (req, res, next) {
   res.json({ 'result': 'success' })
 })
 
-
-router.post('/vi/upload/read', async function (req, res, next) {
-const postfile = PostFile();  
-const session_id = req.session.user_id;
-console.log('@@@upload/read', postfile)
-
-const post_file = await postfile.findAll({
-  user_id : session_id
-})
-console.log('@@@upload/read 뒷부분', postfile)
-
-res.json({ 'result': 'success', 'data': post_file })
-})
-
 router.post('/vi/board/read', async function (req, res, next) {
 
   const session_id = req.session.user_id;
   const todos = Todos();
-
+  console.log('session_id =.>', session_id)
   const todo_list = await todos.findAll({
     offset: 0,
     limit: 5,
     where: {
-      del_yn: 'N',
-      user_eq: session_id
+      del_yn: 'N'      
     },
     order: [
       ['bbs_eq', 'DESC']
@@ -283,23 +322,22 @@ router.post('/v1/regist', async function (req, res, next) {
 
 
   try {
-  const user = await users.create({
-    user_id: user_Id,
-    username: inputName,
-    password: hash,
-    email: inputEmail
-  });
-  const user_login = await users_login.create({
-    user_id: user.id
-  });
-  const post_files = await post_file.create({
-    user_id: user.id
-  })
-
-
- } catch(e) {
-  res.json({ 'result': 'fail' })
- }
+    const user = await users.create({
+      user_id: user_Id,
+      username: inputName,
+      password: hash,
+      email: inputEmail
+    });
+    const user_login = await users_login.create({
+      user_id: user.user_eq
+    });
+    const post_files = await post_file.create({
+      user_id: user.user_eq,
+      file_type: 'board'
+    })
+  } catch (e) {
+    res.json({ 'result': 'fail' })
+  }
   res.json({ 'result': 'success' })
 });
 
@@ -325,13 +363,11 @@ router.post('/v1/login', async function (req, res, next) {
   var inputId = req.body.inputId;
   var inputPw = req.body.inputPw;
   var hash = crypto.createHash('md5').update(inputPw).digest('hex');
-  const session_id = req.session.user_id;
-  const session = req.session
+  
 
   console.log('inputName = ', inputId);
   console.log('inputPw = ', hash);
-  console.log("session_id = ", session_id)
-  console.log("session = ", session)
+ 
 
   if (inputId === '') {
     res.json({ 'result': 'fail' })
@@ -364,7 +400,9 @@ router.post('/v1/login', async function (req, res, next) {
     res.json({ 'result': 'fail' })
   } else {
     // session up
-    req.session.user_id = user[0].id;
+    console.log('성공@@')
+    req.session.user_id = user[0].user_eq;
+    console.log('req.session.user_id@@=>',req.session.user_id)
     res.json({ 'result': 'success' })
   }
 });
@@ -372,4 +410,3 @@ router.post('/v1/login', async function (req, res, next) {
 
 
 module.exports = router;
-

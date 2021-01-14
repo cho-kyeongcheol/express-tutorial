@@ -71,6 +71,8 @@
       </table>
     </div>
 
+
+
     
     <div class="parah" id="parah">댓글입력</div>
 
@@ -81,6 +83,8 @@
         </a>
       </li>
 
+
+      
       <% for(i=1;i<10;i++){ %>
 
         <li class="page-item"><a class="page-link" href="board/read/page/">
@@ -95,11 +99,9 @@
           </li>
     </ul>
 
-    <div id="inputTodo2">tesfdst22</div>
+   
     <!-- <input type="text" id="inputTodo2"> -->
-    <button onclick="test()">
-      test
-    </button>
+   
 
     <%- include('./common/javascript') -%>
 
@@ -125,7 +127,6 @@
           }
         });
 
-
         function readTodo() {
           $.post("/api/vi/board/read/", {
             // pass
@@ -136,13 +137,13 @@
               const content = `                      
           <tr id="row_${el.bbs_eq}">
             <td>
-              ${el.bbs_eq}
+              <span id="bbs_eq">${el.bbs_eq}</span>
             </td>  
             <td>
               <a href="/board_view?${el.bbs_eq}"> ${el.title} </a>
             </td>     
-            <td>
-              ${el.user_eq}
+            <td>              
+               ${el.user_eq}
             </td>       
             <td>
               <input id="inputTodo_${el.bbs_eq}" type='text' class='form-control ml-10 mt-10 mb-15' placeholder="${el.content}" value="${el.content}">
@@ -152,13 +153,7 @@
             </td>
             <td>
               ${el.count}
-            </td>
-            <td>
-              <button class="btn btn-primary" onclick="updateTodo(${el.bbs_eq})">수정</button>
-            </td>
-            <td>
-              <button class="btn btn-secondary" onclick="deleteTodo(${el.bbs_eq})">삭제</button>
-            </td>
+            </td>           
           </tr>
           
           `
@@ -167,39 +162,13 @@
 
           })
         }
-       
-
           
         
         $(function () {
           readTodo();
         })
 
-        function updateTodo(id) {
-          // var inputTodo = document.getElementById('#inputTodo');
-          var inputTodo = $('#inputTodo_' + id).val();
-          console.log('id = ', id)
-          console.log("inputTodo => ", inputTodo)
-          $.post("/api/vi/board/update/", {
-            id: id,
-            content: inputTodo
-          }).done(function (data) {
-            if (data.result === 'fail') {
-              Swal.fire({
-                icon: 'error',
-                title: '수정',
-                text: '실패!'
-              })
-            } else {
-              Swal.fire({
-                icon: 'success',
-                title: '수정',
-                text: '성공!'
-              })
-            }
-          })
-          return id;
-        }
+        
 
         function enterkey(id) {
           if (window.event.keyCode == 13) {

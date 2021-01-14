@@ -128,7 +128,34 @@ const  handleError = (err, res) => {
 	}
 );
 ```
-
+### 리스트에서 삭제할때 id값
+``` js
+function  updateTodo(id) {
+	// var inputTodo = document.getElementById('#inputTodo');
+	var  inputTodo = $('#inputTodo_' + id).val();
+	console.log('id = ', id)
+	console.log("inputTodo => ", inputTodo)
+		$.post("/api/vi/board/update/", {
+			id:  id,
+			content:  inputTodo
+			}).done(function (data) {
+				if (data.result === 'fail') {
+					Swal.fire({
+					icon:  'error',
+					title:  '수정',
+					text:  '실패!'
+					})
+				} else {
+					Swal.fire({
+					icon:  'success',
+					title:  '수정',
+					text:  '성공!'
+					})
+				}
+		})
+	return  id;
+}
+```
 ## file 바로넣기
 ```  html
 <form  action="/upload"  method="post"  enctype="multipart/form-data"  id="fileForm">
@@ -266,6 +293,60 @@ res.json({ 'result': 'fail' })
 }
 ```
 
+
+
+
+####  usermodify.ejs
+``` js
+<% if(img_src != undefined) { %>
+	<img  src="<%= src %>"  style="width: 200px; height: 300px;"/>
+<% } %>
+  
+<% if(img_src == undefined) { %>
+	<div>이미지를 선택하세요</div>
+<% } %>
+
+```
+
+###  raw : true 
+```
+{ raw: true }
+
+`findOne()` 및 `findAll()`에서 json형태로 보거나 가공하고 싶을 때 사용합니다. sequelize 쿼리문 안에 아래와 같이 작성합니다.
+```
+
+
+
+### board_list 에서 board_view로 넘어갈때
+```
+<a href="/board_view?${el.bbs_eq}"> ${el.title} </a>
+
+title을 누르면 bbs_eq값을 뒤에 붙혀서 id값을 뒤에 물고감
+```
+
+# ISSUE
+
+###  Validation error
+```
+ SequelizeUniqueConstraintError: Validation error
+    at Query.formatError (C:\Users\dev\workspace\express-tutorial\node_modules\sequelize\lib\dialects\mysql\query.js:218:16)
+
+DB or model 속성값이랑 컬럼이름 확인
+```
+
+####  DB수정 이슈
+```
+디비 컬럼명을 많이 수정하게 되었다.
+(node:12160) UnhandledPromiseRejectionWarning: SequelizeDatabaseError: Unknown column 'todos.id' in 'order clause'
+    at Query.formatError (C:\Users\dev\workspace\express-tutorial\node_modules\sequelize\lib\dialects\mysql\query.js:239:16)
+```
+
+#### 해결방법
+```
+connection.js -> model 과 DB컬럼명을 맞춰준다
+그래도 없다면 에러난 컬럼명을 찾아 api.js or render.js 에 값이 들어가는 부분을 찾아 컬럼명 확인
+```
+
 ###  컬럼 is null 
 ```
 connection 안에 allowNull 확인
@@ -288,45 +369,6 @@ else{
 	context.post_file = undefined
 }
 ```
-
-####  usermodify.ejs
-``` js
-<% if(img_src != undefined) { %>
-	<img  src="<%= src %>"  style="width: 200px; height: 300px;"/>
-<% } %>
-  
-<% if(img_src == undefined) { %>
-	<div>이미지를 선택하세요</div>
-<% } %>
-
-```
-
-###  raw : true 
-```
-{ raw: true }
-
-`findOne()` 및 `findAll()`에서 json형태로 보거나 가공하고 싶을 때 사용합니다. sequelize 쿼리문 안에 아래와 같이 작성합니다.
-```
-####  DB수정 이슈
-```
-디비 컬럼명을 많이 수정하게 되었다.
-(node:12160) UnhandledPromiseRejectionWarning: SequelizeDatabaseError: Unknown column 'todos.id' in 'order clause'
-    at Query.formatError (C:\Users\dev\workspace\express-tutorial\node_modules\sequelize\lib\dialects\mysql\query.js:239:16)
-```
-
-#### 해결방법
-```
-connection.js -> model 과 DB컬럼명을 맞춰준다
-그래도 없다면 에러난 컬럼명을 찾아 api.js or render.js 에 값이 들어가는 부분을 찾아 컬럼명 확인
-```
-
-### board_list 에서 board_view로 넘어갈때
-```
-<a href="/board_view?${el.bbs_eq}"> ${el.title} </a>
-
-title을 누르면 bbs_eq값을 뒤에 붙혀서 id값을 뒤에 물고감
-```
-
 
     
 

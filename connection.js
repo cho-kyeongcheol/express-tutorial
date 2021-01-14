@@ -28,7 +28,7 @@ exports.PostFile = function() {
         autoIncrement: true
       },
       target_id: {
-        type: DataTypes.STRING(40)        
+        type: DataTypes.INTEGER    
       },     
       filepath: {
         type: DataTypes.STRING(255)
@@ -37,12 +37,10 @@ exports.PostFile = function() {
         type: DataTypes.STRING(255)
       },
       sort: {
-        type: DataTypes.INTEGER,
-        defaultValue: 'y'
+        type: DataTypes.INTEGER        
       },
       create_id: {
-        type: DataTypes.INTEGER,
-        defaultValue: 'y'
+        type: DataTypes.INTEGER        
       },
       del_yn: {
         type: DataTypes.STRING(2),
@@ -51,16 +49,20 @@ exports.PostFile = function() {
       create_date: {
         type: DataTypes.DATE,
         defaultValue: Sequelize.NOW
-    },extension: {
-      type: DataTypes.STRING(10)
-    }
-  }, {
-      // Other model options go here
-      timestamps: false,
-      tableName: 'post_file'
-  });
-  return post_file;
-}
+      },
+      extension: {
+        type: DataTypes.STRING(10)
+      },
+      file_type: {
+        type: DataTypes.STRING(10)
+      }
+    }, {
+        // Other model options go here
+        timestamps: false,
+        tableName: 'post_file'
+    });
+    return post_file;
+  }
 
 
 
@@ -74,6 +76,9 @@ exports.Todos = function() {
       allowNull: false,
       primaryKey: true,
       autoIncrement: true
+    },
+    bbs_key: {
+      type: DataTypes.INTEGER      
     },
     content: {
       type: DataTypes.STRING(255),

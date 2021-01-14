@@ -49,12 +49,9 @@ router.get('/usermodify', async (req, res) => {
 
 }
  
-// console.log("contextcontext",context)
-    
-    res.render('usermodify', context);    
-    
+// console.log("contextcontext",context)    
+    res.render('usermodify', context);        
 })
-
 
 router.get('/', async (req, res) => {
 
@@ -152,9 +149,11 @@ router.get('/board_view', async(req, res) => {
                 user_eq: user_id,
             },
             raw: true
-        });
-        context.todo = todo[0]
-        context.user = user[0]       
+        });        
+
+        context.todo = todo[10]
+        context.user = user[0]  
+         
     } else {
         context.user = undefined       
         context.todo = undefined
