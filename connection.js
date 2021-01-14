@@ -54,7 +54,7 @@ exports.PostFile = function() {
         type: DataTypes.STRING(10)
       },
       file_type: {
-        type: DataTypes.STRING(10)
+        type: DataTypes.STRING(20)
       }
     }, {
         // Other model options go here

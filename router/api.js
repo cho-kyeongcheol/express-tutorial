@@ -123,7 +123,7 @@ router.post('/upload', function (req, res) {
     try {
       await post_file.update({ filepath: path, filename: str }, {
         where: {
-          post_id: session_id
+          target_id: session_id
         }
       });
     } catch (e) {
@@ -259,6 +259,8 @@ router.post('/v1/board/insert', async function (req, res, next) {
 
   // Model Basics
   const todos = Todos();
+  const post_file = PostFile();
+
   console.log('BOARDINSERT');   
 
   try {
@@ -268,6 +270,14 @@ router.post('/v1/board/insert', async function (req, res, next) {
       content: inputText,
       board_type: board_type
     })
+    console.log('todotodotodo@#@#@#@ ')
+    // const post_files = await post_file.create({
+    //   target_id: session_id,
+    //   file_type: 'attach'
+    // })
+    console.log('post_filespost_files@#@#@#@ ')
+
+
     console.log('todo => ', todo)
 
     const data = todo.get({ plain: true })
@@ -332,8 +342,8 @@ router.post('/v1/regist', async function (req, res, next) {
       user_id: user.user_eq
     });
     const post_files = await post_file.create({
-      user_id: user.user_eq,
-      file_type: 'board'
+      target_id: user.user_eq,
+      file_type: 'profile'
     })
   } catch (e) {
     res.json({ 'result': 'fail' })

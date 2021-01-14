@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 const path = require("path");
+var url = require('url');
+
 
 const { getConnection, Users, UsersLogin, Todos, PostFile } = require('../connection')
 
@@ -113,6 +115,12 @@ router.get('/board_write', async(req, res) => {
     if (user_id) {
         const users = Users();
 
+        const post_file = PostFile();
+       
+        const postfile = await post_file.findAll({
+            where: { target_id: user_id }
+        });
+ 
         const user = await users.findAll({
             where: {
                 user_eq: user_id
@@ -120,7 +128,33 @@ router.get('/board_write', async(req, res) => {
             raw: true
         });  
 
-        context.user = user[0]       
+
+        if(postfile[0].dataValues.filename != null) {
+            context.user = user[0]
+            context.img_src =  postfile[0].dataValues.filepath
+            var str = context.img_src.substring(8, 1000);
+            context.src = str
+        
+            console.log('==1=1=1=1postfile=1=1===', postfile)
+            console.log('#@#@#user@#@# =>' , user)
+            console.log('==1=1=1=1=1=1===', postfile[0].dataValues.filepath)
+            console.log('@@@FILENAME', postfile[0].dataValues.filename)
+            console.log('@@str@@ =>', str)
+
+        context.user = user[0]    
+    } else{
+        console.log('@@!!##undefined')    
+        context.user = user[0]
+        context.img_src =  postfile[0].dataValues.filepath
+        context.post_file = undefined
+        console.log('@@#!#!#!#!qwqwqwqw',context.post_file)
+    
+    } 
+        
+        
+
+
+
     } else {
         context.user = undefined       
     }
@@ -130,6 +164,14 @@ router.get('/board_write', async(req, res) => {
 
 router.get('/board_view', async(req, res) => {
     const user_id = req.session.user_id;
+
+    var parsedObject = req.url;
+    var sub_url = parsedObject.substring(19, 30);
+    console.log('parsedObject=>', parsedObject); // 현재 url 객체 정보 출력
+    console.log('sub_url=>', sub_url); // bbs_eq url 객체 정보 출력
+    
+
+
     var context = {};
 
     if (user_id) {
@@ -146,12 +188,12 @@ router.get('/board_view', async(req, res) => {
 
         const todo = await todos.findAll({
             where: {
-                user_eq: user_id,
+                bbs_eq:sub_url
             },
             raw: true
         });        
 
-        context.todo = todo[10]
+        context.todo = todo[0]
         context.user = user[0]  
          
     } else {

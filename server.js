@@ -33,6 +33,7 @@ app.use(session({
   store: new FileStore()
 }));
 
+
 app.use('/', render);
 app.use('/api', api);
 
