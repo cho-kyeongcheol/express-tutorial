@@ -14,6 +14,66 @@ const { path } = require('../server');
 //   res.render('index', { title: 'Express' });
 // });
 
+router.post('/vi/board/read', async function (req, res, next) {
+
+  const session_id = req.session.user_id;
+  const todos = Todos();
+  console.log('session_id =.>', session_id)
+  const todo_list = await todos.findAll({    
+    where: {
+      del_yn: 'N'      
+    },
+    order: [
+      ['bbs_eq', 'DESC']
+    ],
+    raw: true
+  });
+
+  console.log('hello')
+
+  res.json({ 'result': 'success', 'data': todo_list })
+})
+
+router.post('/vi/reply/insert', async function (req, res, next) {
+  console.log('req.body = ', req.body);
+  console.log('REPLYINSERT1');
+  const session_id = req.session.user_id;
+  const replyTitle = req.body.replyTitle;
+  const replyContent = req.body.replyContent;
+  
+  console.log('session_id = ', session_id);
+  console.log('replyTitle = ', replyTitle);
+  console.log('replyContent = ', replyContent);
+    
+  if (replyTitle === '') {
+    res.json({ 'result': 'fail' })
+  } 
+  if (replyContent === '') {
+    res.json({ 'result': 'fail' })
+  } 
+
+  // Model Basics
+  const todos = Todos(); 
+
+  try {
+    const todo = await todos.create({
+      user_eq: session_id,
+      title: replyTitle,
+      content: replyContent,      
+      board_type: 'reply',
+      parent_id: 1
+    })
+    console.log('todo => ', todo)
+    const data = todo.get({ plain: true })
+    res.json({ 'result': 'success', 'data': data })
+  } catch (e) {
+    console.log('실패!!');
+    res.json({ 'result': 'fail' })
+  }
+
+});
+
+
 
 router.post('/vi/upload/board/read', async function (req, res, next) {
   const postfile = PostFile();  

@@ -74,35 +74,76 @@
                 
                   </table>
 
-                    <span>댓글작성</span>
-                    <input id="inputTitle" type='text' class='form-control' >
+                    <<h5>댓글작성</h5>
+                    <input id="replyTitle" type='text' class='form-control' placeholder="제목을 입력하세요.">
+                    <input id="replyContent" type='text' class='form-control' placeholder="내용을 입력하세요.">
     
                 </div>
                 <button class="btn btn-primary" onclick="insertReply()">댓글등록</button>
 
 
 
-
-
-
-
-
-
-
-
-
-
         </div>
 
         
-
-
-
      
 
 
         <%- include('../common/javascript') -%>
+
             <script>
+
+            function readTodo() {
+                    $.post("/api/vi/reply/read/", {
+                        // pass
+                    }).done(function (data) {
+                        var todos = data.data;
+                        console.log('todos = ', todos);
+                        todos.forEach(el => {
+                        const content = `                      
+                    <tr>
+                        <td>              
+                        ${el.user_eq}
+                        </td>       
+                        <td>              
+                        ${el.content}
+                        </td>
+                        <td>
+                        ${el.board_type}
+                        </td>
+                        <td>
+                        ${el.count}
+                        </td>           
+                    </tr>
+                    
+                    `
+                        $('#todo_list').append(content);
+                        });
+
+                    })
+                    }
+
+
+
+
+
+                function insertReply() {
+                    var replyTitle = $('#replyTitle').val();
+                    var replyContent = $('#replyContent').val();
+                    var bbs_eq = $("#bbs_eq").html();
+                    console.log('replyTitle => ',replyTitle)
+                    console.log('replyContent => ',replyContent)
+                    $.post("/api/vi/reply/insert" ,{  
+                        replyTitle:replyTitle,
+                        replyContent:replyContent
+                    }).done(function (data) {
+                        if (data.result === 'fail') {
+                           console.log('댓글실패')
+                        } else {
+                            console.log('댓글성공')
+                        }
+                    })     
+                }
 
             readUpload()
 

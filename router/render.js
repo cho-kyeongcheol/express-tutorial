@@ -128,7 +128,6 @@ router.get('/board_write', async (req, res) => {
             raw: true
         });
 
-
         if (postfile[0].dataValues.filename != null) {
             context.user = user[0]
             context.img_src = postfile[0].dataValues.filepath
@@ -140,7 +139,6 @@ router.get('/board_write', async (req, res) => {
             console.log('==1=1=1=1=1=1===', postfile[0].dataValues.filepath)
             console.log('@@@FILENAME', postfile[0].dataValues.filename)
             console.log('@@str@@ =>', str)
-
             context.user = user[0]
         } else {
             console.log('@@!!##undefined')
@@ -148,13 +146,7 @@ router.get('/board_write', async (req, res) => {
             context.img_src = postfile[0].dataValues.filepath
             context.post_file = undefined
             console.log('@@#!#!#!#!qwqwqwqw', context.post_file)
-
         }
-
-
-
-
-
     } else {
         context.user = undefined
     }
@@ -192,6 +184,17 @@ router.get('/board_view', async (req, res) => {
             },
             raw: true
         });
+
+        const todo_list = await todos.findAll({
+            where: {
+                del_yn: 'N'
+            },
+            order: [
+                ['bbs_eq', 'DESC']
+            ],
+            raw: true
+        });
+
         const postfile = await post_file.findAll({
             where: {
                 target_id: user_id,
@@ -212,15 +215,17 @@ router.get('/board_view', async (req, res) => {
             console.log('@@str@@ =>', str)
 
             context.todo = todo[0]
+            
             context.user = user[0]
         } else {
             console.log('@@!!##undefined')
+            context.user = todo[0]
             context.user = todo[0]
             context.img_src = postfile[0].dataValues.filepath
             context.post_file = undefined
             console.log('@@#!#!#!#!qwqwqwqw', context.post_file)
         }
-
+        context.todo_list = todo_list
     } else {
         context.user = undefined
         context.todo = undefined
