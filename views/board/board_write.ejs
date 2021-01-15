@@ -17,35 +17,38 @@
 
 
 
-                <div class="col">
-                    <span>Title</span>
-                    <input id="inputTitle" type='text' class='form-control input300' placeholder="제목을 입력하세요.">
-                </div>
-
-                <div class="row mt-20">
                     <div class="col">
-                        <span>Content</span>
-                        <input id="inputText" type='text' class='form-control input600' placeholder="내용을 입력하세요">
-                    </div>
-                    <div class="col">
-                        <span>board_type</span><br>
-                        <select class="custom-select" name="pets" id="board_select">
-                            <option value="news">news</option>
-                            <option value="Gallery">Gallery</option>
-                            <option value="Q&A">Q&A</option>
-                        </select>
+                        <span>Title</span>
+                        <input id="inputTitle" type='text' class='form-control input300' placeholder="제목을 입력하세요.">
                     </div>
 
-                    <div class="mb-3 mt-20">
-                        <div class="col"></div>
-                        <form action="/upload" method="post" enctype="multipart/form-data" id="fileForm">
-                            <input type="file" id="fileInput" name="fileInput">
-                        </form>
-                        <input type="text" id="filePath">
-                        <button class="btn btn-secondary ml-30" onclick="insertTodo()">작성</button>
+                    <div class="row mt-20">
+                        <div class="col">
+                            <span>Content</span>
+                            <textarea id="inputText" class='form-control input600' placeholder="내용을 입력하세요">
+
+                            </textarea>
+                            
+                        </div>
+                        <div class="col">
+                            <span>board_type</span><br>
+                            <select class="custom-select" name="pets" id="board_select">
+                                <option value="news">news</option>
+                                <option value="Gallery">Gallery</option>
+                                <option value="Q&A">Q&A</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3 mt-20">
+                            <div class="col"></div>
+                            <form action="/upload" method="post" enctype="multipart/form-data" id="fileForm">
+                                <input type="file" id="fileInput" name="fileInput">
+                            </form>
+                            <input type="text" id="filePath">
+                            <button class="btn btn-secondary ml-30" onclick="insertTodo()">작성</button>
+                        </div>
                     </div>
-                </div>
-            </div>
+        </div>
         <button class="btn btn-primary insertBtn w200" onclick="goIndex()">홈페이지로이동</button>
 
 
@@ -57,7 +60,7 @@
                     window.location.href = "/";
                 }
 
-                function insertTodo() {                    
+                function insertTodo() {
                     var inputTitle = $('#inputTitle').val();
                     var inputText = $('#inputText').val();
                     var board_select = $('#board_select').val();
@@ -88,54 +91,27 @@
                 }
 
 
-    $('#fileInput').on('change', function () {
-        var form = $('#fileForm')[0];
-        var formData = new FormData(form);
-        console.log('form =>', form)
-        console.log('formData =>', formData)
-        $.ajax({
-            type: 'post',
-            url: '/api/board/upload',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (data) {
-                $('#filePath').val(data);
-                console.log('data=>',data)
-                console.log('success')
-            },
-            error: function (error) {
-                console.log('error=>', error);
-            }            
-        });   
-        readUpload()           
-    });
-  
-    readUpload()
-
-    
-    function readUpload() {      
-      $.post("/api/vi/upload/board/read/", {
-            // pass
-          }).done(function (data) {
-            var post_file = data.data;
-            const content = `
-            <% if(img_src != undefined) { %>
-              <img src="<%= src %>" style="width: 200px; height: 300px;"/>
-              <% }  %>
-
-              <% if(img_src == undefined) { %>
-                <div>이미지를 선택하세요</div>
-            <% }  %>
-            `
-            $('#imageload').prepend(content);
-          })         
-    }
-
-
-
-
-
+                $('#fileInput').on('change', function () {
+                    var form = $('#fileForm')[0];
+                    var formData = new FormData(form);
+                    console.log('form =>', form)
+                    console.log('formData =>', formData)
+                    $.ajax({
+                        type: 'post',
+                        url: '/api/board/upload',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (data) {
+                            $('#filePath').val(data);
+                            console.log('data=>', data)
+                            console.log('success')
+                        },
+                        error: function (error) {
+                            console.log('error=>', error);
+                        }
+                    });
+                });
 
 
 

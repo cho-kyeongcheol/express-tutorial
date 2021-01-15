@@ -8,16 +8,12 @@
         <div class="container w100">
             <% if (user) { %>
                 <div class="title">
-                    사용자명
+                    작성자명
                 </div>
                 <div id="username">
                     <%= user.username %>
                 </div>
                 <% } %>
-
-
-
-
 
                     <div class="col mt-20">
                         <span>board_no</span> <br>
@@ -34,7 +30,9 @@
                     <div class="row mt-20">
                         <div class="col">
                             <span>Content</span>
-                            <input id="inputText" type='text' class='form-control input600' value="<%= todo.content %>">
+                            <textarea id="inputText" type='text' class='form-control input600'>
+                                <%= todo.content %>
+                            </textarea>                            
                         </div>
                         <div class="col">
                             <span>board_type</span><br>
@@ -45,28 +43,88 @@
                             </select>
                         </div>
 
+                        <div class="mb-3" id="imageload">   
+                        </div>
+
                         <div class="mb-3 mt-20">
                             <div class="col"></div>
                             <form action="/upload" method="post" enctype="multipart/form-data" id="fileForm">
                                 <input type="file" id="fileInput" name="fileInput">
                             </form>
-                            <input type="text" id="filePath">
-                            <button class="btn btn-secondary ml-30" onclick="insertTodo()">작성</button>
-
+                            <input type="text" id="filePath"> 
                             <button class="btn btn-primary" onclick="updateTodo()">수정</button>
-
                             <button class="btn btn-secondary" onclick="deleteTodo(${el.bbs_eq})">삭제</button>
-
+                            <button class="btn btn-primary w200" onclick="goIndex()">홈페이지로이동</button>
                         </div>
                     </div>
+
+                    <hr>
+                <div class="col mt-20">
+                <h2>Reply</h2>>
+
+                <table class="todo_list2">
+                    <tr>                                            
+                      <th>user_id</th>
+                      <th class="content">content</th>                      
+                    </tr>
+                    <tr>                        
+                        <td>21452313</td>
+                        <td>댓글댓글댓글댓글댓글</td>
+                    </tr>
+                
+                  </table>
+
+                    <span>댓글작성</span>
+                    <input id="inputTitle" type='text' class='form-control' >
+    
+                </div>
+                <button class="btn btn-primary" onclick="insertReply()">댓글등록</button>
+
+
+
+
+
+
+
+
+
+
+
+
+
         </div>
-        <button class="btn btn-primary insertBtn w200" onclick="goIndex()">홈페이지로이동</button>
+
+        
+
+
+
+     
 
 
         <%- include('../common/javascript') -%>
             <script>
 
+            readUpload()
 
+                
+                function readUpload() {      
+                $.post("/api/vi/upload/board/read/", {
+                        // pass
+                    }).done(function (data) {
+                        var post_file = data.data;
+                        const content = `
+                        <% if(img_src != undefined) { %>
+                        <img src="<%= src %>" style="width: 200px; height: 300px;"/>
+                        <% }  %>
+
+                        <% if(img_src == undefined) { %>
+                            <div>이미지를 선택하세요</div>
+                        <% }  %>
+                        `
+                        $('#imageload').prepend(content);
+                    })         
+                }
+                
                 function updateTodo() {
                     var bbs_eq = $("#bbs_eq").html();
                     var inputTitle = $('#inputTitle').val();
@@ -97,10 +155,6 @@
                         }
                     })                    
                 }
-
-
-                
-
 
                 function goIndex() {
                     window.location.href = "/";

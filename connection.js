@@ -76,10 +76,7 @@ exports.Todos = function() {
       allowNull: false,
       primaryKey: true,
       autoIncrement: true
-    },
-    bbs_key: {
-      type: DataTypes.INTEGER      
-    },
+    },    
     content: {
       type: DataTypes.STRING(255),
       allowNull: false

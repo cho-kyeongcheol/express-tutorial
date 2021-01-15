@@ -61,11 +61,38 @@
   border-radius: 8px;
   border: solid 1px #c7c7c7;
 }
+.todo_list2 {
+  margin-left: 20px;
+  margin-right: 20px;
+  border-spacing: 10px;
+  border-top: 1px solid #444444;
+  border-collapse: collapse;
+}
+.todo_list2 th, td {
+  border-bottom: 1px solid #444444;
+    padding: 10px;
+    text-align: center;
+}
 
 .todo_list {
   margin-left: 20px;
   margin-right: 20px;
-  border-spacing: 10px
+  border-spacing: 10px;
+  border-top: 1px solid #444444;
+  border-collapse: collapse;
+}
+
+.todo_list th, td {
+  border-bottom: 1px solid #444444;
+    padding: 10px;
+    text-align: center;
+}
+
+.todo_list th:nth-child(2n), .todo_list td:nth-child(2n) {
+  background-color: #bbdefb;
+}
+.todo_list th:nth-child(2n+1), .todo_list td:nth-child(2n+1) {
+  background-color: #e3f2fd;
 }
 
 .todo_list2 {
@@ -79,7 +106,7 @@
 }
 
 .todo_list tr .content {
-  width: 230px
+  width: 350px
 
 }
 

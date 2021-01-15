@@ -60,12 +60,12 @@
 
       <table id="todo_list">       
         <tr>
-          <td>no</td>
-          <td>title</td>
-          <td>user_id</td>
-          <td class="content">content</td>
-          <td>board_type</td>
-          <td>조회수</td>
+          <th>no</th>
+          <th>title</th>
+          <th>user_id</th>
+          <th class="content">content</th>
+          <th>board_type</th>
+          <th>조회수</th>
         </tr>
     
       </table>
@@ -145,8 +145,8 @@
             <td>              
                ${el.user_eq}
             </td>       
-            <td>
-              <input id="inputTodo_${el.bbs_eq}" type='text' class='form-control ml-10 mt-10 mb-15' placeholder="${el.content}" value="${el.content}">
+            <td>              
+              ${el.content}
             </td>
             <td>
               ${el.board_type}

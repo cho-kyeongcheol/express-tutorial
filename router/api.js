@@ -21,14 +21,15 @@ router.post('/vi/upload/board/read', async function (req, res, next) {
   console.log('@@@upload/read', postfile)
   
   const post_file = await postfile.findAll({
-    user_id : session_id
+    user_id : session_id,
+    file_type: 'attach'
   })
   console.log('@@@upload/read 뒷부분', postfile)
   
   res.json({ 'result': 'success', 'data': post_file })
   })
 
-router.post('/baord/upload', function (req, res) {
+router.post('/board/upload', function (req, res) {
   console.log('ajaxfile insert@@')
   var file = req.body;
   const session_id = req.session.user_id;
@@ -36,7 +37,7 @@ router.post('/baord/upload', function (req, res) {
   console.log('session_id =>', session_id)
   
   const post_file = PostFile();
-00
+
   const sequelize = getConnection();
 
   console.log('postfile =>', post_file)
@@ -55,17 +56,25 @@ router.post('/baord/upload', function (req, res) {
     console.log("path : ", path);
     res.send(path); // 파일과 예외 처리를 한 뒤 브라우저로 응답해준다.  
 
-    const t = await sequelize.transaction();
+    // const t = await sequelize.transaction();
 
     var str = path.substring(8, 1000);
     console.log('@@str@@ =>', str)
 
     try {
-      await post_file.update({ filepath: path, filename: str }, {
-        where: {
-          post_id: session_id
-        }
-      });
+       const post_files = await post_file.create({  
+          target_id: session_id,
+          file_type: 'attach',
+          filepath: path,
+          filename: str
+        })
+
+
+      // await post_file.update({ filepath: path, filename: str , file_type: 'attach'}, {
+      //   where: {
+      //     post_id: session_id
+      //   }
+      // });
     } catch (e) {
       res.json({ 'result': 'fail' })
     }
@@ -270,13 +279,16 @@ router.post('/v1/board/insert', async function (req, res, next) {
       content: inputText,
       board_type: board_type
     })
-    console.log('todotodotodo@#@#@#@ ')
-    // const post_files = await post_file.create({
-    //   target_id: session_id,
+
+    // await post_files.update({ del_yn: "Y", delete_at: date_ob }, {
+    //   where: {
+    //     bbs_eq: id,
+    //     user_eq: session_id
+    //   }
+    // });
+    // const post_files = await post_file.create({      
     //   file_type: 'attach'
     // })
-    console.log('post_filespost_files@#@#@#@ ')
-
 
     console.log('todo => ', todo)
 

@@ -324,6 +324,7 @@ res.json({ 'result': 'fail' })
 title을 누르면 bbs_eq값을 뒤에 붙혀서 id값을 뒤에 물고감
 ```
 
+
 # ISSUE
 
 ###  Validation error
