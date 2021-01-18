@@ -74,12 +74,13 @@
                 $('#filePath').val(data);
                 console.log('data=>',data)
                 console.log('success')
+                window.location.href = '/usermodify'
             },
             error: function (error) {
                 console.log('error=>', error);
             }            
         });   
-        readUpload()           
+                 
     });
 
   

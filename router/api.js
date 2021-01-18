@@ -14,24 +14,23 @@ const { path } = require('../server');
 //   res.render('index', { title: 'Express' });
 // });
 
-router.post('/vi/board/read', async function (req, res, next) {
-
+router.post('/vi/reply/read', async function (req, res, next) {
+  console.log('@@reply/read@@ ')
+  console.log('req.body = ', req.body);  
   const session_id = req.session.user_id;
+  const bbs_eq = req.body.bbs_eq;
+  console.log('bbs_eq=>',bbs_eq)
   const todos = Todos();
   console.log('session_id =.>', session_id)
   const todo_list = await todos.findAll({    
     where: {
-      del_yn: 'N'      
+      del_yn: 'N',
+      parent_id:bbs_eq   
     },
-    order: [
-      ['bbs_eq', 'DESC']
-    ],
     raw: true
   });
-
   console.log('hello')
-
-  res.json({ 'result': 'success', 'data': todo_list })
+  res.json({ 'result': 'success', 'reply': todo_list })
 })
 
 router.post('/vi/reply/insert', async function (req, res, next) {
@@ -40,10 +39,12 @@ router.post('/vi/reply/insert', async function (req, res, next) {
   const session_id = req.session.user_id;
   const replyTitle = req.body.replyTitle;
   const replyContent = req.body.replyContent;
+  const bbs_eq = req.body.bbs_eq;
   
   console.log('session_id = ', session_id);
   console.log('replyTitle = ', replyTitle);
   console.log('replyContent = ', replyContent);
+  console.log('bbs_eq = ', bbs_eq);
     
   if (replyTitle === '') {
     res.json({ 'result': 'fail' })
@@ -61,11 +62,11 @@ router.post('/vi/reply/insert', async function (req, res, next) {
       title: replyTitle,
       content: replyContent,      
       board_type: 'reply',
-      parent_id: 1
+      parent_id: bbs_eq   
     })
     console.log('todo => ', todo)
     const data = todo.get({ plain: true })
-    res.json({ 'result': 'success', 'data': data })
+    res.json({ 'result': 'success', 'datas': data })
   } catch (e) {
     console.log('실패!!');
     res.json({ 'result': 'fail' })
@@ -260,11 +261,12 @@ router.post('/vi/board/read', async function (req, res, next) {
   const session_id = req.session.user_id;
   const todos = Todos();
   console.log('session_id =.>', session_id)
-  const todo_list = await todos.findAll({
+  const todo_list = await todos.findAll({    
     offset: 0,
     limit: 5,
     where: {
-      del_yn: 'N'      
+      del_yn: 'N',
+      parent_id: null      
     },
     order: [
       ['bbs_eq', 'DESC']

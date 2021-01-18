@@ -53,7 +53,7 @@
                             </form>
                             <input type="text" id="filePath"> 
                             <button class="btn btn-primary" onclick="updateTodo()">수정</button>
-                            <button class="btn btn-secondary" onclick="deleteTodo(${el.bbs_eq})">삭제</button>
+                            <button class="btn btn-secondary" onclick="deleteTodo()">삭제</button>
                             <button class="btn btn-primary w200" onclick="goIndex()">홈페이지로이동</button>
                         </div>
                     </div>
@@ -62,19 +62,15 @@
                 <div class="col mt-20">
                 <h2>Reply</h2>>
 
-                <table class="todo_list2">
+                <table id="todo_list2" class="todo_list2">
                     <tr>                                            
                       <th>user_id</th>
+                      <th>title</th>
                       <th class="content">content</th>                      
                     </tr>
-                    <tr>                        
-                        <td>21452313</td>
-                        <td>댓글댓글댓글댓글댓글</td>
-                    </tr>
-                
                   </table>
 
-                    <<h5>댓글작성</h5>
+                    <h5>댓글작성</h5>
                     <input id="replyTitle" type='text' class='form-control' placeholder="제목을 입력하세요.">
                     <input id="replyContent" type='text' class='form-control' placeholder="내용을 입력하세요.">
     
@@ -92,39 +88,38 @@
         <%- include('../common/javascript') -%>
 
             <script>
-
-            function readTodo() {
+            function readReply() {
+                var bbs_eq = $("#bbs_eq").html();
                     $.post("/api/vi/reply/read/", {
                         // pass
-                    }).done(function (data) {
-                        var todos = data.data;
-                        console.log('todos = ', todos);
-                        todos.forEach(el => {
+                        bbs_eq: bbs_eq                        
+                    }).done(function (reply) {
+                        console.log('rereply=> ',reply)
+                        var reply = reply.reply;
+                        console.log('reply = ', reply);
+                        reply.forEach(el => {
                         const content = `                      
-                    <tr>
+                    <tr>                        
                         <td>              
                         ${el.user_eq}
-                        </td>       
+                        </td>   
+                        <td>
+                        ${el.title}
+                        </td>    
                         <td>              
                         ${el.content}
-                        </td>
-                        <td>
-                        ${el.board_type}
-                        </td>
-                        <td>
-                        ${el.count}
-                        </td>           
-                    </tr>
-                    
+                        </td>   
+                    </tr>                    
                     `
-                        $('#todo_list').append(content);
+                        $('#todo_list2').append(content);
                         });
-
                     })
-                    }
+                }
 
 
-
+                $(function () {
+                    readReply()
+                })
 
 
                 function insertReply() {
@@ -133,16 +128,35 @@
                     var bbs_eq = $("#bbs_eq").html();
                     console.log('replyTitle => ',replyTitle)
                     console.log('replyContent => ',replyContent)
+                    console.log('bbs_eq => ',bbs_eq)
                     $.post("/api/vi/reply/insert" ,{  
                         replyTitle:replyTitle,
-                        replyContent:replyContent
-                    }).done(function (data) {
-                        if (data.result === 'fail') {
+                        replyContent:replyContent,
+                        bbs_eq:bbs_eq
+                    }).done(function (datas) {
+                        if (datas.result === 'fail') {
                            console.log('댓글실패')
                         } else {
                             console.log('댓글성공')
+                            // window.location.href = "/board_view?"+'bbs_eq='+bbs_eq;
+                            var el = datas.datas;
+                        const content = `
+                            <tr>                        
+                                <td>              
+                                ${el.user_eq}
+                                </td>   
+                                <td>
+                                ${el.title}
+                                </td>    
+                                <td>              
+                                ${el.content}
+                                </td>   
+                            </tr>          
+                        `
+                        console.log(content);
+                        $('#todo_list2').append(content);
                         }
-                    })     
+                    })                         
                 }
 
             readUpload()

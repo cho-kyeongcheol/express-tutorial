@@ -315,6 +315,19 @@ res.json({ 'result': 'fail' })
 `findOne()` 및 `findAll()`에서 json형태로 보거나 가공하고 싶을 때 사용합니다. sequelize 쿼리문 안에 아래와 같이 작성합니다.
 ```
 
+#### 현재 URL 서버로 넘기기
+
+``` JS 
+var  url = require('url');
+
+
+
+var parsedObject = req.url;
+var sub_url = parsedObject.substring(19, 30);
+console.log('parsedObject=>', parsedObject); // 현재 url 객체 정보 출력
+console.log('sub_url=>', sub_url); // bbs_eq url 객체 정보 출력
+```
+
 
 
 ### board_list 에서 board_view로 넘어갈때
@@ -324,6 +337,55 @@ res.json({ 'result': 'fail' })
 title을 누르면 bbs_eq값을 뒤에 붙혀서 id값을 뒤에 물고감
 ```
 
+#### REPLY api
+#### reply/insert
+``` js
+router.post('/vi/reply/insert', async  function (req, res, next) 
+	const  session_id = req.session.user_id;
+	const  replyTitle = req.body.replyTitle;
+	const  replyContent = req.body.replyContent;
+	const  bbs_eq = req.body.bbs_eq;	
+	if (replyTitle === '') {
+	res.json({ 'result':  'fail' })
+	}
+	if (replyContent === '') {
+	res.json({ 'result':  'fail' })
+	}	  
+	// Model Basics
+	const  todos = Todos();	  
+		try {
+		const  todo = await  todos.create({
+		user_eq:  session_id,
+		title:  replyTitle,
+		content:  replyContent,
+		board_type:  'reply',
+		parent_id:  bbs_eq
+		})
+		const  data = todo.get({ plain:  true })
+			res.json({ 'result':  'success', 'datas':  data })
+		} catch (e) {
+		console.log('실패!!');
+	res.json({ 'result':  'fail' })
+	}
+});
+```
+
+#### insert/read
+``` js
+router.post('/vi/reply/read', async  function (req, res, next) {
+	const  session_id = req.session.user_id;
+	const  bbs_eq = req.body.bbs_eq;	
+	const  todos = Todos();
+	const  todo_list = await  todos.findAll({
+		where: {
+		del_yn:  'N',
+		parent_id:bbs_eq
+		},
+		raw:  true
+	});	
+	res.json({ 'result':  'success', 'reply':  todo_list })
+})
+```
 
 # ISSUE
 

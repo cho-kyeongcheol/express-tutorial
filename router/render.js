@@ -85,13 +85,13 @@ router.get('/', async (req, res) => {
             raw: true
         });
         const todo_list = await todos.findAll({
-            where: {
-                del_yn: 'N'
-            },
-            order: [
-                ['bbs_eq', 'DESC']
-            ],
-            raw: true
+            // where: {
+            //     del_yn: 'N'
+            // },
+            // order: [
+            //     ['bbs_eq', 'DESC']
+            // ],
+            // raw: true
         });
 
         context.user = user[0]
@@ -185,14 +185,12 @@ router.get('/board_view', async (req, res) => {
             raw: true
         });
 
-        const todo_list = await todos.findAll({
+        const todo_list = await todos.findAll({    
             where: {
-                del_yn: 'N'
-            },
-            order: [
-                ['bbs_eq', 'DESC']
-            ],
-            raw: true
+                del_yn: 'N' ,
+                parent_id: sub_url
+              },
+              raw: true  
         });
 
         const postfile = await post_file.findAll({
@@ -213,9 +211,7 @@ router.get('/board_view', async (req, res) => {
             console.log('==1=1=1=1=1=1===', postfile[0].dataValues.filepath)
             console.log('@@@FILENAME', postfile[0].dataValues.filename)
             console.log('@@str@@ =>', str)
-
-            context.todo = todo[0]
-            
+            context.todo = todo[0]            
             context.user = user[0]
         } else {
             console.log('@@!!##undefined')
@@ -225,10 +221,13 @@ router.get('/board_view', async (req, res) => {
             context.post_file = undefined
             console.log('@@#!#!#!#!qwqwqwqw', context.post_file)
         }
+
         context.todo_list = todo_list
+        console.log('todo_list =>',context.todo_list)
     } else {
         context.user = undefined
         context.todo = undefined
+        context.todo_list2 = undefined
     }
 
     res.render('board/board_view', context);
