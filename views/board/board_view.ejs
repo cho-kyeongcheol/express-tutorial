@@ -90,9 +90,11 @@
             <script>
             function readReply() {
                 var bbs_eq = $("#bbs_eq").html();
-                    $.post("/api/vi/reply/read/", {
+                    $.get("/api/vi/reply/read/", {
                         // pass
-                        bbs_eq: bbs_eq                        
+                        data: {
+                        bbs_eq: bbs_eq              
+                    }
                     }).done(function (reply) {
                         console.log('rereply=> ',reply)
                         var reply = reply.reply;
@@ -163,7 +165,7 @@
 
                 
                 function readUpload() {      
-                $.post("/api/vi/upload/board/read/", {
+                $.get("/api/vi/upload/board/read/", {
                         // pass
                     }).done(function (data) {
                         var post_file = data.data;
@@ -174,7 +176,7 @@
 
                         <% if(img_src == undefined) { %>
                             <div>이미지를 선택하세요</div>
-                        <% }  %>
+                        <% }  %> 
                         `
                         $('#imageload').prepend(content);
                     })         

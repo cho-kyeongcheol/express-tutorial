@@ -128,7 +128,7 @@
         });
 
         function readTodo() {
-          $.post("/api/vi/board/read/", {
+          $.get("/api/vi/board/read/", {
             // pass
           }).done(function (data) {
             console.log('data=>',data)

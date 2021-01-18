@@ -14,18 +14,24 @@ const { path } = require('../server');
 //   res.render('index', { title: 'Express' });
 // });
 
-router.post('/vi/reply/read', async function (req, res, next) {
+router.get('/vi/reply/read', async function (req, res, next) {
   console.log('@@reply/read@@ ')
   console.log('req.body = ', req.body);  
   const session_id = req.session.user_id;
   const bbs_eq = req.body.bbs_eq;
+  const param = req.params;
+  const query = req.query;
+  const querydata = req.query.data.bbs_eq;
+  console.log('param=>',param)
+  console.log('query=>',query)
+  console.log('querydata=>',querydata)
   console.log('bbs_eq=>',bbs_eq)
   const todos = Todos();
   console.log('session_id =.>', session_id)
   const todo_list = await todos.findAll({    
     where: {
       del_yn: 'N',
-      parent_id:bbs_eq   
+      parent_id: querydata
     },
     raw: true
   });
@@ -76,7 +82,7 @@ router.post('/vi/reply/insert', async function (req, res, next) {
 
 
 
-router.post('/vi/upload/board/read', async function (req, res, next) {
+router.get('/vi/upload/board/read', async function (req, res, next) {
   const postfile = PostFile();  
   const session_id = req.session.user_id;
   console.log('@@@upload/read', postfile)
@@ -256,7 +262,7 @@ router.post('/vi/board/update', async function (req, res, next) {
   res.json({ 'result': 'success' })
 })
 
-router.post('/vi/board/read', async function (req, res, next) {
+router.get('/vi/board/read', async function (req, res, next) {
 
   const session_id = req.session.user_id;
   const todos = Todos();

@@ -433,5 +433,22 @@ else{
 }
 ```
 
+### net::ERR_CONNECTION_RESET 200 (OK) 
+```  js
+read를 할때 post 메서드 사용시 에러가 가끔나옴
+
+해결 : list 출력할땐 post 매서드를 get매서드로 바꿔준다.
+view 페이지에 bbs_eq값 구하기
+
+(ajax안에서 data로 bbs_eq값을 넘겨준다)
+var  bbs_eq = $("#bbs_eq").html();
+	data: {
+	bbs_eq:  bbs_eq
+	}
+
+const querydata = req.query.data.bbs_eq;
+(ajax로 넘어온데이값을 빼서 parent_id:  querydata 넣어준다)
+```
+
     
 
