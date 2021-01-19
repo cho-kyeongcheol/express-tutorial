@@ -556,6 +556,17 @@ var2  @var2
 ---   ---
 2     4
 ```
+### MYSQL 버전확인
+```
+select version();
+```
 
+### reply insert value (table row)
+``` js
+var  table = document.getElementById("todo_list2");
+var  totalRowCount = table.rows.length; //row 개수
+  
+var  select = document.getElementById('row_'+p_id);
+var  rowIndex = select.rowIndex; //row index 값
 
-
+```

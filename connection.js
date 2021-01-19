@@ -64,7 +64,66 @@ exports.PostFile = function() {
     return post_file;
   }
 
+  exports.Reply = function() {
+    
+    const sequelize = exports.getConnection();
+  
+    const reply = sequelize.define('reply', {
+        idx: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+          primaryKey: true,
+          autoIncrement: true
+        },
+        p_id: {
+          type: DataTypes.INTEGER,
+          allowNull: false  
+        },
+        levels: {
+          type: DataTypes.INTEGER,
+          defaultValue: 0
+        },
+        up_idx: {
+          type: DataTypes.INTEGER          
+        },
+        bbs_eq: {
+          type: DataTypes.INTEGER,
+          allowNull: false  
+        },
+        user_eq: {
+          type: DataTypes.INTEGER,
+          allowNull: false  
+        },
+        create_at: {
+          type: DataTypes.DATE,
+          defaultValue: Sequelize.NOW,
+          allowNull: false  
+        },
+        update_at: {
+          type: DataTypes.DATE          
+        },
+        title: {
+          type: DataTypes.STRING(45),
+          allowNull: false  
+        },
+        content: {
+          type: DataTypes.STRING(200),
+          allowNull: false  
+        },
+        del_yn: {
+          type: DataTypes.STRING(2),
+          defaultValue: 'N',
+          allowNull: false  
+        },   
+      }, {
+          // Other model options go here
+          timestamps: false,
+          tableName: 'reply'
+      });
+      return reply;
+    }
 
+    
 
 exports.Todos = function() {
 
@@ -116,7 +175,10 @@ exports.Todos = function() {
     },
     reply_levels: {
       type: DataTypes.INTEGER
-    }
+    },
+    depth: {
+      type: DataTypes.INTEGER
+    },
 
   }, {
     // Other model options go here

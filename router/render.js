@@ -4,7 +4,7 @@ const path = require("path");
 var url = require('url');
 
 
-const { getConnection, Users, UsersLogin, Todos, PostFile } = require('../connection')
+const { getConnection, Users, UsersLogin, Todos, PostFile, Reply } = require('../connection')
 
 router.get('/test', async (req, res) => {
     var context = {};
@@ -169,6 +169,8 @@ router.get('/board_view', async (req, res) => {
 
         const todos = Todos();
 
+        const reply = Reply();
+
         const post_file = PostFile();
 
         const user = await users.findAll({
@@ -193,6 +195,14 @@ router.get('/board_view', async (req, res) => {
               raw: true  
         });
 
+        const reply_list = await reply.findAll({    
+            where: {
+                del_yn: 'N',
+                bbs_eq: sub_url                
+              },
+              raw: true  
+        });
+
         const postfile = await post_file.findAll({
             where: {
                 target_id: user_id,
@@ -201,12 +211,10 @@ router.get('/board_view', async (req, res) => {
         });
 
         if (postfile[0].dataValues.filename != null) {
-
             context.img_src = postfile[0].dataValues.filepath
             var str = context.img_src.substring(8, 1000);
             context.src = str
-
-            console.log('==1=1=1=1postfile=1=1===', postfile)
+            // console.log('==1=1=1=1postfile=1=1===', postfile)
             console.log('#@#@#user@#@# =>', user)
             console.log('==1=1=1=1=1=1===', postfile[0].dataValues.filepath)
             console.log('@@@FILENAME', postfile[0].dataValues.filename)
@@ -216,18 +224,23 @@ router.get('/board_view', async (req, res) => {
         } else {
             console.log('@@!!##undefined')
             context.todo = todo[0]
-            context.user = todo[0]
+            context.user = user[0]
             context.img_src = postfile[0].dataValues.filepath
             context.post_file = undefined
             console.log('@@#!#!#!#!qwqwqwqw', context.post_file)
         }
 
+        console.log('context@@ =>',context)
         context.todo_list = todo_list
-        console.log('todo_list =>',context.todo_list)
+        // console.log('todo_list =>',context.todo_list)
+
+        context.reply_list = reply_list
+        console.log('reply_list =>', reply_list)
     } else {
         context.user = undefined
         context.todo = undefined
-        context.todo_list2 = undefined
+        context.reply_list = undefined
+        context.todo_list = undefined
     }
 
     res.render('board/board_view', context);

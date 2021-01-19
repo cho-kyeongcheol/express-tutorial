@@ -60,7 +60,7 @@
 
                     <hr>
                 <div class="col mt-20">
-                <h2>Reply</h2>>
+                <h2>Reply</h2>   <button onclick="test()">test</button>
 
                 <table id="todo_list2" class="todo_list2">
                     <tr>                                            
@@ -69,8 +69,9 @@
                       <th class="content">content</th>                      
                     </tr>
                   </table>
-
-                    <h5>댓글작성</h5>
+                    
+                  <br>
+                    <h5>댓글작성</h5> 
                     <input id="replyTitle" type='text' class='form-control' placeholder="제목을 입력하세요.">
                     <input id="replyContent" type='text' class='form-control' placeholder="내용을 입력하세요.">
     
@@ -95,13 +96,11 @@
                         data: {
                         bbs_eq: bbs_eq              
                     }
-                    }).done(function (reply) {
-                        console.log('rereply=> ',reply)
-                        var reply = reply.reply;
-                        console.log('reply = ', reply);
-                        reply.forEach(el => {
+                    }).done(function (data) {                        
+                        var data = data.data;                        
+                        data.forEach(el => {
                         const content = `                      
-                    <tr>                        
+                    <tr id="row_${el.p_id}" class="row_${el.p_id}">                        
                         <td>              
                         ${el.user_eq}
                         </td>   
@@ -109,7 +108,7 @@
                         ${el.title}
                         </td>    
                         <td>              
-                        ${el.content}
+                        ${el.content} <button onclick="rowSelect(${el.p_id})">밑에 댓글쓰기</button>
                         </td>   
                     </tr>                    
                     `
@@ -118,25 +117,56 @@
                     })
                 }
 
+                function rowSelect(p_id){
+                    var table = document.getElementById("todo_list2");
+                    var totalRowCount = table.rows.length;
+                    
 
+                    var select = document.getElementById('row_'+p_id);
+                    var rowIndex = select.rowIndex;
+
+                    console.log('totalRowCount => ',totalRowCount)
+                    console.log('rowIndex => ',rowIndex)
+
+                   
+                }
+                
                 $(function () {
                     readReply()
                 })
+
+                function test() {
+                    var table = document.getElementById("todo_list2");
+                    var totalRowCount = table.rows.length;
+                    
+
+                    var select = document.getElementById('row_2');
+                    var rowIndex = select.rowIndex;
+
+                    console.log('totalRowCount => ',totalRowCount)
+                    console.log('rowIndex => ',rowIndex)
+                }
 
 
                 function insertReply() {
                     var replyTitle = $('#replyTitle').val();
                     var replyContent = $('#replyContent').val();
                     var bbs_eq = $("#bbs_eq").html();
+                    var table = document.getElementById("todo_list2");
+                    var totalRowCount = table.rows.length;
+                    var tbodyRow = table.tBodies[0].rows.length;
                     console.log('replyTitle => ',replyTitle)
                     console.log('replyContent => ',replyContent)
-                    console.log('bbs_eq => ',bbs_eq)
+                    console.log('bbs_eq => ',bbs_eq)                    
+                    console.log('totalRowCount => ',totalRowCount)
+                    console.log('tbodyRow => ',tbodyRow)
                     $.post("/api/vi/reply/insert" ,{  
                         replyTitle:replyTitle,
                         replyContent:replyContent,
-                        bbs_eq:bbs_eq
-                    }).done(function (datas) {
-                        if (datas.result === 'fail') {
+                        bbs_eq:bbs_eq,
+                        tableRow:totalRowCount
+                    }).done(function (datas) {                        
+                        if (datas.datas === 'fail') {
                            console.log('댓글실패')
                         } else {
                             console.log('댓글성공')
@@ -154,8 +184,7 @@
                                 ${el.content}
                                 </td>   
                             </tr>          
-                        `
-                        console.log(content);
+                        `                        
                         $('#todo_list2').append(content);
                         }
                     })                         

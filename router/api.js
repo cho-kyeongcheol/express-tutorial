@@ -9,7 +9,7 @@ var fs = require('fs');
 var multiparty = require('multiparty');
 
 
-const { getConnection, Users, UsersLogin, Todos, PostFile } = require('../connection');
+const { getConnection, Users, UsersLogin, Todos, PostFile, Reply } = require('../connection');
 const { path } = require('../server');
 
 // router.get('/', function(req, res, next) {
@@ -27,17 +27,18 @@ router.get('/vi/reply/read', async function (req, res, next) {
   console.log('query=>',query)
   console.log('querydata=>',querydata)
   
-  const todos = Todos();
+  const reply = Reply(); 
+
   console.log('session_id =.>', session_id)
-  const todo_list = await todos.findAll({    
+  const reply_list = await reply.findAll({    
     where: {
       del_yn: 'N',
-      parent_id: querydata
+      bbs_eq: querydata
     },
     raw: true
   });
   console.log('hello')
-  res.json({ 'result': 'success', 'reply': todo_list })
+  res.json({ 'result': 'success', 'data': reply_list })
 })
 
 router.post('/vi/reply/insert', async function (req, res, next) {
@@ -47,11 +48,13 @@ router.post('/vi/reply/insert', async function (req, res, next) {
   const replyTitle = req.body.replyTitle;
   const replyContent = req.body.replyContent;
   const bbs_eq = req.body.bbs_eq;
+  const tableRow = req.body.tableRow;
   
   console.log('session_id = ', session_id);
   console.log('replyTitle = ', replyTitle);
   console.log('replyContent = ', replyContent);
   console.log('bbs_eq = ', bbs_eq);
+  console.log('tableRow = ', tableRow);
     
   if (replyTitle === '') {
     res.json({ 'result': 'fail' })
@@ -60,19 +63,29 @@ router.post('/vi/reply/insert', async function (req, res, next) {
     res.json({ 'result': 'fail' })
   } 
 
-  // Model Basics
-  const todos = Todos(); 
+  const reply = Reply(); 
+
+  console.log('rep@@ly =>', reply)   
+
+  // const replys = await reply.create({
+  //   p_id: 1,
+  //   title: replyTitle,
+  //   content: replyContent,      
+  //   bbs_eq: bbs_eq,
+  //   user_eq: session_id   
+  // })
 
   try {
-    const todo = await todos.create({
-      user_eq: session_id,
+    console.log('rep###ly =>',reply)
+    const replys = await reply.create({
+      p_id: tableRow,
       title: replyTitle,
       content: replyContent,      
-      board_type: 'reply',
-      parent_id: bbs_eq   
+      bbs_eq: bbs_eq,
+      user_eq: session_id   
     })
-    console.log('todo => ', todo)
-    const data = todo.get({ plain: true })
+    console.log("성공!!")
+    const data = replys.get({ plain: true })
     res.json({ 'result': 'success', 'datas': data })
   } catch (e) {
     console.log('실패!!');
