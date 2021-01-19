@@ -215,7 +215,7 @@ router.get('/board_view', async (req, res) => {
             context.user = user[0]
         } else {
             console.log('@@!!##undefined')
-            context.user = todo[0]
+            context.todo = todo[0]
             context.user = todo[0]
             context.img_src = postfile[0].dataValues.filepath
             context.post_file = undefined

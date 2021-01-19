@@ -181,6 +181,30 @@
                         $('#imageload').prepend(content);
                     })         
                 }
+
+
+                function deleteTodo() {
+                var bbs_eq = $("#bbs_eq").html();
+                console.log('bbs_eq = ', bbs_eq)
+                $.post("/api/vi/board/delete/", {
+                    bbs_eq: bbs_eq
+                }).done(function (data) {
+                    console.log('data =>' , data)
+                    if (data.result === 'fail') {                        
+                    Swal.fire({
+                        icon: 'error',
+                        title: '삭제!',
+                        text: '실패!'
+                    })
+                    console.log('실패')
+                    } else {                            
+                    console.log('성공')
+                    window.location.href = "/";               
+                    }
+                })
+                } 
+
+
                 
                 function updateTodo() {
                     var bbs_eq = $("#bbs_eq").html();

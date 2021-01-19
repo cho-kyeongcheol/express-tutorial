@@ -54,7 +54,6 @@ flush privileges;
 ```
 
 
-
 ### DB구축된 상태
 ```
 /workspace/board_db
@@ -67,6 +66,26 @@ mysql 재시작
 - sudo service mysql restart
   ```
 
+### ssh에서 DB조회
+```
+mysql -u root -p (password:password)
+
+
+### mysql 접속 오류
+1.  ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password:  **NO**)  
+    `mysql -u [user name] -p [your password]`  입력  
+    ex. mysql -u root -p 1234
+    
+2.  ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password:  **YES**)  
+    mysql>  `use mysql`  
+    mysql>  `update user set password=password('바꿀 비밀번호') where user='사용자 이름';`  
+    mysql>  `flush privileges;`
+    
+**1번의 경우** 비밀번호를 입력하지 않아서 그렇고, **2번의 경우** 비밀번호가 틀린 경우이므로 (진짜 비밀번호를 모르겠으면) 새 비밀번호로 설정하고 새로고침[flush] 한다.
+
+-> DB접속
+-> show databases;
+```
 ### 카카오 레포지토리 변경
 ```
 sudo vi /etc/apt/sources.list
@@ -293,6 +312,10 @@ res.json({ 'result': 'fail' })
 }
 ```
 
+### 게시판 List 형태 한줄 지우기
+``` js
+$('#row_'  + id).remove();
+```
 
 
 
@@ -387,11 +410,63 @@ router.post('/vi/reply/read', async  function (req, res, next) {
 })
 ```
 
-# ISSUE
 
-###  Validation error
+### SEARCH
+### function (ajax)
+``` js
+function  search() {
+	for(var  i=0; i<9999;i++){
+	$('#row_'+i).remove();
+	}
+	search2()  //모두 지우고 다시 실행
+}
+
+  
+function  search2() {
+	var  searchText = $('#searchText').val();
+	var  searchType = $('#searchType').val();
+	console.log('searchText=>',searchText)
+	console.log('searchType=>',searchType)
+		$.post("/api/vi/board/search/", {
+			searchText:  searchText,
+			searchType:  searchType
+			}).done(function (data) {
+			console.log('data=>',data)
+			var  todos = data.data;
+			console.log('todos = ', todos);
+			todos.forEach(el  => {
+			const  content = `
+				<tr id="row_${el.bbs_eq}">
+				<td>
+					<span id="bbs_eq">${el.bbs_eq}</span>
+				</td>
+				<td>
+					<a href="/board_view?bbs_eq=${el.bbs_eq}"> ${el.title} </a>
+				</td>
+				<td>
+					${el.user_eq}
+				</td>
+				<td>
+					${el.content}
+				</td>
+				<td>
+					${el.board_type}
+				</td>
+				<td>
+					${el.count}
+				</td>
+				</tr>
+			`
+			$('#todo_list').append(content);
+		});
+	})
+}
 ```
- SequelizeUniqueConstraintError: Validation error
+
+# ISSUE
+###  Validation error
+``
+SequelizeUniqueConstraintError: Validation error
     at Query.formatError (C:\Users\dev\workspace\express-tutorial\node_modules\sequelize\lib\dialects\mysql\query.js:218:16)
 
 DB or model 속성값이랑 컬럼이름 확인
@@ -449,6 +524,38 @@ var  bbs_eq = $("#bbs_eq").html();
 const querydata = req.query.data.bbs_eq;
 (ajax로 넘어온데이값을 빼서 parent_id:  querydata 넣어준다)
 ```
+### MYSQL @ 
+```  
+CREATE PROCEDURE prc_test ()
+BEGIN
+    DECLARE var2 INT DEFAULT 1;
+    SET var2 = var2 + 1;
+    SET @var2 = @var2 + 1;
+    SELECT  var2, @var2;
+END;
 
-    
+SET @var2 = 1;
+
+CALL prc_test();
+
+var2  @var2
+---   ---
+2     2
+
+
+CALL prc_test();
+
+var2  @var2
+---   ---
+2     3
+
+
+CALL prc_test();
+
+var2  @var2
+---   ---
+2     4
+```
+
+
 

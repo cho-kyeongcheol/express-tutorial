@@ -42,10 +42,17 @@
          </div>
 
             <div class="row mt-20 mt-10">
-              <input class='form-control input300 ml-10 mt-10 mb-15' type="text" id="searchTodo"
+              <select class="custom-select w200 height30" name="pets" id="searchType">
+                <option value="title">title</option>
+                <option value="user_eq">user_id</option>
+                <option value="content">content</option>
+                <option value="board_type">board_type</option>
+            </select>
+              <input class='form-control input300 ml-10 mb-15' type="text" id="searchText"
                 placeholder="검색어를 입력하세요">
               <div class="col">
-                <button class="btn btn-primary ml-10 mt-10">검색</button>
+                <button onclick="search()" class="btn btn-primary ml-10 mt-10">검색</button>
+                <button onclick="search2()" class="btn btn-primary ml-10 mt-10">검색2</button>
               </div>
             </div>
 
@@ -110,6 +117,54 @@
 
 
       <script>
+        
+
+        function search() {             
+          for(var i=0; i<9999;i++){
+            $('#row_'+i).remove();            
+        }
+        search2()
+      }
+
+        function search2() {          
+          var searchText = $('#searchText').val();
+          var searchType = $('#searchType').val();
+          console.log('searchText=>',searchText)          
+          console.log('searchType=>',searchType)  
+          $.post("/api/vi/board/search/", {
+            searchText: searchText,
+            searchType: searchType
+          }).done(function (data) {                   
+            console.log('data=>',data)
+            var todos = data.data;
+            console.log('todos = ', todos);
+            todos.forEach(el => {
+              const content = `                      
+          <tr id="row_${el.bbs_eq}">
+            <td>
+              <span id="bbs_eq">${el.bbs_eq}</span>
+            </td>  
+            <td>
+              <a href="/board_view?bbs_eq=${el.bbs_eq}"> ${el.title} </a>
+            </td>     
+            <td>              
+               ${el.user_eq}
+            </td>       
+            <td>              
+              ${el.content}
+            </td>
+            <td>
+              ${el.board_type}
+            </td>
+            <td>
+              ${el.count}
+            </td>           
+          </tr>          
+          `   
+          $('#todo_list').append(content);
+        });
+       })  
+      }
 
         function goboardWirte() {
           window.location.href = "/board_write";
@@ -176,24 +231,7 @@
           }
         }
 
-        function deleteTodo(id) {
-          console.log('id = ', id)
-          var inputTodo = $('#inputTodo').val();
-          console.log("inputTodo => ", inputTodo)
-          $.post("/api/vi/board/delete/", {
-            id: id
-          }).done(function (data) {
-            if (data.result === 'fail') {
-              Swal.fire({
-                icon: 'error',
-                title: '삭제!',
-                text: '실패!'
-              })
-            } else {
-              $('#row_' + id).remove();
-            }
-          })
-        }  
+         
             
 
         function login() {
@@ -214,5 +252,4 @@
         }
       </script>
   </body>
-
 </html>

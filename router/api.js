@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 var crypto = require('crypto');
 var multer = require('multer');
+const sequelize = require("sequelize");
+const Op = sequelize.Op;
 
 var fs = require('fs');
 var multiparty = require('multiparty');
@@ -17,15 +19,14 @@ const { path } = require('../server');
 router.get('/vi/reply/read', async function (req, res, next) {
   console.log('@@reply/read@@ ')
   console.log('req.body = ', req.body);  
-  const session_id = req.session.user_id;
-  const bbs_eq = req.body.bbs_eq;
+  const session_id = req.session.user_id;  
   const param = req.params;
   const query = req.query;
   const querydata = req.query.data.bbs_eq;
   console.log('param=>',param)
   console.log('query=>',query)
   console.log('querydata=>',querydata)
-  console.log('bbs_eq=>',bbs_eq)
+  
   const todos = Todos();
   console.log('session_id =.>', session_id)
   const todo_list = await todos.findAll({    
@@ -150,7 +151,6 @@ router.post('/board/upload', function (req, res) {
 });
 
 
-
 router.post('/vi/upload/read', async function (req, res, next) {
   const postfile = PostFile();  
   const session_id = req.session.user_id;
@@ -262,6 +262,35 @@ router.post('/vi/board/update', async function (req, res, next) {
   res.json({ 'result': 'success' })
 })
 
+router.post('/vi/board/search', async function (req, res, next) {
+  console.log('req.body = ', req.body);
+  const searchText = req.body.searchText
+  const searchType = req.body.searchType
+
+  console.log('searchText=>', searchText)
+  console.log('board_select=>', searchType)
+  
+  const todos = Todos();
+  
+  const todo_list = await todos.findAll({    
+    where: {
+        content : {
+        [Op.like]: "%" + searchText + "%"
+    },
+      del_yn: 'N',
+      parent_id: null      
+    },
+    order: [
+      ['bbs_eq', 'DESC']
+    ],
+    raw: true
+  });
+  console.log('search hello')
+
+  res.json({ 'result': 'success', 'data': todo_list })
+})
+
+
 router.get('/vi/board/read', async function (req, res, next) {
 
   const session_id = req.session.user_id;
@@ -286,12 +315,12 @@ router.get('/vi/board/read', async function (req, res, next) {
 })
 
 
-router.post('/vi/board/delete', async function (req, res, next) {
-  console.log('running@@ =>', running)
+router.post('/vi/board/delete', async function (req, res, next) {  
   console.log('req.body = ', req.body);
 
-  const session_id = req.session.user_id;
-  const id = req.body.id;
+  const session_id = req.session.user_id;  
+  const bbs_eq = req.body.bbs_eq;
+  console.log('bbs_eq =>', bbs_eq)
   let date_ob = new Date();
 
   const todos = Todos();
@@ -299,8 +328,7 @@ router.post('/vi/board/delete', async function (req, res, next) {
   try {
     await todos.update({ del_yn: "Y", delete_at: date_ob }, {
       where: {
-        bbs_eq: id,
-        user_eq: session_id
+        bbs_eq: bbs_eq        
       }
     });
   } catch (e) {
