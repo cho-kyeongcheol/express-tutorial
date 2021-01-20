@@ -63,10 +63,11 @@
                 <h2>Reply</h2>   <button onclick="test()">test</button>
 
                 <table id="todo_list2" class="todo_list2">
-                    <tr>                                            
-                      <th>user_id</th>
-                      <th>title</th>
-                      <th class="content">content</th>                      
+                    <tr>    
+                        <th>no</th>                                        
+                        <th>user_id</th>
+                        <th>title</th>
+                        <th class="content">content</th>                      
                     </tr>
                   </table>
                     
@@ -101,6 +102,9 @@
                         data.forEach(el => {
                         const content = `                      
                     <tr id="row_${el.p_id}" class="row_${el.p_id}">                        
+                        <td id="idx_${el.idx}">              
+                        ${el.idx}
+                        </td> 
                         <td>              
                         ${el.user_eq}
                         </td>   
@@ -108,44 +112,43 @@
                         ${el.title}
                         </td>    
                         <td>              
-                        ${el.content} <button onclick="rowSelect(${el.p_id})">밑에 댓글쓰기</button>
-                        </td>   
+                        ${el.content} 
+                        </td> 
+                        <td>
+                            <button onclick="rowSelect(${el.idx})">밑에 댓글쓰기</button>
+                        </td>
                     </tr>                    
                     `
                         $('#todo_list2').append(content);
                         });
                     })
                 }
+                
 
-                function rowSelect(p_id){
-                    var table = document.getElementById("todo_list2");
-                    var totalRowCount = table.rows.length;
-                    
+                function rowSelect(idx){
+                    console.log('idx=>',idx)
+                    var idxNo = $("#idx_"+idx).html();
+                    console.log('idxNo(up_idx사용할때)) => ',idxNo)
 
-                    var select = document.getElementById('row_'+p_id);
-                    var rowIndex = select.rowIndex;
-
-                    console.log('totalRowCount => ',totalRowCount)
-                    console.log('rowIndex => ',rowIndex)
-
-                   
+                    // insertReply()
                 }
+
                 
                 $(function () {
                     readReply()
                 })
 
-                function test() {
-                    var table = document.getElementById("todo_list2");
-                    var totalRowCount = table.rows.length;
+                // function test() {
+                //     var table = document.getElementById("todo_list2");
+                //     var totalRowCount = table.rows.length;
                     
 
-                    var select = document.getElementById('row_2');
-                    var rowIndex = select.rowIndex;
+                //     var select = document.getElementById('row_2');
+                //     var rowIndex = select.rowIndex;
 
-                    console.log('totalRowCount => ',totalRowCount)
-                    console.log('rowIndex => ',rowIndex)
-                }
+                //     console.log('totalRowCount => ',totalRowCount)
+                //     console.log('rowIndex => ',rowIndex)
+                // }
 
 
                 function insertReply() {
@@ -153,13 +156,12 @@
                     var replyContent = $('#replyContent').val();
                     var bbs_eq = $("#bbs_eq").html();
                     var table = document.getElementById("todo_list2");
-                    var totalRowCount = table.rows.length;
-                    var tbodyRow = table.tBodies[0].rows.length;
+                    var totalRowCount = table.rows.length;                     
+
                     console.log('replyTitle => ',replyTitle)
                     console.log('replyContent => ',replyContent)
                     console.log('bbs_eq => ',bbs_eq)                    
-                    console.log('totalRowCount => ',totalRowCount)
-                    console.log('tbodyRow => ',tbodyRow)
+                    console.log('totalRowCount => ',totalRowCount)                    
                     $.post("/api/vi/reply/insert" ,{  
                         replyTitle:replyTitle,
                         replyContent:replyContent,
@@ -173,7 +175,10 @@
                             // window.location.href = "/board_view?"+'bbs_eq='+bbs_eq;
                             var el = datas.datas;
                         const content = `
-                            <tr>                        
+                            <tr id="row_${el.p_id}" class="row_${el.p_id}">
+                                <td id="idx_${el.idx}">              
+                                ${el.idx}
+                                </td> 
                                 <td>              
                                 ${el.user_eq}
                                 </td>   
@@ -183,6 +188,9 @@
                                 <td>              
                                 ${el.content}
                                 </td>   
+                                <td>
+                                    <button onclick="rowSelect(${el.idx})">밑에 댓글쓰기</button>
+                                </td>
                             </tr>          
                         `                        
                         $('#todo_list2').append(content);

@@ -49,12 +49,14 @@ router.post('/vi/reply/insert', async function (req, res, next) {
   const replyContent = req.body.replyContent;
   const bbs_eq = req.body.bbs_eq;
   const tableRow = req.body.tableRow;
+  const rowIndex = req.body.rowIndex;
   
   console.log('session_id = ', session_id);
   console.log('replyTitle = ', replyTitle);
   console.log('replyContent = ', replyContent);
   console.log('bbs_eq = ', bbs_eq);
   console.log('tableRow = ', tableRow);
+  console.log('rowIndex = ', rowIndex);
     
   if (replyTitle === '') {
     res.json({ 'result': 'fail' })
@@ -82,7 +84,8 @@ router.post('/vi/reply/insert', async function (req, res, next) {
       title: replyTitle,
       content: replyContent,      
       bbs_eq: bbs_eq,
-      user_eq: session_id   
+      user_eq: session_id,
+      up_idx: rowIndex
     })
     console.log("성공!!")
     const data = replys.get({ plain: true })

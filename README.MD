@@ -351,7 +351,27 @@ console.log('parsedObject=>', parsedObject); // 현재 url 객체 정보 출력
 console.log('sub_url=>', sub_url); // bbs_eq url 객체 정보 출력
 ```
 
+### html안에 text값 가져오기
+``` js
+var  bbs_eq = $("#bbs_eq").html();
+or
+var  bbs_eq = document.getElementById('bbs_eq').innerHTML;
+```
 
+### id값이 바뀔때마다 (파라미터 넣어주기)
+``` html
+<td id="idx_${el.idx}">
+<button onclick="rowSelect(${el.idx})">밑에 댓글쓰기</button>
+```
+
+### id값이 바뀔때마다 (파라미터 가져오기, text값 빼서 쓰기)
+``` js 
+function  rowSelect(idx){
+	console.log('idx=>',idx)
+	var  idxNo = $("#idx_"+idx).html();
+	console.log('idxNo(up_idx사용할때)) => ',idxNo)
+}
+```
 
 ### board_list 에서 board_view로 넘어갈때
 ```
@@ -359,6 +379,7 @@ console.log('sub_url=>', sub_url); // bbs_eq url 객체 정보 출력
 
 title을 누르면 bbs_eq값을 뒤에 붙혀서 id값을 뒤에 물고감
 ```
+
 
 #### REPLY api
 #### reply/insert
