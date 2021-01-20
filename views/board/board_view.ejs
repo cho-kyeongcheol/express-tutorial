@@ -101,8 +101,8 @@
                         var data = data.data;                        
                         data.forEach(el => {
                         const content = `                      
-                    <tr id="row_${el.p_id}" class="row_${el.p_id}">                        
-                        <td id="idx_${el.idx}">              
+                    <tr>                        
+                        <td>              
                         ${el.idx}
                         </td> 
                         <td>              
@@ -123,32 +123,26 @@
                         });
                     })
                 }
-                
+
+
+                var MyApp = {}
 
                 function rowSelect(idx){
+                     
                     console.log('idx=>',idx)
-                    var idxNo = $("#idx_"+idx).html();
-                    console.log('idxNo(up_idx사용할때)) => ',idxNo)
+                    MyApp.idx = idx
+                    var idx_no = MyApp.idx
+                    console.log('MYAPPIDX=>', idx_no)
+                                      
+                }                          
 
-                    // insertReply()
-                }
+                // function test() {                                         
+                //     console.log('$#$#$MyApp.test2222 =>', MyApp.test)   
+                // }
 
-                
                 $(function () {
                     readReply()
                 })
-
-                // function test() {
-                //     var table = document.getElementById("todo_list2");
-                //     var totalRowCount = table.rows.length;
-                    
-
-                //     var select = document.getElementById('row_2');
-                //     var rowIndex = select.rowIndex;
-
-                //     console.log('totalRowCount => ',totalRowCount)
-                //     console.log('rowIndex => ',rowIndex)
-                // }
 
 
                 function insertReply() {
@@ -156,8 +150,9 @@
                     var replyContent = $('#replyContent').val();
                     var bbs_eq = $("#bbs_eq").html();
                     var table = document.getElementById("todo_list2");
-                    var totalRowCount = table.rows.length;                     
-
+                    var totalRowCount = table.rows.length; 
+                    var idx_no = MyApp.idx
+                    console.log('idx_no =>', idx_no)
                     console.log('replyTitle => ',replyTitle)
                     console.log('replyContent => ',replyContent)
                     console.log('bbs_eq => ',bbs_eq)                    
@@ -166,7 +161,8 @@
                         replyTitle:replyTitle,
                         replyContent:replyContent,
                         bbs_eq:bbs_eq,
-                        tableRow:totalRowCount
+                        tableRow:totalRowCount,
+                        up_idx:idx_no
                     }).done(function (datas) {                        
                         if (datas.datas === 'fail') {
                            console.log('댓글실패')
@@ -175,8 +171,8 @@
                             // window.location.href = "/board_view?"+'bbs_eq='+bbs_eq;
                             var el = datas.datas;
                         const content = `
-                            <tr id="row_${el.p_id}" class="row_${el.p_id}">
-                                <td id="idx_${el.idx}">              
+                            <tr>
+                                <td>              
                                 ${el.idx}
                                 </td> 
                                 <td>              

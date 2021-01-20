@@ -380,6 +380,19 @@ function  rowSelect(idx){
 title을 누르면 bbs_eq값을 뒤에 붙혀서 id값을 뒤에 물고감
 ```
 
+### javascript 글로벌 변수로 사용하기(MyApp에 담아서 다른함수에서 호출)
+``` js
+var MyApp = {}; // Globally scoped object
+
+function foo(){
+    MyApp.color = 'green';
+}
+
+function bar(){
+    alert(MyApp.color); // Alerts 'green'
+} 
+
+```
 
 #### REPLY api
 #### reply/insert
