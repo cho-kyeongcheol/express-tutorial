@@ -373,11 +373,23 @@ function  rowSelect(idx){
 }
 ```
 
+### ejs에서 id="row_{el.idx}" (파싱한 값 에러)
+```
+api.js or render.js 에서 sequelize쿼리부분 확인
+```
+
 ### board_list 에서 board_view로 넘어갈때
 ```
 <a href="/board_view?${el.bbs_eq}"> ${el.title} </a>
 
 title을 누르면 bbs_eq값을 뒤에 붙혀서 id값을 뒤에 물고감
+```
+### sequelizejs 에서 raw쿼리 사용하기
+``` js
+const  reply_list = await  todos.sequelize.query("SELECT * FROM `todos` where del_yn = 'N' and bbs_eq = '"+querydata+"' ",
+	{
+	type:  QueryTypes.SELECT
+	});
 ```
 
 ### javascript 글로벌 변수로 사용하기(MyApp에 담아서 다른함수에서 호출)
@@ -406,6 +418,43 @@ td:nth-of-type(5) { display: none; }
 function rowSelect(idx,p_id){
 }
 ```
+
+### p_id,levels 초기화 (return;)
+``` js
+function  init(levels,p_id) {
+	var  table = document.getElementById("todo_list2");
+	var  totalRowCount = table.rows.length;
+	MyApp.levels = 0
+	MyApp.p_id = totalRowCount
+	console.log('MyApp.levels=>', MyApp.levels)
+	console.log('MyApp.p_id=>',MyApp.p_id)
+	return;
+}
+```
+
+### 초기 level이 없는값에 1을 넣어주기
+``` js
+let  levels = req.body.levels;
+
+if(levels === undefined ){
+levels = 0
+}
+```
+
+### p_id이 일정하게 나옴
+``` js
+var  p_id = MyApp.p_id
+var  p_idx; //대댓글시 p_id를 같게 , 댓글시 p_id를 맨밑에 값에 넣어줌
+ 
+if(p_id){
+	p_idx = p_id
+} else{
+	p_idx = totalRowCount
+}
+```
+
+
+
 
 #### REPLY api
 #### reply/insert

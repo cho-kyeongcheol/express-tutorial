@@ -3,7 +3,10 @@ var router = express.Router();
 var crypto = require('crypto');
 var multer = require('multer');
 const sequelize = require("sequelize");
+
+
 const Op = sequelize.Op;
+const { QueryTypes } = require('sequelize');
 
 var fs = require('fs');
 var multiparty = require('multiparty');
@@ -50,13 +53,22 @@ router.get('/vi/reply/read', async function (req, res, next) {
   const todos = Todos(); 
 
   console.log('session_id =.>', session_id)
-  const reply_list = await todos.findAll({    
-    where: {
-      del_yn: 'N',
-      bbs_eq: querydata      
-    },
-    raw: true
+
+
+
+  const reply_list = await todos.sequelize.query("SELECT * FROM `todos` where del_yn = 'N' and bbs_eq = '"+querydata+"'  ",
+   {
+     type: QueryTypes.SELECT 
   });
+
+  // const reply_list = await todos.findAll({    
+  //   where: {
+  //     del_yn: 'N',
+  //     bbs_eq: querydata      
+  //   },
+  //   raw: true
+  // });
+
   console.log('hello')
   res.json({ 'result': 'success', 'data': reply_list })
 })
@@ -70,6 +82,7 @@ router.post('/vi/reply/insert', async function (req, res, next) {
   const bbs_eq = req.body.bbs_eq;
   const tableRow = req.body.tableRow;  
   const up_idx = req.body.up_idx;
+  const idx_no = req.body.idx_no;
   let levels = req.body.levels;
 
   if(levels === undefined ){
@@ -109,7 +122,16 @@ router.post('/vi/reply/insert', async function (req, res, next) {
   //   levels:1    
   // })
 
-  try {    
+  //   await todos.update({ 
+  //     idx : idx + 1      
+  //   }, {
+  //     where: {
+  //       idx : idx_no
+  //     }
+  //   });
+
+
+  try {  
     const todo = await todos.create({
       p_id: tableRow,
       title: replyTitle,
