@@ -17,7 +17,7 @@
 
                     <div class="col mt-20">
                         <span>board_no</span> <br>
-                        <span id="bbs_eq"><%= todo.bbs_eq %></span>
+                        <span id="bbs_eq"><%= todo.idx %></span>
 
                     </div>
 
@@ -97,8 +97,10 @@
                         data: {
                         bbs_eq: bbs_eq              
                     }
-                    }).done(function (data) {                        
-                        var data = data.data;                        
+                    }).done(function (data) {  
+                        console.log('data=>', data)                     
+                        var data = data.data;    
+                        console.log('data.data=>', data)
                         data.forEach(el => {
                         const content = `                      
                     <tr>                        
@@ -114,8 +116,11 @@
                         <td>              
                         ${el.content} 
                         </td> 
+                        <td id="p_${el.p_id}">              
+                        ${el.p_id}
+                        </td> 
                         <td>
-                            <button onclick="rowSelect(${el.idx})">밑에 댓글쓰기</button>
+                            <button onclick="rowSelect(${el.idx},${el.p_id})">밑에 댓글쓰기</button>
                         </td>
                     </tr>                    
                     `
@@ -127,13 +132,22 @@
 
                 var MyApp = {}
 
-                function rowSelect(idx){
-                     
+                function pidSelect(p_id) {
+                    console.log('p_id=>',p_id)   
+                    var p_id = $("#p_",p_id).html();   
+                    console.log('p_id=>',p_id)
+                }
+                
+                function rowSelect(idx,p_id){   
                     console.log('idx=>',idx)
+                    console.log('p_id=>',p_id)                       
                     MyApp.idx = idx
+                    MyApp.levels = 1
                     var idx_no = MyApp.idx
+                    var levels = MyApp.levels
                     console.log('MYAPPIDX=>', idx_no)
-                                      
+                    console.log('levels=>', levels)   
+                    // pidSelect()                                   
                 }                          
 
                 // function test() {                                         
@@ -152,7 +166,9 @@
                     var table = document.getElementById("todo_list2");
                     var totalRowCount = table.rows.length; 
                     var idx_no = MyApp.idx
+                    var levels = MyApp.levels
                     console.log('idx_no =>', idx_no)
+                    console.log('levels =>', levels)
                     console.log('replyTitle => ',replyTitle)
                     console.log('replyContent => ',replyContent)
                     console.log('bbs_eq => ',bbs_eq)                    
@@ -162,7 +178,8 @@
                         replyContent:replyContent,
                         bbs_eq:bbs_eq,
                         tableRow:totalRowCount,
-                        up_idx:idx_no
+                        up_idx:idx_no,
+                        levels:levels
                     }).done(function (datas) {                        
                         if (datas.datas === 'fail') {
                            console.log('댓글실패')
@@ -171,10 +188,10 @@
                             // window.location.href = "/board_view?"+'bbs_eq='+bbs_eq;
                             var el = datas.datas;
                         const content = `
-                            <tr>
+                            <tr>  
                                 <td>              
                                 ${el.idx}
-                                </td> 
+                                </td>                              
                                 <td>              
                                 ${el.user_eq}
                                 </td>   
@@ -183,6 +200,9 @@
                                 </td>    
                                 <td>              
                                 ${el.content}
+                                </td> 
+                                <td <td id="p_${el.p_id}">              
+                                ${el.p_id}
                                 </td>   
                                 <td>
                                     <button onclick="rowSelect(${el.idx})">밑에 댓글쓰기</button>

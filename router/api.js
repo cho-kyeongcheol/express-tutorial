@@ -27,13 +27,14 @@ router.get('/vi/reply/read', async function (req, res, next) {
   console.log('query=>',query)
   console.log('querydata=>',querydata)
   
-  const reply = Reply(); 
+  const todos = Todos(); 
 
   console.log('session_id =.>', session_id)
-  const reply_list = await reply.findAll({    
+  const reply_list = await todos.findAll({    
     where: {
       del_yn: 'N',
-      bbs_eq: querydata
+      bbs_eq: querydata,
+      levels: 1
     },
     raw: true
   });
@@ -50,6 +51,10 @@ router.post('/vi/reply/insert', async function (req, res, next) {
   const bbs_eq = req.body.bbs_eq;
   const tableRow = req.body.tableRow;  
   const up_idx = req.body.up_idx;
+  const levels = req.body.levels;
+
+
+  var re_levels = parseInt(levels)
   
   console.log('session_id = ', session_id);
   console.log('replyTitle = ', replyTitle);
@@ -57,6 +62,8 @@ router.post('/vi/reply/insert', async function (req, res, next) {
   console.log('bbs_eq = ', bbs_eq);
   console.log('tableRow = ', tableRow);  
   console.log('up_idx = ', up_idx);
+  console.log('levels = ', levels);
+  console.log('re_levels = ', re_levels);
     
   if (replyTitle === '') {
     res.json({ 'result': 'fail' })
@@ -65,30 +72,32 @@ router.post('/vi/reply/insert', async function (req, res, next) {
     res.json({ 'result': 'fail' })
   } 
 
-  const reply = Reply(); 
+  const todos = Todos(); 
 
-  console.log('rep@@ly =>', reply)   
+  console.log('todo@@@sss =>', todos)   
 
-  // const replys = await reply.create({
-  //   p_id: 1,
+  // const todo = await todos.create({
+  //   p_id: tableRow,
   //   title: replyTitle,
   //   content: replyContent,      
   //   bbs_eq: bbs_eq,
-  //   user_eq: session_id   
+  //   user_eq: session_id,
+  //   up_idx: up_idx,
+  //   levels:1    
   // })
 
-  try {
-    console.log('rep###ly =>',reply)
-    const replys = await reply.create({
+  try {    
+    const todo = await todos.create({
       p_id: tableRow,
       title: replyTitle,
       content: replyContent,      
       bbs_eq: bbs_eq,
       user_eq: session_id,
-      up_idx: up_idx,      
+      up_idx: up_idx,
+      levels: 1 + re_levels   
     })
     console.log("성공!!")
-    const data = replys.get({ plain: true })
+    const data = todo.get({ plain: true })
     res.json({ 'result': 'success', 'datas': data })
   } catch (e) {
     console.log('실패!!');
@@ -268,7 +277,7 @@ router.post('/vi/board/update', async function (req, res, next) {
   try {
     await todos.update({ title: inputTitle, content: inputText, board_tpye: board_select, update_at: date_ob }, {
       where: {
-        bbs_eq: id
+        idx: id
       }
     });
   } catch (e) {
@@ -317,7 +326,9 @@ router.get('/vi/board/read', async function (req, res, next) {
     limit: 5,
     where: {
       del_yn: 'N',
-      parent_id: null      
+      p_id:0,
+      levels: null,
+      levels:0     
     },
     order: [
       ['bbs_eq', 'DESC']
@@ -362,7 +373,6 @@ router.post('/v1/board/insert', async function (req, res, next) {
   const inputTitle = req.body.inputTitle;
   const inputText = req.body.inputText;
   const board_type = req.body.board_type;
-  
 
   console.log('session_id = ', session_id);
   console.log('inputTitle = ', inputTitle);
@@ -376,7 +386,6 @@ router.post('/v1/board/insert', async function (req, res, next) {
   if (inputTitle === '') {
     res.json({ 'result': 'fail' })
   }
- 
 
   // Model Basics
   const todos = Todos();
@@ -389,7 +398,9 @@ router.post('/v1/board/insert', async function (req, res, next) {
       user_eq: session_id,
       title: inputTitle,
       content: inputText,
-      board_type: board_type
+      board_type: board_type,
+      p_id:0,
+      levels:0          
     })
 
     // await post_files.update({ del_yn: "Y", delete_at: date_ob }, {

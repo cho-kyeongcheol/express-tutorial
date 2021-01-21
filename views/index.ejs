@@ -142,10 +142,10 @@
               const content = `                      
           <tr id="row_${el.bbs_eq}">
             <td>
-              <span id="bbs_eq">${el.bbs_eq}</span>
+              <span id="bbs_eq">${el.idx}</span>
             </td>  
             <td>
-              <a href="/board_view?bbs_eq=${el.bbs_eq}"> ${el.title} </a>
+              <a href="/board_view?bbs_eq=${el.idx}"> ${el.title} </a>
             </td>     
             <td>              
                ${el.user_eq}
@@ -191,12 +191,12 @@
             console.log('todos = ', todos);
             todos.forEach(el => {
               const content = `                      
-          <tr id="row_${el.bbs_eq}">
+          <tr id="row_${el.idx}">
             <td>
-              <span id="bbs_eq">${el.bbs_eq}</span>
+              <span id="bbs_eq">${el.idx}</span>
             </td>  
             <td>
-              <a href="/board_view?bbs_eq=${el.bbs_eq}"> ${el.title} </a>
+              <a href="/board_view?bbs_eq=${el.idx}"> ${el.title} </a>
             </td>     
             <td>              
                ${el.user_eq}

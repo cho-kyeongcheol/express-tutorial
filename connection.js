@@ -64,11 +64,11 @@ exports.PostFile = function() {
     return post_file;
   }
 
-  exports.Reply = function() {
+  exports.Todos = function() {
     
     const sequelize = exports.getConnection();
   
-    const reply = sequelize.define('reply', {
+    const todos = sequelize.define('todos', {
         idx: {
           type: DataTypes.INTEGER,
           allowNull: false,
@@ -80,15 +80,13 @@ exports.PostFile = function() {
           allowNull: false  
         },
         levels: {
-          type: DataTypes.INTEGER,
-          defaultValue: 0
+          type: DataTypes.INTEGER
         },
         up_idx: {
           type: DataTypes.INTEGER          
         },
         bbs_eq: {
-          type: DataTypes.INTEGER,
-          allowNull: false  
+          type: DataTypes.INTEGER          
         },
         user_eq: {
           type: DataTypes.INTEGER,
@@ -114,82 +112,88 @@ exports.PostFile = function() {
           type: DataTypes.STRING(2),
           defaultValue: 'N',
           allowNull: false  
-        },   
+        },
+        count: {
+          type: DataTypes.INTEGER          
+        },
+        board_type: {
+          type: DataTypes.STRING(15)          
+        }, 
       }, {
           // Other model options go here
           timestamps: false,
-          tableName: 'reply'
+          tableName: 'todos'
       });
-      return reply;
+      return todos;
     }
 
     
 
-exports.Todos = function() {
+// exports.Todos = function() {
 
-  const sequelize = exports.getConnection();
+//   const sequelize = exports.getConnection();
 
-  const todos = sequelize.define('todos', {
-    bbs_eq: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      primaryKey: true,
-      autoIncrement: true
-    },    
-    content: {
-      type: DataTypes.STRING(255),
-      allowNull: false
-    },   
-    title: {
-      type: DataTypes.STRING(60),
-      allowNull: false
-    },   
-    user_eq: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },    
-    del_yn: {
-      type: DataTypes.STRING(1),
-      defaultValue: 'N'
-    },
-    create_at: {
-      type: DataTypes.DATE,
-      defaultValue: Sequelize.NOW
-    },
-    update_at: {
-      type: DataTypes.DATE
-    },
-    delete_at: {
-      type: DataTypes.DATE
-    },
-    count: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0
-    },
-    board_type: {
-      type: DataTypes.STRING(20),
-      defaultValue: 'news'
-    }, 
-    parent_id: {
-      type: DataTypes.INTEGER
-    },
-    reply_levels: {
-      type: DataTypes.INTEGER
-    },
-    depth: {
-      type: DataTypes.INTEGER
-    },
+//   const todos = sequelize.define('todos', {
+//     bbs_eq: {
+//       type: DataTypes.INTEGER,
+//       allowNull: false,
+//       primaryKey: true,
+//       autoIncrement: true
+//     },    
+//     content: {
+//       type: DataTypes.STRING(255),
+//       allowNull: false
+//     },   
+//     title: {
+//       type: DataTypes.STRING(60),
+//       allowNull: false
+//     },   
+//     user_eq: {
+//       type: DataTypes.INTEGER,
+//       allowNull: false
+//     },    
+//     del_yn: {
+//       type: DataTypes.STRING(1),
+//       defaultValue: 'N'
+//     },
+//     create_at: {
+//       type: DataTypes.DATE,
+//       defaultValue: Sequelize.NOW
+//     },
+//     update_at: {
+//       type: DataTypes.DATE
+//     },
+//     delete_at: {
+//       type: DataTypes.DATE
+//     },
+//     count: {
+//       type: DataTypes.INTEGER,
+//       defaultValue: 0
+//     },
+//     board_type: {
+//       type: DataTypes.STRING(20),
+//       defaultValue: 'news'
+//     }, 
+//     parent_id: {
+//       type: DataTypes.INTEGER
+//     },
+//     reply_levels: {
+//       type: DataTypes.INTEGER
+//     },
+//     depth: {
+//       type: DataTypes.INTEGER
+//     },
 
-  }, {
-    // Other model options go here
-    timestamps: false,
-    tableName: 'todos'
-});
+//   }, {
+//     // Other model options go here
+//     timestamps: false,
+//     tableName: 'todos'
+// });
 
-console.log('todos => ', todos)
-return todos;
+// console.log('todos => ', todos)
+// return todos;
 
-}
+// }
 
 
 exports.Users = function() {

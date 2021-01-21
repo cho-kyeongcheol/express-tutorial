@@ -394,6 +394,19 @@ function bar(){
 
 ```
 
+### TABLE에서 특정 td값 숨기기
+``` CSS
+td:nth-of-type(5) { display: none; }
+```
+
+### button 에 다중 파라미터 넣기
+``` html,
+<button onclck="rowSelect(${el.idx},${el.p_id})">밑에 댓글쓰기</button>
+
+function rowSelect(idx,p_id){
+}
+```
+
 #### REPLY api
 #### reply/insert
 ``` js

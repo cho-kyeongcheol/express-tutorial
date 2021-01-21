@@ -78,12 +78,12 @@ router.get('/', async (req, res) => {
             raw: true
         });
 
-        const todo = await todos.findAll({
-            where: {
-                user_eq: user_id,
-            },
-            raw: true
-        });
+        // const todo = await todos.findAll({
+        //     where: {
+        //         user_eq: user_id,
+        //     },
+        //     raw: true
+        // });
         const todo_list = await todos.findAll({
             // where: {
             //     del_yn: 'N'
@@ -96,12 +96,14 @@ router.get('/', async (req, res) => {
 
         context.user = user[0]
         context.user_list = user_list
-        context.todo = todo[0]
+        // context.todo = todo[0]
+        // console.log('context.todo =>', context.todo)
         context.todo_list = todo_list
+        // console.log('context.todo_list =>', context.todo_list)
     } else {
         context.user = undefined
         context.user_list = undefined
-        context.todo = undefined
+        // context.todo = undefined
         context.todo_list = undefined
     }
     res.render('index', context);
@@ -118,7 +120,9 @@ router.get('/board_write', async (req, res) => {
         const post_file = PostFile();
 
         const postfile = await post_file.findAll({
-            where: { target_id: user_id }
+            where: { 
+                target_id: user_id
+             }
         });
 
         const user = await users.findAll({
@@ -169,7 +173,7 @@ router.get('/board_view', async (req, res) => {
 
         const todos = Todos();
 
-        const reply = Reply();
+        // const reply = Reply();
 
         const post_file = PostFile();
 
@@ -182,7 +186,7 @@ router.get('/board_view', async (req, res) => {
 
         const todo = await todos.findAll({
             where: {
-                bbs_eq: sub_url
+                idx: sub_url
             },
             raw: true
         });
@@ -190,18 +194,18 @@ router.get('/board_view', async (req, res) => {
         const todo_list = await todos.findAll({    
             where: {
                 del_yn: 'N' ,
-                parent_id: sub_url
+                p_id: sub_url
               },
               raw: true  
         });
 
-        const reply_list = await reply.findAll({    
-            where: {
-                del_yn: 'N',
-                bbs_eq: sub_url                
-              },
-              raw: true  
-        });
+        // const reply_list = await reply.findAll({    
+        //     where: {
+        //         del_yn: 'N',
+        //         bbs_eq: sub_url                
+        //       },
+        //       raw: true  
+        // });
 
         const postfile = await post_file.findAll({
             where: {
@@ -234,12 +238,12 @@ router.get('/board_view', async (req, res) => {
         context.todo_list = todo_list
         // console.log('todo_list =>',context.todo_list)
 
-        context.reply_list = reply_list
-        console.log('reply_list =>', reply_list)
+        // context.reply_list = reply_list
+        // console.log('reply_list =>', reply_list)
     } else {
         context.user = undefined
         context.todo = undefined
-        context.reply_list = undefined
+        // context.reply_list = undefined
         context.todo_list = undefined
     }
 
