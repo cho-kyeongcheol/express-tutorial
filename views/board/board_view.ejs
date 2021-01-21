@@ -60,7 +60,7 @@
 
                     <hr>
                 <div class="col mt-20">
-                <h2>Reply</h2>   <button onclick="test()">test</button>
+                <h2>Reply</h2>  
 
                 <table id="todo_list2" class="todo_list2">
                     <tr>    
@@ -70,7 +70,7 @@
                         <th class="content">content</th>                      
                     </tr>
                   </table>
-                    
+                  <button onclick="init()"> 초기화 </button>
                   <br>
                     <h5>댓글작성</h5> 
                     <input id="replyTitle" type='text' class='form-control' placeholder="제목을 입력하세요.">
@@ -90,6 +90,7 @@
         <%- include('../common/javascript') -%>
 
             <script>
+           
             function readReply() {
                 var bbs_eq = $("#bbs_eq").html();
                     $.get("/api/vi/reply/read/", {
@@ -120,7 +121,7 @@
                         ${el.p_id}
                         </td> 
                         <td>
-                            <button onclick="rowSelect(${el.idx},${el.p_id})">밑에 댓글쓰기</button>
+                            <button onclick="rowSelect(${el.idx},${el.levels},${el.p_id})">밑에 댓글쓰기</button>
                         </td>
                     </tr>                    
                     `
@@ -131,29 +132,36 @@
 
 
                 var MyApp = {}
-
-                function pidSelect(p_id) {
-                    console.log('p_id=>',p_id)   
-                    var p_id = $("#p_",p_id).html();   
-                    console.log('p_id=>',p_id)
+                     
+                function init(levels,p_id) {                                        
+                    var table = document.getElementById("todo_list2");
+                    var totalRowCount = table.rows.length; 
+                    MyApp.levels = 0
+                    MyApp.p_id = totalRowCount
+                    console.log('MyApp.levels=>', MyApp.levels)
+                    console.log('MyApp.p_id=>',MyApp.p_id)
+                    
+                    return;
                 }
+
+
                 
-                function rowSelect(idx,p_id){   
+                function rowSelect(idx,levels,p_id){   
                     console.log('idx=>',idx)
-                    console.log('p_id=>',p_id)                       
+                    console.log('p_id=>',p_id)    
+                    console.log('levels=>',levels)    
                     MyApp.idx = idx
-                    MyApp.levels = 1
+                    MyApp.levels = levels
+                    MyApp.p_id = p_id
                     var idx_no = MyApp.idx
                     var levels = MyApp.levels
                     console.log('MYAPPIDX=>', idx_no)
-                    console.log('levels=>', levels)   
-                    // pidSelect()                                   
+                    console.log('levels=>', levels)                      
+                    
+                    return;
                 }                          
 
-                // function test() {                                         
-                //     console.log('$#$#$MyApp.test2222 =>', MyApp.test)   
-                // }
-
+               
                 $(function () {
                     readReply()
                 })
@@ -167,8 +175,18 @@
                     var totalRowCount = table.rows.length; 
                     var idx_no = MyApp.idx
                     var levels = MyApp.levels
+                    var p_id = MyApp.p_id
+                    var test = 1
+
+                    if(p_id){
+                        test = p_id
+                    } else{
+                        test = totalRowCount
+                    }
+
                     console.log('idx_no =>', idx_no)
                     console.log('levels =>', levels)
+                    console.log('p_id =>', p_id)
                     console.log('replyTitle => ',replyTitle)
                     console.log('replyContent => ',replyContent)
                     console.log('bbs_eq => ',bbs_eq)                    
@@ -177,7 +195,7 @@
                         replyTitle:replyTitle,
                         replyContent:replyContent,
                         bbs_eq:bbs_eq,
-                        tableRow:totalRowCount,
+                        tableRow:test,
                         up_idx:idx_no,
                         levels:levels
                     }).done(function (datas) {                        
@@ -211,7 +229,8 @@
                         `                        
                         $('#todo_list2').append(content);
                         }
-                    })                         
+                    })
+                     return;                      
                 }
 
             readUpload()

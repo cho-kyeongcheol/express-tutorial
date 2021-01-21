@@ -33,8 +33,7 @@ router.get('/vi/reply/read', async function (req, res, next) {
   const reply_list = await todos.findAll({    
     where: {
       del_yn: 'N',
-      bbs_eq: querydata,
-      levels: 1
+      bbs_eq: querydata      
     },
     raw: true
   });
@@ -51,11 +50,15 @@ router.post('/vi/reply/insert', async function (req, res, next) {
   const bbs_eq = req.body.bbs_eq;
   const tableRow = req.body.tableRow;  
   const up_idx = req.body.up_idx;
-  const levels = req.body.levels;
+  let levels = req.body.levels;
 
-
-  var re_levels = parseInt(levels)
+  if(levels === undefined ){
+    levels = 0
+  } 
   
+  var re_levels = parseInt(levels) // 문자열로 들어온 levels 를 int형으로 바꾸기
+
+
   console.log('session_id = ', session_id);
   console.log('replyTitle = ', replyTitle);
   console.log('replyContent = ', replyContent);
@@ -94,6 +97,7 @@ router.post('/vi/reply/insert', async function (req, res, next) {
       bbs_eq: bbs_eq,
       user_eq: session_id,
       up_idx: up_idx,
+      board_type: 'reply',
       levels: 1 + re_levels   
     })
     console.log("성공!!")
@@ -331,7 +335,7 @@ router.get('/vi/board/read', async function (req, res, next) {
       levels:0     
     },
     order: [
-      ['bbs_eq', 'DESC']
+      ['idx', 'DESC']
     ],
     raw: true
   });

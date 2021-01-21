@@ -78,7 +78,7 @@
     text-align: center;
 }
 
-td:nth-of-type(5) { display: none; }   
+.todo_list2 td:nth-of-type(5) { display: none; }   
 
 .todo_list {
   margin-left: 20px;
