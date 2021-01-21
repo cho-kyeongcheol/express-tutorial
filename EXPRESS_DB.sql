@@ -4,6 +4,20 @@ select * from users;
 
 select * from todos;
 
+SELECT *, IF(p_id <= 1, levels = 'A', IF(p_id <=3, levels = 'B', levels = 'c')) AS levels FROM todos;
+
+
+SELECT 
+	seq, 
+	CASE
+		WHEN (u.seq BETWEEN 1 AND 3) THEN 'A'
+		WHEN (u.seq BETWEEN 4 AND 6) THEN 'B'
+        ELSE 'C'
+	END AS case_result
+FROM `user` u;
+
+select * from todossss;
+
 select * from reply;
 
 select * from post_file;

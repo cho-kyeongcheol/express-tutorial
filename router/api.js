@@ -16,6 +16,26 @@ const { path } = require('../server');
 //   res.render('index', { title: 'Express' });
 // });
 
+router.post('/vi/reply/delete', async function (req, res, next) {
+  console.log('req.body = ', req.body); 
+  const idx = req.body.idx;
+
+  const todos = Todos();
+
+  try {
+    await todos.update({ 
+      del_yn: 'Y',       
+    }, {
+      where: {
+        idx: idx
+      }
+    });
+    res.json({ 'result': 'success' })
+  } catch (e) {
+    res.json({ 'result': 'fail'})
+  } 
+})
+
 router.get('/vi/reply/read', async function (req, res, next) {
   console.log('@@reply/read@@ ')
   console.log('req.body = ', req.body);  

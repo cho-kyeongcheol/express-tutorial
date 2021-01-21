@@ -91,6 +91,21 @@
 
             <script>
            
+           function replyDelete(idx){
+               console.log('idx=>',idx)   
+               $.post("/api/vi/reply/delete",{
+                idx: idx
+               }).done(function(result){
+                   if(result == 'fail' ){
+                    console.log('삭제실패!')
+                   }else{
+                    console.log('삭제성공!')
+                    $('#row_'  + idx).remove();
+                   }
+
+               })
+           }
+
             function readReply() {
                 var bbs_eq = $("#bbs_eq").html();
                     $.get("/api/vi/reply/read/", {
@@ -104,7 +119,7 @@
                         console.log('data.data=>', data)
                         data.forEach(el => {
                         const content = `                      
-                    <tr>                        
+                    <tr id="row_${el.idx}">                        
                         <td>              
                         ${el.idx}
                         </td> 
@@ -116,12 +131,12 @@
                         </td>    
                         <td>              
                         ${el.content} 
-                        </td> 
-                        <td id="p_${el.p_id}">              
-                        ${el.p_id}
-                        </td> 
+                        </td>                         
                         <td>
                             <button onclick="rowSelect(${el.idx},${el.levels},${el.p_id})">밑에 댓글쓰기</button>
+                        </td>
+                        <td>
+                            <button onclick="replyDelete(${el.idx})">댓글삭제</button>
                         </td>
                     </tr>                    
                     `
@@ -166,6 +181,7 @@
                     readReply()
                 })
 
+                // init()  
 
                 function insertReply() {
                     var replyTitle = $('#replyTitle').val();
@@ -176,12 +192,12 @@
                     var idx_no = MyApp.idx
                     var levels = MyApp.levels
                     var p_id = MyApp.p_id
-                    var test = 1
+                    var p_idx; //대댓글시 p_id를 같게 , 댓글시 p_id를 맨밑에 값에 넣어줌
 
                     if(p_id){
-                        test = p_id
+                        p_idx = p_id
                     } else{
-                        test = totalRowCount
+                        p_idx = totalRowCount
                     }
 
                     console.log('idx_no =>', idx_no)
@@ -195,7 +211,7 @@
                         replyTitle:replyTitle,
                         replyContent:replyContent,
                         bbs_eq:bbs_eq,
-                        tableRow:test,
+                        tableRow:p_idx,
                         up_idx:idx_no,
                         levels:levels
                     }).done(function (datas) {                        
@@ -206,7 +222,7 @@
                             // window.location.href = "/board_view?"+'bbs_eq='+bbs_eq;
                             var el = datas.datas;
                         const content = `
-                            <tr>  
+                            <tr id="row_${el.idx}">
                                 <td>              
                                 ${el.idx}
                                 </td>                              
@@ -218,20 +234,22 @@
                                 </td>    
                                 <td>              
                                 ${el.content}
-                                </td> 
-                                <td <td id="p_${el.p_id}">              
-                                ${el.p_id}
                                 </td>   
                                 <td>
-                                    <button onclick="rowSelect(${el.idx})">밑에 댓글쓰기</button>
+                                    <button onclick="rowSelect(${el.idx},${el.levels},${el.p_id})">밑에 댓글쓰기</button>
+                                </td>
+                                <td>
+                                    <button onclick="replyDelete(${el.idx})">댓글삭제</button>
                                 </td>
                             </tr>          
                         `                        
                         $('#todo_list2').append(content);
                         }
-                    })
-                     return;                      
+                    })                    
+                     return;                                         
                 }
+
+                
 
             readUpload()
 

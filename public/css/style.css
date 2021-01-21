@@ -72,13 +72,14 @@
   border-top: 1px solid #444444;
   border-collapse: collapse;
 }
+
 .todo_list2 th, td {
   border-bottom: 1px solid #444444;
     padding: 10px;
     text-align: center;
 }
 
-.todo_list2 td:nth-of-type(5) { display: none; }   
+.todo_list4 td:nth-of-type(5) { display: none; }   
 
 .todo_list {
   margin-left: 20px;
