@@ -25,6 +25,9 @@ router.post('/vi/reply/delete', async function (req, res, next) {
 
   const todos = Todos();
 
+  // await todos.sequelize.query("update todos set del_yn = 'Y' WHERE idx = '"+idx+"' ");
+  // await todos.sequelize.query("update todos set idx = idx + 1 WHERE idx >= "+idx+" order by idx DESC");
+
   try {
     await todos.update({ 
       del_yn: 'Y',       
@@ -37,6 +40,7 @@ router.post('/vi/reply/delete', async function (req, res, next) {
   } catch (e) {
     res.json({ 'result': 'fail'})
   } 
+
 })
 
 router.get('/vi/reply/read', async function (req, res, next) {
@@ -53,21 +57,19 @@ router.get('/vi/reply/read', async function (req, res, next) {
   const todos = Todos(); 
 
   console.log('session_id =.>', session_id)
-
-
-
-  const reply_list = await todos.sequelize.query("SELECT * FROM `todos` where del_yn = 'N' and bbs_eq = '"+querydata+"'  ",
-   {
-     type: QueryTypes.SELECT 
-  });
-
-  // const reply_list = await todos.findAll({    
-  //   where: {
-  //     del_yn: 'N',
-  //     bbs_eq: querydata      
-  //   },
-  //   raw: true
+  
+  // const reply_list = await todos.sequelize.query("SELECT * FROM `todos` where del_yn = 'N' and bbs_eq = '"+querydata+"'  ",
+  //  {
+  //    type: QueryTypes.SELECT 
   // });
+
+  const reply_list = await todos.findAll({    
+    where: {
+      del_yn: 'N',
+      bbs_eq: querydata      
+    },
+    raw: true
+  });
 
   console.log('hello')
   res.json({ 'result': 'success', 'data': reply_list })
@@ -82,11 +84,15 @@ router.post('/vi/reply/insert', async function (req, res, next) {
   const bbs_eq = req.body.bbs_eq;
   const tableRow = req.body.tableRow;  
   const up_idx = req.body.up_idx;
-  const idx_no = req.body.idx_no;
+  let idx_no = req.body.idx_no;
   let levels = req.body.levels;
 
   if(levels === undefined ){
     levels = 0
+  } 
+
+  if(idx_no === undefined ){
+    idx_no = 9999
   } 
   
   var re_levels = parseInt(levels) // 문자열로 들어온 levels 를 int형으로 바꾸기
@@ -100,7 +106,8 @@ router.post('/vi/reply/insert', async function (req, res, next) {
   console.log('up_idx = ', up_idx);
   console.log('levels = ', levels);
   console.log('re_levels = ', re_levels);
-    
+  console.log('idx_no = ', idx_no);  
+
   if (replyTitle === '') {
     res.json({ 'result': 'fail' })
   } 
@@ -112,27 +119,33 @@ router.post('/vi/reply/insert', async function (req, res, next) {
 
   console.log('todo@@@sss =>', todos)   
 
+  // await todos.sequelize.query("update todos set idx = idx + 1 WHERE idx >= "+idx_no+" order by idx DESC");
+
+
+  // console.log('update 성공!')
+
   // const todo = await todos.create({
+  //   idx : idx_no,
   //   p_id: tableRow,
   //   title: replyTitle,
   //   content: replyContent,      
   //   bbs_eq: bbs_eq,
   //   user_eq: session_id,
   //   up_idx: up_idx,
-  //   levels:1    
+  //   board_type: 'reply',
+  //   levels: 1 + re_levels   
   // })
+  // console.log('@@@@todo = ', todo); 
+  
 
-  //   await todos.update({ 
-  //     idx : idx + 1      
-  //   }, {
-  //     where: {
-  //       idx : idx_no
-  //     }
-  //   });
-
+  // await todos.sequelize.query("update todos set idx = idx + 1 WHERE idx >= "+idx_no+" order by idx DESC");
+   
 
   try {  
+    await todos.sequelize.query("update todos set idx = idx + 1 WHERE idx >= "+idx_no+" order by idx DESC");
+    
     const todo = await todos.create({
+      idx : idx_no,
       p_id: tableRow,
       title: replyTitle,
       content: replyContent,      
@@ -372,8 +385,7 @@ router.get('/vi/board/read', async function (req, res, next) {
     limit: 5,
     where: {
       del_yn: 'N',
-      p_id:0,
-      levels: null,
+      p_id:0,      
       levels:0     
     },
     order: [

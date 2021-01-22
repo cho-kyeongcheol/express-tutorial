@@ -75,6 +75,9 @@ exports.PostFile = function() {
           primaryKey: true,
           autoIncrement: true
         },
+        idx_key: {
+          type: DataTypes.INTEGER          
+        },
         p_id: {
           type: DataTypes.INTEGER,
           allowNull: false  
