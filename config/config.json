@@ -1,5 +1,5 @@
 {
-    "db_name": "database_development", 
+    "db_name": "express", 
     "username": "dev", 
     "password": "password", 
     "connection": {

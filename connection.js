@@ -15,50 +15,188 @@ exports.getConnection = function() {
     return sequelize;
 }
 
-exports.Todos = function() {
 
+exports.PostFile = function() {
+    
   const sequelize = exports.getConnection();
 
-  const todos = sequelize.define('todos', {
-    id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      primaryKey: true,
-      autoIncrement: true
-    },
-    content: {
-      type: DataTypes.STRING(255),
-      allowNull: false
-    },   
-    user_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },    
-    del_yn: {
-      type: DataTypes.STRING(1),
-      defaultValue: 'N'
-    },
-    create_at: {
-      type: DataTypes.DATE,
-      defaultValue: Sequelize.NOW
-    },
-    update_at: {
-      type: DataTypes.DATE
-    },
-    delete_at: {
-      type: DataTypes.DATE
+  const post_file = sequelize.define('post_file', {
+      post_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        primaryKey: true,
+        autoIncrement: true
+      },
+      target_id: {
+        type: DataTypes.INTEGER    
+      },     
+      filepath: {
+        type: DataTypes.STRING(255)
+      },
+      filename: {
+        type: DataTypes.STRING(255)
+      },
+      sort: {
+        type: DataTypes.INTEGER        
+      },
+      create_id: {
+        type: DataTypes.INTEGER        
+      },
+      del_yn: {
+        type: DataTypes.STRING(2),
+        defaultValue: 'y'
+      },
+      create_date: {
+        type: DataTypes.DATE,
+        defaultValue: Sequelize.NOW
+      },
+      extension: {
+        type: DataTypes.STRING(10)
+      },
+      file_type: {
+        type: DataTypes.STRING(20)
+      }
+    }, {
+        // Other model options go here
+        timestamps: false,
+        tableName: 'post_file'
+    });
+    return post_file;
+  }
+
+  exports.Todos = function() {
+    
+    const sequelize = exports.getConnection();
+  
+    const todos = sequelize.define('todos', {
+        idx: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+          primaryKey: true,
+          autoIncrement: true
+        },
+        idx_key: {
+          type: DataTypes.INTEGER          
+        },
+        p_id: {
+          type: DataTypes.INTEGER,
+          allowNull: false  
+        },
+        levels: {
+          type: DataTypes.INTEGER
+        },
+        up_idx: {
+          type: DataTypes.INTEGER          
+        },
+        bbs_eq: {
+          type: DataTypes.INTEGER          
+        },
+        user_eq: {
+          type: DataTypes.INTEGER,
+          allowNull: false  
+        },
+        create_at: {
+          type: DataTypes.DATE,
+          defaultValue: Sequelize.NOW,
+          allowNull: false  
+        },
+        update_at: {
+          type: DataTypes.DATE          
+        },
+        title: {
+          type: DataTypes.STRING(45),
+          allowNull: false  
+        },
+        content: {
+          type: DataTypes.STRING(200),
+          allowNull: false  
+        },
+        del_yn: {
+          type: DataTypes.STRING(2),
+          defaultValue: 'N',
+          allowNull: false  
+        },
+        count: {
+          type: DataTypes.INTEGER          
+        },
+        board_type: {
+          type: DataTypes.STRING(15)          
+        }, 
+      }, {
+          // Other model options go here
+          timestamps: false,
+          tableName: 'todos'
+      });
+      return todos;
     }
 
-  }, {
-    // Other model options go here
-    timestamps: false,
-    tableName: 'todos'
-});
+    
 
-console.log('todos => ', todos)
-return todos;
+// exports.Todos = function() {
 
-}
+//   const sequelize = exports.getConnection();
+
+//   const todos = sequelize.define('todos', {
+//     bbs_eq: {
+//       type: DataTypes.INTEGER,
+//       allowNull: false,
+//       primaryKey: true,
+//       autoIncrement: true
+//     },    
+//     content: {
+//       type: DataTypes.STRING(255),
+//       allowNull: false
+//     },   
+//     title: {
+//       type: DataTypes.STRING(60),
+//       allowNull: false
+//     },   
+//     user_eq: {
+//       type: DataTypes.INTEGER,
+//       allowNull: false
+//     },    
+//     del_yn: {
+//       type: DataTypes.STRING(1),
+//       defaultValue: 'N'
+//     },
+//     create_at: {
+//       type: DataTypes.DATE,
+//       defaultValue: Sequelize.NOW
+//     },
+//     update_at: {
+//       type: DataTypes.DATE
+//     },
+//     delete_at: {
+//       type: DataTypes.DATE
+//     },
+//     count: {
+//       type: DataTypes.INTEGER,
+//       defaultValue: 0
+//     },
+//     board_type: {
+//       type: DataTypes.STRING(20),
+//       defaultValue: 'news'
+//     }, 
+//     parent_id: {
+//       type: DataTypes.INTEGER
+//     },
+//     reply_levels: {
+//       type: DataTypes.INTEGER
+//     },
+//     depth: {
+//       type: DataTypes.INTEGER
+//     },
+
+//   }, {
+//     // Other model options go here
+//     timestamps: false,
+//     tableName: 'todos'
+// });
+
+// console.log('todos => ', todos)
+// return todos;
+
+// }
 
 
 exports.Users = function() {
@@ -66,20 +204,27 @@ exports.Users = function() {
     const sequelize = exports.getConnection();
 
     const users = sequelize.define('users', {
-        id: {
+        user_eq: {
           type: DataTypes.INTEGER,
           allowNull: false,
           primaryKey: true,
           autoIncrement: true
         },
-        username: {
+        user_id: {
           type: DataTypes.STRING(255),
           allowNull: false,
           unique: true
         },
+        username: {
+          type: DataTypes.STRING(255),
+          allowNull: false
+        },
         password: {
           type: DataTypes.STRING(255),
           allowNull: false
+        },
+        email: {
+          type: DataTypes.STRING(255)
         },
         create_at: {
           type: DataTypes.DATE,
@@ -103,7 +248,7 @@ exports.UsersLogin = function() {
     const sequelize = exports.getConnection();
 
     const users_login = sequelize.define('users_login', {
-        id: {
+        login_eq: {
           type: DataTypes.INTEGER,
           allowNull: false,
           primaryKey: true,

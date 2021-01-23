@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html>
+<%- include('../common/head') -%>
+
+    <body>
+        <h1>View</h1>
+
+        <div class="container w100">
+            <% if (user) { %>
+                <div class="title">
+                    작성자명
+                </div>
+                <div id="username">
+                    <%= user.username %>
+                </div>
+                <% } %>
+
+                    <div class="col mt-20">
+                        <span>board_no</span> <br>
+                        <span id="bbs_eq"><%= todo.idx %></span>
+
+                    </div>
+
+
+                    <div class="col mt-20">
+                        <span>Title</span>
+                        <input id="inputTitle" type='text' class='form-control input300' value="<%= todo.title %>">
+                    </div>
+
+                    <div class="row mt-20">
+                        <div class="col">
+                            <span>Content</span>
+                            <textarea id="inputText" type='text' class='form-control input600'>
+                                <%= todo.content %>
+                            </textarea>                            
+                        </div>
+                        <div class="col">
+                            <span>board_type</span><br>
+                            <select class="custom-select" name="pets" id="board_select">
+                                <option value="news">news</option>
+                                <option value="Gallery">Gallery</option>
+                                <option value="Q&A">Q&A</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3" id="imageload">   
+                        </div>
+
+                        <div class="mb-3 mt-20">
+                            <div class="col"></div>
+                            <form action="/upload" method="post" enctype="multipart/form-data" id="fileForm">
+                                <input type="file" id="fileInput" name="fileInput">
+                            </form>
+                            <input type="text" id="filePath"> 
+                            <button class="btn btn-primary" onclick="updateTodo()">수정</button>
+                            <button class="btn btn-secondary" onclick="deleteTodo()">삭제</button>
+                            <button class="btn btn-primary w200" onclick="goIndex()">홈페이지로이동</button>
+                        </div>
+                    </div>
+
+                    <hr>
+                <div class="col mt-20">
+                <h2>Reply</h2>  
+
+                <table id="todo_list2" class="todo_list2">
+                    <tr>    
+                        <th>no</th>                                        
+                        <th>p_id</th> 
+                        <th>levels</th>
+                        <th>user_id</th>
+                        <th>title</th>
+                        <th class="content">content</th>                      
+                    </tr>
+                  </table>
+                  <button onclick="init()"> 초기화 </button>
+                  <br>
+                    <h5>댓글작성</h5> 
+                    <input id="replyTitle" type='text' class='form-control' placeholder="제목을 입력하세요.">
+                    <input id="replyContent" type='text' class='form-control' placeholder="내용을 입력하세요.">
+    
+                </div>
+                <button class="btn btn-primary" onclick="insertReply()">댓글등록</button>
+
+
+
+        </div>
+
+        
+     
+
+
+        <%- include('../common/javascript') -%>
+
+            <script>
+           
+           function replyDelete(idx){
+               console.log('idx=>',idx)   
+               $.post("/api/vi/reply/delete",{
+                idx: idx
+               }).done(function(result){
+                   if(result == 'fail' ){
+                    console.log('삭제실패!')
+                   }else{
+                    console.log('삭제성공!')
+                    $('#row_'  + idx).remove();
+                   }
+
+               })
+           }
+
+            function readReply() {
+                var bbs_eq = $("#bbs_eq").html();
+                    $.get("/api/vi/reply/read/", {
+                        // pass
+                        data: {
+                        bbs_eq: bbs_eq              
+                    }
+                    }).done(function (data) {  
+                        console.log('data=>', data)                     
+                        var data = data.data;    
+                        console.log('data.data=>', data)
+                        data.forEach(el => {
+                        const content = `                      
+                    <tr id="row_${el.idx}">                        
+                        <td>              
+                        ${el.idx}
+                        </td> 
+                        <td>              
+                        ${el.p_id}
+                        </td> 
+                        <td>              
+                        ${el.levels}
+                        </td> 
+                        <td>              
+                        ${el.user_eq}
+                        </td>   
+                        <td>
+                        ${el.title}
+                        </td>    
+                        <td>              
+                        ${el.content} 
+                        </td>                         
+                        <td>
+                            <button onclick="rowSelect(${el.idx},${el.levels},${el.p_id})">밑에 댓글쓰기</button>
+                        </td>
+                        <td>
+                            <button onclick="replyDelete(${el.idx})">댓글삭제</button>
+                        </td>
+                    </tr>                    
+                    `
+                        $('#todo_list2').append(content);
+                        });
+                    })
+                }
+
+
+                var MyApp = {}
+                     
+                function init(levels,p_id) {                                        
+                    var table = document.getElementById("todo_list2");
+                    var totalRowCount = table.rows.length; 
+                    MyApp.levels = 0
+                    MyApp.p_id = totalRowCount
+                    console.log('MyApp.levels=>', MyApp.levels)
+                    console.log('MyApp.p_id=>',MyApp.p_id)
+                    
+                    return;
+                }
+
+
+                
+                function rowSelect(idx,levels,p_id){   
+                    console.log('idx=>',idx)
+                    console.log('p_id=>',p_id)    
+                    console.log('levels=>',levels)    
+                    MyApp.idx = idx
+                    MyApp.levels = levels
+                    MyApp.p_id = p_id
+                    var idx_no = MyApp.idx
+                    var levels = MyApp.levels
+                    console.log('MYAPPIDX=>', idx_no)
+                    console.log('levels=>', levels)                      
+                    
+                    return;
+                }                          
+
+               
+                $(function () {
+                    readReply()
+                })
+
+                
+
+                function insertReply() {
+                    var replyTitle = $('#replyTitle').val();
+                    var replyContent = $('#replyContent').val();
+                    var bbs_eq = $("#bbs_eq").html();
+                    var table = document.getElementById("todo_list2");
+                    var totalRowCount = table.rows.length; 
+                    var idx_no = MyApp.idx
+                    var levels = MyApp.levels
+                    var p_id = MyApp.p_id
+                    var p_idx; //대댓글시 p_id를 같게 , 댓글시 p_id를 맨밑에 값에 넣어줌
+
+                    if(p_id){
+                        p_idx = p_id
+                    } else{
+                        p_idx = totalRowCount
+                    }
+
+                    console.log('idx_no =>', idx_no)
+                    console.log('levels =>', levels)
+                    console.log('p_id =>', p_id)
+                    console.log('replyTitle => ',replyTitle)
+                    console.log('replyContent => ',replyContent)
+                    console.log('bbs_eq => ',bbs_eq)                    
+                    console.log('totalRowCount => ',totalRowCount)                    
+                    $.post("/api/vi/reply/insert" ,{  
+                        replyTitle:replyTitle,
+                        replyContent:replyContent,
+                        bbs_eq:bbs_eq,
+                        tableRow:p_idx,
+                        up_idx:idx_no,
+                        levels:levels,
+                        idx_no: idx_no
+                    }).done(function (datas) {                        
+                        if (datas.datas === 'fail') {
+                           console.log('댓글실패')
+                        } else {
+                            console.log('댓글성공')
+                            // window.location.href = "/board_view?"+'bbs_eq='+bbs_eq;
+                            var el = datas.datas;
+                        const content = `
+                            <tr id="row_${el.idx}">
+                                <td>              
+                                ${el.idx}
+                                </td> 
+                                <td>              
+                                ${el.p_id}
+                                </td>  
+                                <td>              
+                                ${el.levels}
+                                </td>                             
+                                <td>              
+                                ${el.user_eq}
+                                </td>   
+                                <td>
+                                ${el.title}
+                                </td>    
+                                <td>              
+                                ${el.content}
+                                </td>   
+                                <td>
+                                    <button onclick="rowSelect(${el.idx},${el.levels},${el.p_id})">밑에 댓글쓰기</button>
+                                </td>
+                                <td>
+                                    <button onclick="replyDelete(${el.idx})">댓글삭제</button>
+                                </td>
+                            </tr>          
+                        `                        
+                        $('#todo_list2').append(content);
+                        }
+                    })                    
+                     return;                                         
+                }
+
+                
+
+
+                function deleteTodo() {
+                var bbs_eq = $("#bbs_eq").html();
+                console.log('bbs_eq = ', bbs_eq)
+                $.post("/api/vi/board/delete/", {
+                    bbs_eq: bbs_eq
+                }).done(function (data) {
+                    console.log('data =>' , data)
+                    if (data.result === 'fail') {                        
+                    Swal.fire({
+                        icon: 'error',
+                        title: '삭제!',
+                        text: '실패!'
+                    })
+                    console.log('실패')
+                    } else {                            
+                    console.log('성공')
+                    window.location.href = "/";               
+                    }
+                })
+                } 
+
+
+                
+                function updateTodo() {
+                    var bbs_eq = $("#bbs_eq").html();
+                    var inputTitle = $('#inputTitle').val();
+                    var inputText = $('#inputText').val();
+                    var board_select = $('#board_select').val();   
+                    console.log("bbs_eq => ", bbs_eq)
+                    console.log("inputTitle => ", inputTitle)
+                    console.log("inputText => ", inputText)
+                    console.log("board_select => ", board_select)
+                    $.post("/api/vi/board/update/", {  
+                        bbs_eq:bbs_eq,                      
+                        inputTitle: inputTitle,
+                        inputText: inputText,
+                        board_select: board_select
+                    }).done(function (data) {
+                        if (data.result === 'fail') {
+                            Swal.fire({
+                                icon: 'error',
+                                title: '수정',
+                                text: '실패!'
+                            })
+                        } else {
+                            Swal.fire({
+                                icon: 'success',
+                                title: '수정',
+                                text: '성공!'
+                            })
+                        }
+                    })                    
+                }
+
+                function goIndex() {
+                    window.location.href = "/";
+                }
+
+                function insertTodo() {
+                    var inputTitle = $('#inputTitle').val();
+                    var inputText = $('#inputText').val();
+                    var board_select = $('#board_select').val();
+                    console.log("inputTitle =>", inputTitle)
+                    console.log("inputText =>", inputText)
+                    console.log("board_select =>", board_select)
+                    $.post("/api/v1/board/insert", {
+                        inputTitle: inputTitle,
+                        inputText: inputText,
+                        board_type: board_select
+                    }).done(function (data) {
+                        if (data.result === 'fail') {
+                            Swal.fire({
+                                icon: 'error',
+                                title: '등록!',
+                                text: '실패!'
+                            })
+                        } else {
+                            // success
+                            Swal.fire({
+                                icon: 'success',
+                                title: '등록!',
+                                text: '성공!'
+                            })
+
+                        }
+                    });
+                }
+
+
+
+
+
+
+
+            </script>
+    </body>
+
+</html>

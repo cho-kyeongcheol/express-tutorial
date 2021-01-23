@@ -1,66 +1,66 @@
 <!DOCTYPE html>
 <html>
-  <%- include('./common/head') -%>
-<body>
+<%- include('./common/head') -%>
 
-  <div class="container">
-    <div class="regist-box">      
-      <h1 class="text-center">
-        로그인
-      </h1>
-      <div class="mb-3">
-        <label for="inputName" class="form-label">이름</label>
-        <input type="text" class="form-control" id="inputName">
-      </div>
-      <div class="mb-3">
-        <label for="inputPw" class="form-label">비밀번호</label>
-        <input type="password" class="form-control" id="inputPw">
-      </div>
-      <div>
-        <button onclick="login()" type="submit" class="btn btn-secondary w-100p mb-15">로그인</button>
-      </div>
-      <div>
-        <button onclick="goRegist()" type="submit" class="btn btn-light w-100p">회원가입</button>
+  <body>
+
+    <div class="container">
+      <div class="regist-box">
+        <h1 class="text-center">
+          로그인
+        </h1>
+        <div class="mb-3">
+          <label for="inputId" class="form-label">이름</label>
+          <input type="text" class="form-control" id="inputId">
+        </div>
+        <div class="mb-3">
+          <label for="inputPw" class="form-label">비밀번호</label>
+          <input type="password" class="form-control" id="inputPw">
+        </div>
+        <div>
+          <button onclick="login()" type="submit" class="btn btn-secondary w-100p mb-15">로그인</button>
+        </div>
+        <div>
+          <button onclick="goRegist()" type="submit" class="btn btn-light w-100p">회원가입</button>
+        </div>
       </div>
     </div>
-  </div>
 
-  <%- include('./common/javascript') -%>
-  <script>
+    <%- include('./common/javascript') -%>
+      <script>
+        $("#inputPw").keydown(function (key) {
+          if (key.keyCode == 13) {
+            login();
+          }
+        });
+        function login() {
+          var inputId = $('#inputId').val();
+          var inputPw = $('#inputPw').val();
+          console.log('inputId => ',inputId)
+          console.log('inputPw=>',inputPw)
 
-    $("#inputPw").keydown(function(key) {
-      if (key.keyCode == 13) {
-        login();
-      }
-    });
-
-    function login() {
-      var inputName = $('#inputName').val();
-      var inputPw = $('#inputPw').val();
-
-      $.post( "/api/v1/login", {         
-        inputName: inputName,
-        inputPw: inputPw
-      })
-      .done(function( data ) {
-        if (data.result === 'fail') {
-          // alert('아이디 또는 비밀번호가 일치하지 않습니다');
-          Swal.fire({
-            icon: 'error',
-            title: '로그인',
-            text: '아이디 또는 비밀번호가 일치하지 않습니다.'
+          $.post("/api/v1/login", {
+            inputId: inputId,
+            inputPw: inputPw
           })
-        } else {
-          window.location.href = "/";
+            .done(function (data) {
+              if (data.result === 'fail') {
+                // alert('아이디 또는 비밀번호가 일치하지 않습니다');
+                Swal.fire({
+                  icon: 'error',
+                  title: '로그인',
+                  text: '아이디 또는 비밀번호가 일치하지 않습니다.'
+                })
+              } else {
+                window.location.href = "/";
+              }
+            });
         }
-      });
-    }
 
-    function goRegist() {
-      window.location.href = "/regist";
-    }
-  </script>
-</body>
+        function goRegist() {
+          window.location.href = "/regist";
+        }
+      </script>
+  </body>
+
 </html>
-
-

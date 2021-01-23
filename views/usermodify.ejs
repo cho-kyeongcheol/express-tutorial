@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+  <%- include('./common/head') -%>
+<body>
+
+  <div class="container">
+    <div class="regist-box">   
+      <h1 class="text-center">
+        회원가입수정
+      </h1>   
+
+      <div class="mb-3" id="imageload">    
+       
+      </div>
+
+        <!-- <img src="/1L3u55SVN_reUQ13LKwIvVeW.jpg" style="width: 200px; height: 300px;"/> -->
+        <!-- <button onclick="imageload()">image</button> -->
+
+        <div class="mb-3">
+      <form action="/upload" method="post" enctype="multipart/form-data" id="fileForm">
+        <input type="file" id="fileInput" name="fileInput">
+      </form>
+      <input type="text" id="filePath">      
+      </div>
+
+      <div class="mb-3">
+        <label for="user_Id" class="form-label">아이디</label>
+        <input type="text" class="form-control" id="user_Id" value="<%= user.user_id %>">
+      </div>
+      <div class="mb-3">
+        <label for="inputName" class="form-label">이름</label>
+        <input type="text" class="form-control" id="inputName" value="<%= user.username %>">
+      </div>      
+      <div class="mb-3">
+        <label for="inputPw" class="form-label">비밀번호</label>
+        <input type="password" class="form-control" id="inputPw" value="<%= user.username %>">
+      </div>
+      <div class="mb-3">
+        <label for="inputEmail" class="form-label">이메일</label>
+        <input type="text" class="form-control" id="inputEmail" value="<%= user.email %>">
+      </div>      
+     
+      </div>
+      <div>
+        <button onclick="updateUser()" type="submit" class="btn btn-secondary w-100p mb-15">회원수정</button>
+      </div>
+      <div>
+        <button onclick="goIndex()" type="submit" class="btn btn-light w-100p">홈페이지 이동</button>
+      </div>
+    </div>
+  </div>
+
+  <%- include('./common/javascript') -%>
+  <script src="http://code.jquery.com/jquery-1.7.1.js"></script>
+  <script>
+    $("#inputPw").keydown(function(key) {
+      if (key.keyCode == 13) {
+        regist();
+      }
+    });   
+
+    $('#fileInput').on('change', function () {
+        var form = $('#fileForm')[0];
+        var formData = new FormData(form);
+        console.log('form =>', form)
+        console.log('formData =>', formData)
+        $.ajax({
+            type: 'post',
+            url: '/api/upload',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                $('#filePath').val(data);
+                console.log('data=>',data)
+                console.log('success')
+                window.location.href = '/usermodify'
+            },
+            error: function (error) {
+                console.log('error=>', error);
+            }            
+        });                    
+    });
+
+  
+  
+    readUpload()
+
+ 
+
+    function readUpload() {      
+      $.post("/api/vi/upload/read/", {
+            // pass
+          }).done(function (data) {
+            var post_file = data.data;
+            const content = `
+            <% if(img_src != undefined) { %>
+              <img src="<%= src %>" style="width: 200px; height: 300px;"/>
+              <% }  %>
+
+              <% if(img_src == undefined) { %>
+                <div>이미지를 선택하세요</div>
+            <% }  %>
+            `
+            $('#imageload').prepend(content);
+          })         
+    }
+
+       
+
+
+    function updateUser() {      
+      var user_Id = $('#user_Id').val();       
+      var inputName = $('#inputName').val();   
+      var inputPw = $('#inputPw').val();   
+      var inputEmail = $('#inputEmail').val();   
+      console.log('user_Id = ', user_Id)             
+      console.log("inputName => ",inputName)
+      console.log("inputPw => ",inputPw)
+      console.log("inputEmail => ",inputEmail)
+      $.post("/api/vi/user/update/", {
+        id:user_Id,
+        userName:inputName,
+        password:inputPw,
+        email: inputEmail
+      }).done(function (data) {
+        if (data.result === 'fail') {
+          Swal.fire({
+            icon: 'error',
+            title: '수정',
+            text: '실패!'
+          })
+        } else {
+          Swal.fire({
+            icon: 'success',
+            title: '수정',
+            text: '성공!'
+          })          
+        }   
+      })
+      
+    }
+
+   
+
+    function regist() {
+      var inputName = $('#inputName').val();
+      var inputPw = $('#inputPw').val();
+      var user_Id = $('#user_Id').val();
+      var inputEmail = $('#inputEmail').val();
+      console.log('inputName = ', inputName)
+      console.log('inputPw = ', inputPw)      
+      console.log('user_Id = ', user_Id)     
+      console.log('inputEmail = ', inputEmail)     
+      $.post( "/api/v1/regist", {         
+        inputName: inputName,
+        inputPw: inputPw,
+        user_Id: user_Id,
+        inputEmail: inputEmail
+      })
+      .done(function( data ) {
+        if (data.result === 'fail') {
+          // alert('회원가입에 실패하였습니다.')
+          Swal.fire({
+            icon: 'error',
+            title: '회원가입',
+            text: '회원가입에 실패하였습니다.'
+          })
+        } else {
+          // alert('회원가입 성공!');
+          Swal.fire({
+            icon: 'success',
+            title: '회원가입',
+            text: '회원가입이 완료되었습니다.'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              window.location.href = "/login";
+            } else if (result.isDenied) {
+              // pass
+            }
+          })
+        }
+      });
+    }
+
+    
+
+
+
+    function goIndex() {
+      window.location.href = "/";
+    }
+  </script>
+</body>
+</html>
